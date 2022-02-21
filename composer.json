@@ -1,5 +1,5 @@
 {
-    "name": "sigwin/symfony-docker",
+    "name": "sigwin/infra",
     "description": "Sigwin's Symfony Docker default infra",
     "license": "MIT"
 }
