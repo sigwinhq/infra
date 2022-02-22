@@ -24,10 +24,26 @@ PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.66.2-php${BUILD_ENV}-alpine
 PHPQA_DOCKER_COMMAND=docker run --init --interactive ${TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "$(shell id -u):$(shell id -g)" --volume "$(shell pwd)/var/tmp/phpqa:/tmp" --volume "$(shell pwd):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
 endif
 
+ifndef APP_DOCKER_COMMAND
+APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app
+endif
+
 composer/validate: util/ensure ## Composer: validate composer.* files
 	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
 composer/normalize: util/ensure ## Composer: normalize composer.* files
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction"
+
+start/dev: ## Start app in "dev" mode
+	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans
+start: ## Start app in APP_ENV mode (defined in .env)
+	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml up --detach --remove-orphans
+stop: ## Stop app
+	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans
+
+sh/app: ## Run application shell
+	sh -c "${APP_DOCKER_COMMAND} bash"
+sh/php: util/ensure ## Run PHP shell
+	sh -c "${PHPQA_DOCKER_COMMAND} sh"
 
 setup/filesystem: util/ensure var/admin var/cache var/config var/log ## Setup: filesystem (var, public/var folders)
 util/ensure: ${HOME}/.composer var/tmp/phpqa
