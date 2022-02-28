@@ -3,6 +3,8 @@ SHELL=bash
 RUNNER=33
 
 default: help
+dist: composer/normalize cs phpstan psalm ## Prepare for commit
+check: check/cs phpstan psalm
 
 include ${ROOT}/../Common/Makefile
 include ${ROOT}/../${OS_FAMILY}/Makefile
@@ -28,10 +30,27 @@ ifndef APP_DOCKER_COMMAND
 APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app
 endif
 
-composer/validate: util/ensure ## Composer: validate composer.* files
+composer/validate: util/ensure
 	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
-composer/normalize: util/ensure ## Composer: normalize composer.* files
+composer/normalize: util/ensure
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction"
+
+cs: util/ensure ## Code style: fix the code style
+	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
+check/cs: util/ensure
+	$(call start,PHP CS Fixer)
+	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
+	$(call end)
+
+phpstan: util/ensure ## Analyze the code using PHPStan
+	$(call start,PHPStan)
+	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse ${PHPSTAN_OUTPUT}"
+	$(call end)
+
+psalm: util/ensure ## Analyze the code using Psalm
+	$(call start,Psalm)
+	sh -c "${PHPQA_DOCKER_COMMAND} psalm --threads=max --show-info=false --diff ${PSALM_OUTPUT}"
+	$(call end)
 
 start/dev: ## Start app in "dev" mode
 	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans
