@@ -10,20 +10,3 @@ else
 		OS_FAMILY = Darwin
 	endif
 endif
-
-PHPSTAN_OUTPUT=
-PSALM_OUTPUT=
-define start
-endef
-define end
-endef
-ifdef GITHUB_ACTIONS
-define start
-echo ::group::$(1)
-endef
-define end
-echo ::endgroup::
-endef
-PHPSTAN_OUTPUT=--error-format=github
-PSALM_OUTPUT=--output-format=github
-endif
