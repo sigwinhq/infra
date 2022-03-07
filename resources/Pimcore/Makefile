@@ -18,28 +18,6 @@ ifndef APP_DOCKER_COMMAND
 APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app
 endif
 
-composer/validate: util/ensure
-	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
-composer/normalize: util/ensure
-	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction"
-
-cs: util/ensure ## Code style: fix the code style
-	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
-check/cs: util/ensure
-	$(call start,PHP CS Fixer)
-	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
-	$(call end)
-
-phpstan: util/ensure ## Analyze the code using PHPStan
-	$(call start,PHPStan)
-	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse ${PHPSTAN_OUTPUT}"
-	$(call end)
-
-psalm: util/ensure ## Analyze the code using Psalm
-	$(call start,Psalm)
-	sh -c "${PHPQA_DOCKER_COMMAND} psalm --threads=max --show-info=false --diff ${PSALM_OUTPUT}"
-	$(call end)
-
 build/dev: ## Build app for "dev" target
 	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml build
 build/prod: ## Build app for "prod" target
@@ -55,10 +33,7 @@ stop: ## Stop app
 sh/app: ## Run application shell
 	sh -c "${APP_DOCKER_COMMAND} bash"
 
-setup/filesystem: util/ensure var/admin var/cache var/config var/log ## Setup: filesystem (var, public/var folders)
-util/ensure: ${HOME}/.composer var/tmp
-${HOME}/.composer:
-	mkdir -p ${HOME}/.composer
+setup/filesystem: $HOME/.composer var/tmp var/admin var/cache var/config var/log ## Setup: filesystem (var, public/var folders)
 var:
 	mkdir -p var
 	$(call permissions,var)
@@ -74,6 +49,3 @@ var/config: var
 var/log: var
 	mkdir -p var/log
 	$(call permissions,var/log)
-var/tmp: var
-	mkdir -p var/tmp
-	$(call permissions,var/tmp)
