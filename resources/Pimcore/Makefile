@@ -18,6 +18,33 @@ ifndef APP_DOCKER_COMMAND
 APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app
 endif
 
+composer/validate: util/ensure
+	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
+composer/normalize: util/ensure
+	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction"
+
+cs: util/ensure ## Code style: fix the code style
+	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
+check/cs: util/ensure
+	$(call start,PHP CS Fixer)
+	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
+	$(call end)
+
+phpstan: util/ensure ## Analyze the code using PHPStan
+	$(call start,PHPStan)
+	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse ${PHPSTAN_OUTPUT}"
+	$(call end)
+
+psalm: util/ensure ## Analyze the code using Psalm
+	$(call start,Psalm)
+	sh -c "${PHPQA_DOCKER_COMMAND} psalm --threads=max --show-info=false --diff ${PSALM_OUTPUT}"
+	$(call end)
+
+build/dev: ## Build app for "dev" target
+	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml build
+build/prod: ## Build app for "prod" target
+	docker-compose --file docker-compose.yaml build
+
 start/dev: ## Start app in "dev" mode
 	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans
 start: ## Start app in APP_ENV mode (defined in .env)
