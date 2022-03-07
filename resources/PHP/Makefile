@@ -34,9 +34,9 @@ sh/php: ${HOME}/.composer var/tmp ## Run PHP shell
 composer/validate: ${HOME}/.composer var/tmp
 	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
 composer/normalize: ${HOME}/.composer var/tmp
-	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction"
+	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock"
 check/composer/normalize: ${HOME}/.composer var/tmp
-	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --dry-run --no-check-lock"
+	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run"
 
 cs: ${HOME}/.composer var/tmp ## Code style: fix the code style
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
