@@ -34,9 +34,9 @@ sh/app: ## Run application shell
 	sh -c "${APP_DOCKER_COMMAND} bash"
 
 clean: ## Clear application logs and system cache
-	rm -rf var/cache/* var/log/*
+	rm -rf var/admin/* var/cache/* var/log/*
 
-setup/filesystem: ${HOME}/.composer var/tmp var/admin var/cache var/config var/log ## Setup: filesystem (var, public/var folders)
+setup/filesystem: ${HOME}/.composer var/tmp var/admin var/cache var/config var/log var/versions ## Setup: filesystem (var, public/var folders)
 var:
 	mkdir -p var
 	$(call permissions,var)
@@ -52,3 +52,6 @@ var/config: var
 var/log: var
 	mkdir -p var/log
 	$(call permissions,var/log)
+var/versions: var
+	mkdir -p var/versions
+	$(call permissions,var/versions)
