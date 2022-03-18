@@ -36,7 +36,13 @@ sh/app: ## Run application shell
 clean: ## Clear application logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/*
 
-setup/filesystem: ${HOME}/.composer var/tmp var/admin var/cache var/config var/log var/versions ## Setup: filesystem (var, public/var folders)
+setup/filesystem: ${HOME}/.composer public/var/assets public/var/tmp var/tmp var/admin var/cache var/config var/log var/versions ## Setup: filesystem (var, public/var folders)
+public/var/assets:
+	mkdir -p public/var/assets
+	$(call permissions,public/var/assets)
+public/var/tmp:
+	mkdir -p public/var/tmp
+	$(call permissions,public/var/tmp)
 var:
 	mkdir -p var
 	$(call permissions,var)
