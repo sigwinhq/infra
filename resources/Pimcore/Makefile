@@ -1,18 +1,9 @@
-ROOT=$(abspath $(dir $(lastword $(MAKEFILE_LIST))))
 SHELL=bash
 RUNNER=33
 
 default: help
 dist: composer/normalize cs phpstan psalm ## Prepare for commit
 check: check/cs phpstan psalm
-
-include ${ROOT}/../Common/Makefile
-include ${ROOT}/../${OS_FAMILY}/Makefile
-include ${ROOT}/../PHP/Makefile
-
-ifndef APP_ENV
-include .env
-endif
 
 ifndef APP_DOCKER_COMMAND
 APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app
@@ -58,6 +49,9 @@ var/config: var
 var/log: var
 	mkdir -p var/log
 	$(call permissions,var/log)
+var/tmp: var
+	mkdir -p var/tmp
+	$(call permissions,var/tmp)
 var/versions: var
 	mkdir -p var/versions
 	$(call permissions,var/versions)
