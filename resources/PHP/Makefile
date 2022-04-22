@@ -55,7 +55,7 @@ phpstan: ${HOME}/.composer var/cache ## Analyze the code using PHPStan
 
 psalm: ${HOME}/.composer var/cache ## Analyze the code using Psalm
 	$(call start,Psalm)
-	sh -c "${PHPQA_DOCKER_COMMAND} psalm --threads=max --show-info=false --diff ${PSALM_OUTPUT}"
+	sh -c "${PHPQA_DOCKER_COMMAND} psalm ${PSALM_OUTPUT}"
 	$(call end)
 
 ${HOME}/.composer:
