@@ -1,3 +1,4 @@
+ROOT := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
 OS_FAMILY :=
 ifeq ($(OS),Windows_NT)
 	OS_FAMILY = Windows
@@ -10,3 +11,5 @@ else
 		OS_FAMILY = Darwin
 	endif
 endif
+
+include ${ROOT}/../${OS_FAMILY}/Makefile

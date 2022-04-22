@@ -2,13 +2,16 @@ ifndef BUILD_ENV
 BUILD_ENV=8.1
 endif
 
-ifndef TTY
-TTY:=$(shell [ -t 0 ] && echo --tty)
+ifndef PHPQA_DOCKER_IMAGE
+PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.69.1-php${BUILD_ENV}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
-PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.66.2-php${BUILD_ENV}-alpine
 PHPQA_DOCKER_COMMAND=docker run --init --interactive ${TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "$(shell id -u):$(shell id -g)" --volume "$(shell pwd)/var/tmp:/tmp" --volume "$(shell pwd):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
+endif
+
+ifndef TTY
+TTY:=$(shell [ -t 0 ] && echo --tty)
 endif
 
 PHPSTAN_OUTPUT=
