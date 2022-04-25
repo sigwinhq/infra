@@ -1,5 +1,9 @@
+# ${ROOT} is defined by the caller makefile
+ifndef ROOT
+$(error ROOT must be defined when loading Common/default.mk)
+endif
+
 SHELL := bash
-ROOT := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
 OS_FAMILY :=
 ifeq ($(OS),Windows_NT)
 	OS_FAMILY = Windows
@@ -13,4 +17,4 @@ else
 	endif
 endif
 
-include ${ROOT}/../${OS_FAMILY}/Makefile
+include ${ROOT}/Common/Platform/${OS_FAMILY}/default.mk

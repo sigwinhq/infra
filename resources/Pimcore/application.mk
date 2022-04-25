@@ -1,4 +1,3 @@
-SHELL=bash
 RUNNER=33
 
 default: help
