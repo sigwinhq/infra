@@ -1,8 +1,7 @@
-RUNNER=33
+ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
 
-default: help
-dist: composer/normalize cs phpstan psalm ## Prepare for commit
-check: check/cs phpstan psalm
+include ${ROOT}/Common/default.mk
+include ${ROOT}/PHP/default.mk
 
 ifndef APP_DOCKER_COMMAND
 APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app

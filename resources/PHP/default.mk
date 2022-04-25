@@ -1,5 +1,5 @@
-ifndef BUILD_ENV
-BUILD_ENV=8.1
+ifndef PHPVERSION
+PHPVERSION=8.1
 endif
 
 ifndef TTY
@@ -7,7 +7,7 @@ TTY:=$(shell [ -t 0 ] && echo --tty)
 endif
 
 ifndef PHPQA_DOCKER_IMAGE
-PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.69.1-php${BUILD_ENV}-alpine
+PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.69.1-php${PHPVERSION}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
@@ -41,19 +41,19 @@ composer/normalize: ${HOME}/.composer var/cache
 check/composer/normalize: ${HOME}/.composer var/cache
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run"
 
-cs: ${HOME}/.composer var/cache ## Code style: fix the code style
+cs: ${HOME}/.composer var/cache
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
 check/cs: ${HOME}/.composer var/cache
 	$(call start,PHP CS Fixer)
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
 	$(call end)
 
-phpstan: ${HOME}/.composer var/cache ## Analyze the code using PHPStan
+check/phpstan: ${HOME}/.composer var/cache ## Analyze the codebase using PHPStan
 	$(call start,PHPStan)
 	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse ${PHPSTAN_OUTPUT}"
 	$(call end)
 
-psalm: ${HOME}/.composer var/cache ## Analyze the code using Psalm
+check/psalm: ${HOME}/.composer var/cache ## Analyze the codebase using Psalm
 	$(call start,Psalm)
 	sh -c "${PHPQA_DOCKER_COMMAND} psalm ${PSALM_OUTPUT}"
 	$(call end)
