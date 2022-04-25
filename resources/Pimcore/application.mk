@@ -1,5 +1,7 @@
+ifndef SIGWIN_INFRA_ROOT
 SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
-include ${SIGWIN_INFRA_ROOT}/PHP/default.mk
+endif
+include ${SIGWIN_INFRA_ROOT}/PHP/common.mk
 
 ifndef APP_DOCKER_COMMAND
 APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app

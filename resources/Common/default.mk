@@ -1,4 +1,3 @@
-# ${ROOT} is defined by the caller makefile
 ifndef SIGWIN_INFRA_ROOT
 $(error SIGWIN_INFRA_ROOT must be defined before loading Common/default.mk)
 endif
