@@ -1,3 +1,4 @@
+SHELL := bash
 ROOT := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
 OS_FAMILY :=
 ifeq ($(OS),Windows_NT)
