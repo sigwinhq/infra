@@ -1,3 +1,6 @@
+SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
+include ${SIGWIN_INFRA_ROOT}/Common/default.mk
+
 ifndef PHPVERSION
 PHPVERSION=8.1
 endif

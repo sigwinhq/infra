@@ -1,6 +1,6 @@
 # ${ROOT} is defined by the caller makefile
-ifndef ROOT
-$(error ROOT must be defined when loading Common/default.mk)
+ifndef SIGWIN_INFRA_ROOT
+$(error SIGWIN_INFRA_ROOT must be defined before loading Common/default.mk)
 endif
 
 SHELL := bash
@@ -17,4 +17,4 @@ else
 	endif
 endif
 
-include ${ROOT}/Common/Platform/${OS_FAMILY}/default.mk
+include ${SIGWIN_INFRA_ROOT}/Common/Platform/${OS_FAMILY}/default.mk
