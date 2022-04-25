@@ -1,4 +1,8 @@
-ROOT := $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST))))))
+ifndef SIGWIN_INFRA_ROOT
+$(error SIGWIN_INFRA_ROOT must be defined before loading Common/default.mk)
+endif
+
+SHELL := bash
 OS_FAMILY :=
 ifeq ($(OS),Windows_NT)
 	OS_FAMILY = Windows
@@ -12,4 +16,4 @@ else
 	endif
 endif
 
-include ${ROOT}/../${OS_FAMILY}/Makefile
+include ${SIGWIN_INFRA_ROOT}/Common/Platform/${OS_FAMILY}/default.mk

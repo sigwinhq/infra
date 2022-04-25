@@ -1,9 +1,7 @@
-SHELL=bash
-RUNNER=33
-
-default: help
-dist: composer/normalize cs phpstan psalm ## Prepare for commit
-check: check/cs phpstan psalm
+ifndef SIGWIN_INFRA_ROOT
+SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
+endif
+include ${SIGWIN_INFRA_ROOT}/PHP/common.mk
 
 ifndef APP_DOCKER_COMMAND
 APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app
