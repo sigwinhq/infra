@@ -1,10 +1,10 @@
 ifndef SIGWIN_INFRA_ROOT
-SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
+$(error SIGWIN_INFRA_ROOT must be defined before loading PHP/common.mk)
 endif
 include ${SIGWIN_INFRA_ROOT}/Common/default.mk
 
-ifndef PHPVERSION
-PHPVERSION=8.1
+ifndef PHP_VERSION
+PHP_VERSION=8.1
 endif
 
 ifndef TTY
@@ -12,7 +12,7 @@ TTY:=$(shell [ -t 0 ] && echo --tty)
 endif
 
 ifndef PHPQA_DOCKER_IMAGE
-PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.69.1-php${PHPVERSION}-alpine
+PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.69.1-php${PHP_VERSION}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
