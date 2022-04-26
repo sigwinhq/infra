@@ -43,22 +43,22 @@ composer/validate: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
 composer/normalize: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock"
-check/composer/normalize: ${HOME}/.composer var/phpqa
+analyze/composer: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run"
 
 cs: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
-check/cs: ${HOME}/.composer var/phpqa
+analyze/cs: ${HOME}/.composer var/phpqa
 	$(call start,PHP CS Fixer)
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
 	$(call end)
 
-check/phpstan: ${HOME}/.composer var/phpqa
+analyze/phpstan: ${HOME}/.composer var/phpqa
 	$(call start,PHPStan)
 	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse ${PHPSTAN_OUTPUT}"
 	$(call end)
 
-check/psalm: ${HOME}/.composer var/phpqa
+analyze/psalm: ${HOME}/.composer var/phpqa
 	$(call start,Psalm)
 	sh -c "${PHPQA_DOCKER_COMMAND} psalm ${PSALM_OUTPUT}"
 	$(call end)
@@ -67,11 +67,11 @@ test/phpunit:
 	$(call start,PHPUnit)
 	sh -c "${PHPQA_DOCKER_COMMAND} vendor/bin/phpunit --verbose"
 	$(call end)
-test/phpunit/coverage: ${HOME}/.composer var/phpqa
+test/phpunit-coverage: ${HOME}/.composer var/phpqa
 	$(call start,PHPUnit)
 	sh -c "${PHPQA_DOCKER_COMMAND} php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/"
 	$(call end)
-test/infection: test/phpunit/coverage
+test/infection: test/phpunit-coverage
 	$(call start,Infection)
 	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads 4"
 	$(call end)

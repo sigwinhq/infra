@@ -3,6 +3,6 @@ SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword 
 endif
 include ${SIGWIN_INFRA_ROOT}/PHP/common.mk
 
-dist: cs check/phpstan check/psalm test ## Prepare the codebase for commit
-check: check/cs check/phpstan check/psalm ## Analyze the codebase
-test: test/phpunit/coverage ## Run the tests
+dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
+analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
+test: test/phpunit-coverage ## Test the codebase
