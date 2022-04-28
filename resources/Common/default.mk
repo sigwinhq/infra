@@ -2,7 +2,7 @@ ifndef SIGWIN_INFRA_ROOT
 $(error SIGWIN_INFRA_ROOT must be defined before loading Common/default.mk)
 endif
 
-SHELL := bash
+SHELL := sh
 OS_FAMILY :=
 ifeq ($(OS),Windows_NT)
 	OS_FAMILY = Windows
