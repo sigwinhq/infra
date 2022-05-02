@@ -1,6 +1,10 @@
 ifndef APP_ROOT
 $(error APP_ROOT must be defined before loading YASSG/default.mk)
 endif
+ifndef SIGWIN_INFRA_ROOT
+SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
+endif
+include ${SIGWIN_INFRA_ROOT}/Common/default.mk
 APP_PORT ?= 9988
 BUILD_DIR ?= public
 BUILD_OPTS ?=
