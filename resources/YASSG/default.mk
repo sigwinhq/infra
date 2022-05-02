@@ -10,7 +10,7 @@ BUILD_DIR ?= public
 BUILD_OPTS ?=
 BASE_URL ?= file://localhost${APP_ROOT}/${BUILD_DIR}
 
-start/dev: dev
+start/dev: dev ## Start app in "dev" mode
 dev: clean
 	@make dev/assets dev/server -j2
 dev/server: vendor index.php
@@ -20,7 +20,7 @@ dev/assets: node_modules
 index.php:
 	ln -s vendor/sigwin/yassg/web/index.php
 
-build: ${BUILD_DIR}/assets/entrypoints.json vendor
+build: ${BUILD_DIR}/assets/entrypoints.json vendor ## Build app for "prod" target
 	php vendor/sigwin/yassg/bin/yassg yassg:generate --env prod $(BASE_URL) ${BUILD_OPTS}
 .PHONY: build
 
