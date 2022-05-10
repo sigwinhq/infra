@@ -4,7 +4,7 @@ endif
 include ${SIGWIN_INFRA_ROOT}/PHP/common.mk
 
 ifndef APP_DOCKER_COMMAND
-APP_DOCKER_COMMAND=docker-compose exec --env "APP_ENV=$(value APP_ENV)" --user "$(shell id -u):$(shell id -g)" app
+APP_DOCKER_COMMAND=docker-compose exec --user "$(shell id -u):$(shell id -g)" app
 endif
 
 dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
