@@ -29,7 +29,7 @@ sh/app: ## Run application shell
 	sh -c "${APP_DOCKER_COMMAND} sh"
 
 clean: ## Clear application logs and system cache
-	rm -rf var/admin/* var/cache/* var/log/*
+	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*
 
 setup/filesystem: ${HOME}/.composer public/var/assets public/var/tmp var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/versions ## Setup: filesystem (var, public/var folders)
 public/var/assets:
