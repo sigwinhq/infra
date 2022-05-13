@@ -7,23 +7,33 @@ ifndef APP_DOCKER_COMMAND
 APP_DOCKER_COMMAND=docker-compose exec --user "$(shell id -u):$(shell id -g)" app
 endif
 
+ifndef VERSION
+VERSION=latest
+endif
+
+ifndef BASE_URL
+BASE_URL=http://example.com/
+endif
+
 dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
 test: test/phpunit-coverage ## Test the codebase
 
 build/dev: ## Build app for "dev" target
-	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml build
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml build --build-arg BASE_URL=${BASE_URL}
 build/prod: ## Build app for "prod" target
-	docker-compose --file docker-compose.yaml build
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml build --build-arg BASE_URL=${BASE_URL}
+push:
+	VERSION=${VERSION} docker-compose push
 
 start/dev: ## Start app in "dev" mode
-	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans
 start/prod: ## Start app in "prod" mode
-	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.prod.yaml up --detach --remove-orphans
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.prod.yaml up --detach --remove-orphans
 start: ## Start app in APP_ENV mode (defined in .env)
-	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml up --detach --remove-orphans
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml up --detach --remove-orphans
 stop: ## Stop app
-	docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans
 
 sh/app: ## Run application shell
 	sh -c "${APP_DOCKER_COMMAND} sh"
