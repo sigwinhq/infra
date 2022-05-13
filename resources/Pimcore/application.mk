@@ -23,13 +23,15 @@ build/dev: ## Build app for "dev" target
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml build --build-arg BASE_URL=${BASE_URL}
 build/prod: ## Build app for "prod" target
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml build --build-arg BASE_URL=${BASE_URL}
-push:
+docker/push:
 	VERSION=${VERSION} docker-compose push
+docker/pull:
+	VERSION=${VERSION} docker-compose pull
 
 start/dev: ## Start app in "dev" mode
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans
 start/prod: ## Start app in "prod" mode
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.prod.yaml up --detach --remove-orphans
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.prod.yaml up --detach --remove-orphans --no-build
 start: ## Start app in APP_ENV mode (defined in .env)
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml up --detach --remove-orphans
 stop: ## Stop app
@@ -41,7 +43,10 @@ sh/app: ## Run application shell
 clean: ## Clear application logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*
 
-setup/filesystem: ${HOME}/.composer public/var/assets public/var/tmp var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/versions ## Setup: filesystem (var, public/var folders)
+setup/filesystem: ${HOME}/.composer config/pimcore/classes public/var/assets public/var/tmp var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/versions ## Setup: filesystem (var, public/var folders)
+config/pimcore/classes:
+	mkdir -p config/pimcore/classes
+	$(call permissions,config/pimcore/classes)
 public/var/assets:
 	mkdir -p public/var/assets
 	$(call permissions,public/var/assets)
