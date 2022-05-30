@@ -15,6 +15,13 @@ ifndef BASE_URL
 BASE_URL=http://example.com/
 endif
 
+ifndef SECRETS_DIR
+SECRETS_DIR=./.infra/secrets
+endif
+ifndef SECRETS_DIST
+SECRETS_DIST=.dist
+endif
+
 dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
 test: test/phpunit-coverage ## Test the codebase
@@ -28,17 +35,17 @@ docker/push:
 docker/pull:
 	VERSION=${VERSION} docker-compose pull
 
-start/dev: ## Start app in "dev" mode
+start/dev: secrets ## Start app in "dev" mode
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans
-start/prod: ## Start app in "prod" mode
+start/prod: secrets ## Start app in "prod" mode
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.prod.yaml up --detach --remove-orphans --no-build
-start: ## Start app in APP_ENV mode (defined in .env)
+start: secrets ## Start app in APP_ENV mode (defined in .env)
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml up --detach --remove-orphans
 stop: ## Stop app
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans
 
 sh/app: ## Run application shell
-	sh -c "${APP_DOCKER_COMMAND} sh"
+	VERSION=${VERSION} sh -c "${APP_DOCKER_COMMAND} sh"
 
 clean: ## Clear application logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*
@@ -80,3 +87,7 @@ var/tmp: var
 var/versions: var
 	mkdir -p var/versions
 	$(call permissions,var/versions)
+
+secrets: $(patsubst %${SECRETS_DIST},%,$(wildcard ${SECRETS_DIR}/*.secret${SECRETS_DIST}))
+${SECRETS_DIR}/%.secret:
+	cp $@${SECRETS_DIST} $@
