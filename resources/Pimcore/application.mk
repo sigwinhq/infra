@@ -30,9 +30,9 @@ build/dev: ## Build app for "dev" target
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml build --build-arg BASE_URL=${BASE_URL}
 build/prod: ## Build app for "prod" target
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml build --build-arg BASE_URL=${BASE_URL}
-docker/push:
+registry/push:
 	VERSION=${VERSION} docker-compose push
-docker/pull:
+registry/pull:
 	VERSION=${VERSION} docker-compose pull
 
 start/dev: secrets ## Start app in "dev" mode
