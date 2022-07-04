@@ -42,9 +42,9 @@ sh/php: ${HOME}/.composer var/phpqa ## Run PHP shell
 composer/validate: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
 composer/normalize: ${HOME}/.composer var/phpqa
-	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock"
+	# sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock"
 analyze/composer: ${HOME}/.composer var/phpqa
-	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run"
+	# sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run"
 
 cs: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
