@@ -5,4 +5,4 @@ include ${SIGWIN_INFRA_ROOT}/PHP/common.mk
 
 dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
-test: test/phpunit-coverage ## Test the codebase
+test: test/infection ## Test the codebase
