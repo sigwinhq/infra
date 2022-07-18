@@ -24,7 +24,7 @@ endif
 
 dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
-test: test/phpunit-coverage ## Test the codebase
+test: test/infection ## Test the codebase
 
 build/dev: ## Build app for "dev" target
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml build --build-arg BASE_URL=${BASE_URL}
