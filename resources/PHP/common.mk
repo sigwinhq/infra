@@ -73,7 +73,7 @@ test/phpunit-coverage: ${HOME}/.composer var/phpqa
 	$(call end)
 test/infection: test/phpunit-coverage
 	$(call start,Infection)
-	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads 4"
+	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads ${OS_CPUS}"
 	$(call end)
 
 ${HOME}/.composer:
