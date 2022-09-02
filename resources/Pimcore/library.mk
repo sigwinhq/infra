@@ -4,10 +4,10 @@ endif
 include ${SIGWIN_INFRA_ROOT}/Pimcore/common.mk
 
 ifndef COMPOSE_PROJECT_NAME
-$(error COMPOSE_PROJECT_NAME must be defined before loading Pimcore/library.mk)
+$(warning COMPOSE_PROJECT_NAME must be defined before loading Pimcore/library.mk to run functional tests)
 endif
 ifndef PIMCORE_KERNEL_CLASS
-$(error PIMCORE_KERNEL_CLASS must be defined before loading Pimcore/library.mk)
+$(warning PIMCORE_KERNEL_CLASS must be defined before loading Pimcore/library.mk to run functional tests)
 endif
 
 TESTS_RUNTIME_ROOT?=tests/runtime
@@ -18,6 +18,7 @@ test/unit: test/infection ## Test the codebase, unit tests
 test/functional: test/behat ## Test the codebase, functional tests
 test: test/unit test/functional ## Test the codebase
 
+ifdef COMPOSE_PROJECT_NAME
 start/test: ## Start app in "test" mode
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml up --detach
 stop: ## Stop app
@@ -30,3 +31,6 @@ test/behat:
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/behat --format pretty
 .env:
 	touch .env
+else
+test/behat:
+endif
