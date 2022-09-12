@@ -3,33 +3,28 @@ SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword 
 endif
 include ${SIGWIN_INFRA_ROOT}/Pimcore/common.mk
 
-ifndef APP_DOCKER_COMMAND
-APP_DOCKER_COMMAND=docker-compose exec --user "$(shell id -u):$(shell id -g)" app
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
 endif
 
-ifndef VERSION
-VERSION=latest
-endif
+APP_DOCKER_COMMAND ?= docker-compose exec --user "$(shell id -u):$(shell id -g)" app
 
-ifndef BASE_URL
-BASE_URL=http://example.com/
-endif
+VERSION ?= latest
 
-ifndef SECRETS_DIR
-SECRETS_DIR=./.infra/secrets
-endif
-ifndef SECRETS_DIST
-SECRETS_DIST=.dist
-endif
+BASE_URL ?= http://example.com/
+
+SECRETS_DIR ?= ./.infra/secrets
+SECRETS_DIST ?= .dist
 
 dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
 test: test/infection ## Test the codebase
 
 build/dev: ## Build app for "dev" target
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml build --build-arg BASE_URL=${BASE_URL}
+	VERSION=${VERSION} docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=${BASE_URL} --file .infra/docker-buildx/docker-buildx.dev.hcl
 build/prod: ## Build app for "prod" target
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml build --build-arg BASE_URL=${BASE_URL}
+	VERSION=${VERSION} docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=${BASE_URL} --file .infra/docker-buildx/docker-buildx.prod.hcl
 registry/push:
 	VERSION=${VERSION} docker-compose push
 registry/pull:
