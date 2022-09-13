@@ -18,7 +18,7 @@ test/unit: test/infection ## Test the codebase, unit tests
 test/functional: test/behat ## Test the codebase, functional tests
 test: test/unit test/functional ## Test the codebase
 
-ifdef COMPOSE_PROJECT_NAME
+ifneq ($(and $(COMPOSE_PROJECT_NAME),$(PIMCORE_KERNEL_CLASS)),)
 start/test: ## Start app in "test" mode
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml up --detach
 stop: ## Stop app
