@@ -26,7 +26,8 @@ stop: ## Stop app
 sh/app: ## Run application shell
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app bash
 setup/pimcore: start/test .env ## Setup: create a working Pimcore install
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config &&  rm -rf config/local var/config var/installer
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup
 test/behat:
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/behat --format pretty
 .env:
