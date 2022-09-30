@@ -36,29 +36,34 @@ PHPSTAN_OUTPUT=--error-format=github
 PSALM_OUTPUT=--output-format=github
 endif
 
-sh/php: ${HOME}/.composer var/phpqa ## Run PHP shell
+sh/php: ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
 	sh -c "${PHPQA_DOCKER_COMMAND} sh"
 
-composer/validate: ${HOME}/.composer var/phpqa
+composer/install: ${HOME}/.composer var/phpqa
+	sh -c "${PHPQA_DOCKER_COMMAND} composer install"
+composer/install-lowest: ${HOME}/.composer var/phpqa
+	sh -c "${PHPQA_DOCKER_COMMAND} composer install --prefer-lowest"
+
+composer/validate: ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
-composer/normalize: ${HOME}/.composer var/phpqa
+composer/normalize: ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock"
-analyze/composer: ${HOME}/.composer var/phpqa
+analyze/composer: ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run"
 
-cs: ${HOME}/.composer var/phpqa
+cs: ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
-analyze/cs: ${HOME}/.composer var/phpqa
+analyze/cs: ${HOME}/.composer var/phpqa composer.lock
 	$(call start,PHP CS Fixer)
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
 	$(call end)
 
-analyze/phpstan: ${HOME}/.composer var/phpqa
+analyze/phpstan: ${HOME}/.composer var/phpqa composer.lock
 	$(call start,PHPStan)
 	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse ${PHPSTAN_OUTPUT}"
 	$(call end)
 
-analyze/psalm: ${HOME}/.composer var/phpqa
+analyze/psalm: ${HOME}/.composer var/phpqa composer.lock
 	$(call start,Psalm)
 	sh -c "${PHPQA_DOCKER_COMMAND} psalm ${PSALM_OUTPUT}"
 	$(call end)
@@ -67,7 +72,7 @@ test/phpunit:
 	$(call start,PHPUnit)
 	sh -c "${PHPQA_DOCKER_COMMAND} vendor/bin/phpunit --verbose"
 	$(call end)
-test/phpunit-coverage: ${HOME}/.composer var/phpqa
+test/phpunit-coverage: ${HOME}/.composer var/phpqa composer.lock
 	$(call start,PHPUnit)
 	sh -c "${PHPQA_DOCKER_COMMAND} php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/"
 	$(call end)
@@ -80,3 +85,4 @@ ${HOME}/.composer:
 	mkdir -p ${HOME}/.composer
 var/phpqa:
 	mkdir -p var/phpqa
+composer.lock: composer/install
