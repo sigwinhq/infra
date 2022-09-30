@@ -39,10 +39,11 @@ endif
 sh/php: ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
 	sh -c "${PHPQA_DOCKER_COMMAND} sh"
 
-composer/install: ${HOME}/.composer var/phpqa
+composer/install: composer/install-highest
+composer/install-highest: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} composer install"
 composer/install-lowest: ${HOME}/.composer var/phpqa
-	sh -c "${PHPQA_DOCKER_COMMAND} composer install --prefer-lowest"
+	sh -c "${PHPQA_DOCKER_COMMAND} composer upgrade --prefer-lowest"
 
 composer/validate: ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
