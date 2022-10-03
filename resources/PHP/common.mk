@@ -39,9 +39,11 @@ endif
 sh/php: ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
 	sh -c "${PHPQA_DOCKER_COMMAND} sh"
 
-composer/install: composer/install-highest
-composer/install-highest: ${HOME}/.composer var/phpqa
+composer/install: composer.lock
+composer/install-highest: composer.lock
+composer.lock: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} composer install"
+	touch composer.lock
 composer/install-lowest: ${HOME}/.composer var/phpqa
 	sh -c "${PHPQA_DOCKER_COMMAND} composer upgrade --prefer-lowest"
 
@@ -86,4 +88,3 @@ ${HOME}/.composer:
 	mkdir -p ${HOME}/.composer
 var/phpqa:
 	mkdir -p var/phpqa
-composer.lock: composer/install
