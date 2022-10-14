@@ -39,7 +39,9 @@ function createBackstopConfig(root = __dirname + "/public", scenarios = [], defa
         },
         report: ["CI"],
         engine: "puppeteer",
-        engineOptions: {},
+        engineOptions: {
+            args: ["--no-sandbox", "--allow-file-access-from-files"]
+        },
         asyncCaptureLimit: 5,
         asyncCompareLimit: 50,
         debug: false,
