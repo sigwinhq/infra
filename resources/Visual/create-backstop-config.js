@@ -5,7 +5,7 @@ function createBackstopConfig(root = __dirname + "/public", scenarios = [], defa
 
     spawn(
         "node",
-        ["vendor/sigwin/infra/resources/Visual/http-server.js"],
+        [__dirname + "/http-server.js"],
         { detached: true, stdio: "inherit", env: { ...process.env, SERVER_PORT, ROOT: root } }
     ).unref();
 
