@@ -56,7 +56,11 @@ const server = http.createServer(function (req, res) {
             return;
         }
         res.writeHead(200, { 'Content-Type': contentType });
-        res.end(modifyResponse(data.toString()), 'utf-8');
+        if (extname === '.html') {
+            res.end(modifyResponse(data.toString()), 'utf-8');
+        } else {
+            res.end(data, 'utf-8');
+        }
     });
 }).listen(SERVER_PORT);
 console.log(`HTTP server listening on ${SERVER_PORT}`);
