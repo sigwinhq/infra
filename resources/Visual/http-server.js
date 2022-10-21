@@ -51,6 +51,7 @@ const server = http.createServer(function (req, res) {
 
     fs.readFile(ROOT + req.url.replace(/\?[^?]+/, ''), function (err, data) {
         if (err) {
+            console.error(err);
             res.writeHead(404);
             res.end(JSON.stringify(err));
             return;
