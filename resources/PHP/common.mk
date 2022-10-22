@@ -19,19 +19,6 @@ ifndef PHPQA_DOCKER_COMMAND
 PHPQA_DOCKER_COMMAND=docker run --init --interactive ${TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "$(shell id -u):$(shell id -g)" --volume "$(shell pwd)/var/phpqa:/cache" --volume "$(shell pwd):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
 endif
 
-define start
-endef
-define end
-endef
-ifdef GITHUB_ACTIONS
-define start
-echo ::group::$(1)
-endef
-define end
-echo ::endgroup::
-endef
-endif
-
 sh/php: | ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
 	sh -c "${PHPQA_DOCKER_COMMAND} sh"
 
@@ -48,37 +35,39 @@ composer/validate: | ${HOME}/.composer var/phpqa composer.lock
 composer/normalize: | ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock"
 analyze/composer: | ${HOME}/.composer var/phpqa composer.lock
+	$(call block_start,$@)
 	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run"
+	$(call block_end)
 
 cs: | ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
 analyze/cs: | ${HOME}/.composer var/phpqa composer.lock
-	$(call start,PHP CS Fixer)
+	$(call block_start,$@)
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
-	$(call end)
+	$(call block_end)
 
 analyze/phpstan: | ${HOME}/.composer var/phpqa composer.lock
-	$(call start,PHPStan)
+	$(call block_start,$@)
 	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse --configuration $(call file_prefix,phpstan.neon.dist,$(PHP_VERSION)-)"
-	$(call end)
+	$(call block_end)
 
 analyze/psalm: | ${HOME}/.composer var/phpqa composer.lock
-	$(call start,Psalm)
+	$(call block_start,$@)
 	sh -c "${PHPQA_DOCKER_COMMAND} psalm --php-version=${PHP_VERSION} --config $(call file_prefix,psalm.xml.dist,$(PHP_VERSION)-)"
-	$(call end)
+	$(call block_end)
 
-test/phpunit:
-	$(call start,PHPUnit)
+test/phpunit: | ${HOME}/.composer var/phpqa composer.lock
+	$(call block_start,$@)
 	sh -c "${PHPQA_DOCKER_COMMAND} vendor/bin/phpunit --verbose"
-	$(call end)
+	$(call block_end)
 test/phpunit-coverage: | ${HOME}/.composer var/phpqa composer.lock
-	$(call start,PHPUnit)
+	$(call block_start,$@)
 	sh -c "${PHPQA_DOCKER_COMMAND} php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/"
-	$(call end)
+	$(call block_end)
 test/infection: test/phpunit-coverage
-	$(call start,Infection)
+	$(call block_start,$@)
 	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads ${OS_CPUS}"
-	$(call end)
+	$(call block_end)
 
 ${HOME}/.composer:
 	mkdir -p ${HOME}/.composer
