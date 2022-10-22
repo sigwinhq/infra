@@ -19,8 +19,6 @@ ifndef PHPQA_DOCKER_COMMAND
 PHPQA_DOCKER_COMMAND=docker run --init --interactive ${TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "$(shell id -u):$(shell id -g)" --volume "$(shell pwd)/var/phpqa:/cache" --volume "$(shell pwd):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
 endif
 
-PHPSTAN_OUTPUT=
-PSALM_OUTPUT=
 define start
 endef
 define end
@@ -32,8 +30,6 @@ endef
 define end
 echo ::endgroup::
 endef
-PHPSTAN_OUTPUT=--error-format=github
-PSALM_OUTPUT=--output-format=github
 endif
 
 sh/php: | ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
@@ -63,12 +59,12 @@ analyze/cs: | ${HOME}/.composer var/phpqa composer.lock
 
 analyze/phpstan: | ${HOME}/.composer var/phpqa composer.lock
 	$(call start,PHPStan)
-	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse ${PHPSTAN_OUTPUT}"
+	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse --configuration $(call file_prefix,phpstan.neon.dist,$(PHP_VERSION)-)"
 	$(call end)
 
 analyze/psalm: | ${HOME}/.composer var/phpqa composer.lock
 	$(call start,Psalm)
-	sh -c "${PHPQA_DOCKER_COMMAND} psalm --php-version=${PHP_VERSION} ${PSALM_OUTPUT}"
+	sh -c "${PHPQA_DOCKER_COMMAND} psalm --php-version=${PHP_VERSION} --config $(call file_prefix,psalm.xml.dist,$(PHP_VERSION)-)"
 	$(call end)
 
 test/phpunit:
