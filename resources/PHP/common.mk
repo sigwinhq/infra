@@ -68,7 +68,7 @@ analyze/phpstan: | ${HOME}/.composer var/phpqa composer.lock
 
 analyze/psalm: | ${HOME}/.composer var/phpqa composer.lock
 	$(call start,Psalm)
-	sh -c "${PHPQA_DOCKER_COMMAND} psalm ${PSALM_OUTPUT}"
+	sh -c "${PHPQA_DOCKER_COMMAND} psalm --php-version=${PHP_VERSION} ${PSALM_OUTPUT}"
 	$(call end)
 
 test/phpunit:
