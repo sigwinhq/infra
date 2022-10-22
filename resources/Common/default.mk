@@ -2,6 +2,19 @@ ifndef SIGWIN_INFRA_ROOT
 $(error SIGWIN_INFRA_ROOT must be defined before loading Common/default.mk)
 endif
 
+define block_start
+endef
+define block_end
+endef
+ifdef GITHUB_ACTIONS
+define block_start
+echo ::group::$(1)
+endef
+define block_end
+echo ::endgroup::
+endef
+endif
+
 SHELL := sh
 OS_FAMILY :=
 ifeq ($(OS),Windows_NT)
