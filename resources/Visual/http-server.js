@@ -49,7 +49,7 @@ const server = http.createServer(function (req, res) {
             break;
     }
 
-    fs.readFile(ROOT + req.url.replace(/\?[^?]+/, ''), function (err, data) {
+    fs.readFile(decodeURI(ROOT + req.url.replace(/\?[^?]+/, '')), function (err, data) {
         if (err) {
             console.error(err);
             res.writeHead(404);
