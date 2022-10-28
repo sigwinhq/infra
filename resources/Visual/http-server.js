@@ -74,8 +74,11 @@ process.on('SIGTERM', () => {
 });
 
 // remove the filesystem part of all paths present in the response
+// and inject a script to notify Backstop when all visible images have been loaded
 function modifyResponse(res) {
     const baseWithoutProtocol = process.env.BASE_URL.replace('file://localhost', '');
+    const checkLoadedImagesScript = fs.readFileSync(__dirname + '/check-loaded-images.js', {encoding: 'utf8', flag: 'r'});
+    res = res + `<script>${checkLoadedImagesScript}</script>`;
     return res.replaceAll(baseWithoutProtocol, '');
 }
 
