@@ -59,10 +59,6 @@ const server = http.createServer(function (req, res) {
         res.writeHead(200, { 'Content-Type': contentType });
         if (extname === '.html') {
             res.end(modifyResponse(data.toString()), 'utf-8');
-        } else if (extname === '.webp') {
-            setTimeout(() => {
-                res.end(data, 'utf-8');
-            }, 3000);
         } else {
             res.end(data, 'utf-8');
         }
