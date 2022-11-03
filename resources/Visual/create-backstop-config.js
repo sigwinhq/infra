@@ -23,7 +23,8 @@ function createBackstopConfig(root = __dirname + "/public", scenarios = [], defa
                 const scenario = {...defaults, label: file, url: PREVIEW_BASE_URL + file};
                 return scenario;
             } else if (typeof file === "object" && "path" in file) {
-                const scenario = {...defaults, label: file.path, url: PREVIEW_BASE_URL + file.path, ...file};
+                if (typeof file.label !== "string") throw new Error(`${JSON.stringify(file)} - scenario must have a label property`);
+                const scenario = {...defaults, ...file, label: `${file.path} ${file.label}`, url: PREVIEW_BASE_URL + file.path};
                 return scenario;
             } else {
                 throw new Error("Scenario must be a string or an object literal containing a path property");
@@ -32,7 +33,7 @@ function createBackstopConfig(root = __dirname + "/public", scenarios = [], defa
         scenarioLogsInReports: true,
         paths: {
             bitmaps_reference: "tests/visual/references",
-            engine_scripts: "tests/visual/scripts",
+            engine_scripts: __dirname,
             bitmaps_test: "var/backstop/tests",
             html_report: "var/backstop/reports",
             ci_report: "var/backstop/reports"
@@ -42,6 +43,7 @@ function createBackstopConfig(root = __dirname + "/public", scenarios = [], defa
         engineOptions: {
             args: ["--no-sandbox", "--allow-file-access-from-files"]
         },
+        onReadyScript: "on-ready.js",
         asyncCaptureLimit: 5,
         asyncCompareLimit: 50,
         debug: false,
