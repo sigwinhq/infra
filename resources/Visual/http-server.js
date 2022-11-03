@@ -2,51 +2,33 @@ const ROOT = process.env.ROOT;
 const SERVER_PORT = process.env.SERVER_PORT;
 
 const fs = require('fs');
-const path = require('path');
 const http = require('http');
+const types = [
+    {ext: '.stream.html', type: 'text/vnd.turbo-stream.html'},
+    {ext: '.js', type: 'text/javascript'},
+    {ext: '.js', type: 'text/javascript'},
+    {ext: '.css', type: 'text/css'},
+    {ext: '.json', type: 'application/json'},
+    {ext: '.png', type: 'image/png'},
+    {ext: '.jpg', type: 'image/jpeg'},
+    {ext: '.jpeg', type: 'image/jpeg'},
+    {ext: '.gif', type: 'image/gif'},
+    {ext: '.webp', type: 'image/webp'},
+    {ext: '.avif', type: 'image/avif'},
+    {ext: '.svg', type: 'image/svg+xml'},
+    {ext: '.woff', type: 'font/woff'},
+    {ext: '.woff2', type: 'font/woff2'},
+    {ext: '.ttf', type: 'font/ttf'},
+]
 
 const server = http.createServer(function (req, res) {
-    var filePath = '.' + req.url;
-    var extname = path.extname(filePath);
-    var contentType = 'text/html';
-    switch (extname) {
-        case '.js':
-            contentType = 'text/javascript';
+    const filePath = '.' + req.url;
+    let contentType = 'text/html';
+    for (const type of types) {
+        if (filePath.endsWith(type.ext)) {
+            contentType = type.type;
             break;
-        case '.css':
-            contentType = 'text/css';
-            break;
-        case '.json':
-            contentType = 'application/json';
-            break;
-        case '.png':
-            contentType = 'image/png';
-            break;
-        case '.jpg':
-        case '.jpeg':
-            contentType = 'image/jpg';
-            break;
-        case '.gif':
-            contentType = 'image/gif';
-            break;
-        case '.webp':
-            contentType = 'image/webp';
-            break;
-        case '.avif':
-            contentType = 'image/avif';
-            break;
-        case '.svg':
-            contentType = 'image/svg+xml';
-            break;
-        case '.woff':
-            contentType = 'font/woff';
-            break;
-        case '.woff2':
-            contentType = 'font/woff2';
-            break;
-        case '.ttf':
-            contentType = 'font/ttf';
-            break;
+        }
     }
 
     fs.readFile(decodeURI(ROOT + req.url.replace(/\?[^?]+/, '')), function (err, data) {
@@ -57,7 +39,7 @@ const server = http.createServer(function (req, res) {
             return;
         }
         res.writeHead(200, { 'Content-Type': contentType });
-        if (extname === '.html') {
+        if (filePath.endsWith('.html')) {
             res.end(modifyResponse(data.toString()), 'utf-8');
         } else {
             res.end(data, 'utf-8');
