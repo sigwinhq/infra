@@ -25,8 +25,13 @@ module.exports = async (page, scenario) => {
 
     if (clickSelector) {
         for (const clickSelectorIndex of [].concat(clickSelector)) {
-            await page.waitForSelector(clickSelectorIndex);
-            await page.click(clickSelectorIndex);
+            // passing in a number (ms) instead of a selector (string) will insert a delay
+            if (typeof clickSelectorIndex === 'number') {
+                await page.waitForTimeout(clickSelectorIndex);
+            } else {
+                await page.waitForSelector(clickSelectorIndex);
+                await page.click(clickSelectorIndex);
+            }
         }
     }
 
