@@ -7,6 +7,7 @@ BUILD_DIR ?= public
 BUILD_OPTS ?=
 BASE_URL ?= file://localhost${APP_ROOT}/${BUILD_DIR}
 
+start: dev ## Start app in APP_ENV mode (defaults to "dev")
 start/dev: dev ## Start app in "dev" mode
 dev: clean
 	@make dev/assets dev/server -j2
