@@ -2,6 +2,9 @@ ifndef SIGWIN_INFRA_ROOT
 $(error SIGWIN_INFRA_ROOT must be defined before loading Common/default.mk)
 endif
 
+.DEPRECATED:
+	$(warning NOTE: target "${DEPRECATED_FROM}" has been deprecated, use "${DEPRECATED_TO}" instead.)
+
 define block_start
 endef
 define block_end
