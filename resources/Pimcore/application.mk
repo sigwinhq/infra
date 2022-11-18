@@ -47,7 +47,7 @@ clean: ## Clear application logs and system cache
 
 test/functional: test/behat ## Test the codebase, functional tests
 test/behat:
-	sh -c "${APP_DOCKER_COMMAND} vendor/bin/behat --strict --format pretty"
+	sh -c "${APP_DOCKER_COMMAND} vendor/bin/behat --strict"
 setup/test:
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction doctrine:database:drop --if-exists --force
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction doctrine:database:create
