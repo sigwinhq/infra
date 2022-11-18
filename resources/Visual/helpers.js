@@ -5,6 +5,30 @@ module.exports = async (page, scenario) => {
         scenario.keyPressSelectors || scenario.keyPressSelector;
     const scrollToSelector = scenario.scrollToSelector;
     const postInteractionWait = scenario.postInteractionWait; // selector [str] | ms [int]
+    const addAttribute = scenario.addAttributes || scenario.addAttribute;
+
+    if (addAttribute) {
+        for (const item of [].concat(addAttribute)) {
+            if (typeof item === 'object' && item.hasOwnProperty('selector') && item.hasOwnProperty('attribute')) {
+                await page.waitForSelector(item.selector);
+                await page.evaluate((item) => {
+                    document.querySelectorAll(item.selector).forEach(el => {
+                        const name = item.attribute.name;
+                        const value = item.attribute.value;
+                        const delimiter = item.delimiter || ' ';
+                        if (el.getAttribute(name)) {
+                            const prevValue = el.getAttribute(name);
+                            el.setAttribute(name, prevValue + delimiter + value);
+                        } else {
+                            el.setAttribute(name, value);
+                        }
+                    });
+                }, item);
+            } else {
+                throw new Error('addAttribute must be an object: {selector: "", attribute: {name: "", value: ""}}');
+            }
+        }
+    }
 
     if (keyPressSelector) {
         for (const keyPressSelectorItem of [].concat(keyPressSelector)) {
