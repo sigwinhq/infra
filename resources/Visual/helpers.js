@@ -5,6 +5,20 @@ module.exports = async (page, scenario) => {
         scenario.keyPressSelectors || scenario.keyPressSelector;
     const scrollToSelector = scenario.scrollToSelector;
     const postInteractionWait = scenario.postInteractionWait; // selector [str] | ms [int]
+    const addClassTo = scenario.addClassTo;
+
+    if (addClassTo) {
+        if (Array.isArray(addClassTo) && addClassTo.length === 2) {
+            await page.waitForSelector(addClassTo[0]);
+            await page.evaluate((addClassTo) => {
+                document.querySelectorAll(addClassTo[0]).forEach(el => {
+                    el.className += ' ' + addClassTo[1];
+                });
+            }, addClassTo);
+        } else {
+            throw new Error('addClassTo must be an array with 2 args: [selector, class]');
+        }
+    }
 
     if (keyPressSelector) {
         for (const keyPressSelectorItem of [].concat(keyPressSelector)) {
