@@ -31,7 +31,7 @@ setup/test: start/test .env ## Setup: create a functional test runtime
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup
 test/behat:
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/behat --strict --format pretty
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec --user "$(shell id -u):$(shell id -g)" --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/behat --strict
 clean: ## Clear library logs and system cache
 	rm -rf var/ tests/runtime/var
 .env:
