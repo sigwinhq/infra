@@ -7,7 +7,8 @@ BUILD_DIR ?= public
 BUILD_OPTS ?=
 BASE_URL ?= file://localhost${APP_ROOT}/${BUILD_DIR}
 
-start/dev: dev ## Start app in "dev" mode
+start: dev ## Start app in "dev" mode
+start/dev: dev
 dev: clean
 	@make dev/assets dev/server -j2
 dev/server: vendor index.php
