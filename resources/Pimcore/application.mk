@@ -19,7 +19,7 @@ SECRETS_DIST ?= .dist
 
 dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
-test: test/infection ## Test the codebase
+test: test/infection test/functional ## Test the codebase
 
 build/dev: ## Build app for "dev" target
 	VERSION=${VERSION} docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=${BASE_URL} --file .infra/docker-buildx/docker-buildx.dev.hcl
@@ -45,7 +45,18 @@ sh/app: ## Run application shell
 clean: ## Clear application logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*
 
-setup/filesystem: ${HOME}/.composer config/pimcore/classes public/var/assets public/var/tmp var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/versions ## Setup: filesystem (var, public/var folders)
+test/functional: test/behat ## Test the codebase, functional tests
+test/behat:
+	sh -c "${APP_DOCKER_COMMAND} vendor/bin/behat --strict --format pretty"
+setup/test:
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction doctrine:database:drop --if-exists --force
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction doctrine:database:create
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test sigwin:testing:setup
+start/test: secrets ## Start app in "test" mode
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml up --detach --remove-orphans --no-build
+
+setup/filesystem: ${HOME}/.composer clean config/pimcore/classes public/var/assets public/var/tmp var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/versions ## Setup: filesystem (var, public/var folders)
 config/pimcore/classes:
 	mkdir -p config/pimcore/classes
 	$(call permissions,config/pimcore/classes)
