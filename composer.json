@@ -8,7 +8,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Sigwin\\Infra\\": "tests/functional"
+            "Sigwin\\Infra\\Test\\Functional\\": "tests/functional"
         }
     }
 }
