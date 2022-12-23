@@ -1,5 +1,6 @@
 help: ## Prints this help
-	@grep --help
+	@make -v
+	@grep -h -E '^ *[-a-zA-Z0-9_/]+ *:.*## ' $(MAKEFILE_LIST)
 
 OS_CPUS:=4
 
