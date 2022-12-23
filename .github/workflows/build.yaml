@@ -9,16 +9,16 @@ jobs:
         runs-on: ${{ matrix.operating-system }}
         strategy:
             matrix:
-                operating-system: ['ubuntu-latest', 'windows-latest', 'macos-latest']
-                phpunit-versions: ['9.5']
+                operating-system: [ 'ubuntu-latest', 'windows-latest', 'macos-latest' ]
         steps:
-            - name: Setup PHP
-              uses: shivammathur/setup-php@v2
-              with:
-                  php-version: 8.2
-                  extensions: mbstring, intl
-                  ini-values: post_max_size=256M, max_execution_time=180
-                  tools: php-cs-fixer
+            -
+                name: Setup PHP
+                uses: shivammathur/setup-php@v2
+                with:
+                    php-version: 8.2
+                    extensions: mbstring, intl
+                    ini-values: post_max_size=256M, max_execution_time=180
+                    tools: php-cs-fixer
             -
                 name: Repo checkout
                 uses: actions/checkout@v3
