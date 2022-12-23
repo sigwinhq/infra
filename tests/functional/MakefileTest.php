@@ -57,7 +57,8 @@ final class MakefileTest extends TestCase
     ): string {
         $root = realpath(__DIR__.'/../..');
 
-        $command = ['make', '-f', $root.'/'.ltrim($makefile, '/')];
+        $makefile = str_replace('/', DIRECTORY_SEPARATOR, $makefile);
+        $command = ['make', '-f', $root.DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
         if ($args !== null) {
             array_push($command, ...$args);
         }
@@ -68,7 +69,7 @@ final class MakefileTest extends TestCase
         $process = new Process(
             $command,
             $directory,
-            ['SIGWIN_INFRA_ROOT' => $root.'/resources'],
+            ['SIGWIN_INFRA_ROOT' => $root.DIRECTORY_SEPARATOR.'resources'],
         );
         $process->mustRun();
 
