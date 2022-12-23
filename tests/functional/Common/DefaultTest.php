@@ -24,4 +24,11 @@ use Sigwin\Infra\Test\Functional\MakefileTestCase;
  */
 final class DefaultTest extends MakefileTestCase
 {
+    protected function getExpectedHelp(): string
+    {
+        return <<<'EOF'
+            [45mhelp                [0m Prints this help
+
+            EOF;
+    }
 }

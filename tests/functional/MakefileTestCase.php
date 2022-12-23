@@ -32,11 +32,20 @@ abstract class MakefileTestCase extends TestCase
         $this->root = realpath(__DIR__.'/../..');
     }
 
+    abstract protected function getExpectedHelp(): string;
+
     public function testMakefileExists(): void
     {
         static::assertFileExists(
             $this->root.\DIRECTORY_SEPARATOR.$this->getMakefilePath()
         );
+    }
+
+    public function testMakefileHasHelp(): void
+    {
+        $actual = $this->execute($this->getMakefilePath());
+
+        static::assertSame($this->getExpectedHelp(), $actual);
     }
 
     private function getMakefilePath(): string
@@ -67,7 +76,7 @@ abstract class MakefileTestCase extends TestCase
         string $makefile,
         ?string $makeCommand = null,
         ?array $args = null,
-        string $directory = __DIR__.'/../..'
+        string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..'
     ): string {
         $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile);
         $command = ['make', '-f', $this->root.\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
@@ -80,7 +89,7 @@ abstract class MakefileTestCase extends TestCase
 
         $process = new Process(
             $command,
-            $directory,
+            realpath($directory),
             ['SIGWIN_INFRA_ROOT' => $this->root.\DIRECTORY_SEPARATOR.'resources'],
         );
         $process->mustRun();
