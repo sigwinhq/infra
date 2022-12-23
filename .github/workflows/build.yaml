@@ -1,5 +1,11 @@
+on:
+    pull_request:
+    push:
+        branches:
+            - "main"
+
 jobs:
-    run:
+    Test:
         runs-on: ${{ matrix.operating-system }}
         strategy:
             matrix:
