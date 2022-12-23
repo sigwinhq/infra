@@ -27,6 +27,5 @@ jobs:
                 run: composer install --prefer-dist
             -
                 name: Run PHPUnit
-                # run: vendor/bin/phpunit
-                run: make --version
+                run: vendor/bin/phpunit
                 shell: bash
