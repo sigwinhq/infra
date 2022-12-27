@@ -32,4 +32,7 @@ else
 	endif
 endif
 
-include ${SIGWIN_INFRA_ROOT}/Common/Platform/${OS_FAMILY}/default.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/Common/Platform/${OS_FAMILY}/default.mk
+
+init:
+	echo ${MAKEFILE_LIST}

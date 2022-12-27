@@ -1,7 +1,7 @@
 ifndef SIGWIN_INFRA_ROOT
 $(error SIGWIN_INFRA_ROOT must be defined before loading PHP/common.mk)
 endif
-include ${SIGWIN_INFRA_ROOT}/Common/default.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/Common/default.mk
 
 ifndef PHP_VERSION
 PHP_VERSION=8.1
