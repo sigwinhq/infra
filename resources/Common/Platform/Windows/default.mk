@@ -1,6 +1,7 @@
+SHELL := powershell.exe
+
 help: ## Prints this help
-	@awk --version
-	@grep --no-filename --extended-regexp '^ *[-a-zA-Z0-9_/]+ *:.*## ' $(MAKEFILE_LIST) | sort
+	$(warning MAKEFILE_LIST=$(patsubst " ",",",${MAKEFILE_LIST}))
 
 OS_CPUS:=4
 

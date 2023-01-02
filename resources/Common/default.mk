@@ -1,3 +1,7 @@
+ifndef MAKEFILE_LIST
+$(error MAKEFILE_LIST must be defined, are you running GNU make?)
+endif
+
 ifndef SIGWIN_INFRA_ROOT
 $(error SIGWIN_INFRA_ROOT must be defined before loading Common/default.mk)
 endif
