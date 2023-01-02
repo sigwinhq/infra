@@ -29,7 +29,10 @@ abstract class MakefileTestCase extends TestCase
 
     protected function setUp(): void
     {
-        $this->root = realpath(__DIR__.'/../..');
+        /** @var string $root */
+        $root = realpath(__DIR__.'/../..');
+
+        $this->root = $root;
     }
 
     abstract protected function getExpectedHelp(): string;
@@ -46,8 +49,10 @@ abstract class MakefileTestCase extends TestCase
         $actual = $this->execute($this->getMakefilePath());
         $expected = $this->getExpectedHelp();
 
-        if (PHP_OS_FAMILY === 'Windows') {
-            $expected = str_replace("\r\n", "\n", preg_replace('/\033\[\d+m/', '', $expected));
+        if (\PHP_OS_FAMILY === 'Windows') {
+            /** @var string $expected */
+            $expected = preg_replace('/\033\[\d+m/', '', $expected);
+            $expected = str_replace("\r\n", "\n", $expected);
         }
 
         static::assertSame($expected, $actual);
@@ -66,6 +71,7 @@ abstract class MakefileTestCase extends TestCase
         return sprintf('resources%2$s%1$s%2$s%3$s.mk', $dir, \DIRECTORY_SEPARATOR, mb_strtolower($name));
     }
 
+    /** @phpstan-ignore-next-line */
     private function dryRun(
         string $makefile,
         ?string $makeCommand = null,
@@ -92,9 +98,11 @@ abstract class MakefileTestCase extends TestCase
             $command[] = $makeCommand;
         }
 
+        /** @var string $directory */
+        $directory = realpath($directory);
         $process = new Process(
             $command,
-            realpath($directory),
+            $directory,
             ['SIGWIN_INFRA_ROOT' => $this->root.\DIRECTORY_SEPARATOR.'resources'],
         );
         $process->mustRun();
