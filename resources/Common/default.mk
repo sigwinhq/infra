@@ -38,6 +38,10 @@ else
 	ifneq ($(findstring WSL2,$(UNAME_R)),)
 		OS_FAMILY = Linux
 	endif
+	UNAME_R := $(shell uname -r)
+	ifneq ($(findstring WSL2,$(UNAME_R)),)
+		OS_FAMILY = Linux
+	endif
 endif
 
 define dir_copy
