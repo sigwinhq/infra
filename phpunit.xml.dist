@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
-         cacheResultFile="var/phpqa/phpunit.result.cache"
-         executionOrder="random"
-         forceCoversAnnotation="true"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
+         beStrictAboutChangesToGlobalState="true"
          beStrictAboutCoversAnnotation="true"
          beStrictAboutOutputDuringTests="true"
          beStrictAboutTodoAnnotatedTests="true"
+         bootstrap="./vendor/autoload.php"
+         cacheResultFile="var/phpqa/phpunit.result.cache"
+         colors="true"
          convertDeprecationsToExceptions="true"
+         executionOrder="random"
          failOnRisky="true"
          failOnWarning="true"
+         forceCoversAnnotation="true"
          verbose="true">
     <testsuites>
-        <testsuite name="Sigwin Infra functional tests">
-            <directory>tests/functional</directory>
+        <testsuite name="Suite">
+            <directory>tests</directory>
         </testsuite>
     </testsuites>
 </phpunit>
