@@ -33,7 +33,7 @@ else
 endif
 
 define dir_copy
-$(shell if [ -d ${1} ]; then echo "cp -a ${1}/. ."; fi)
+$(shell if [ -d "${1}" ]; then cp -a ${1}/. .; fi)
 endef
 
 define str_reverse
@@ -43,4 +43,4 @@ endef
 include ${SIGWIN_INFRA_ROOT:%/=%}/Common/Platform/${OS_FAMILY}/default.mk
 
 init:
-	$(foreach MAKEFILE, $(call str_reverse, ${MAKEFILE_LIST}), $(call dir_copy,$(basename ${MAKEFILE})))
+	$(foreach MAKEFILE, $(call str_reverse, ${MAKEFILE_LIST}),$(call dir_copy,$(basename $(abspath ${MAKEFILE}))))
