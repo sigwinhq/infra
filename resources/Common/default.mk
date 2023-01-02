@@ -1,3 +1,7 @@
+ifndef MAKEFILE_LIST
+$(error MAKEFILE_LIST must be defined, are you running GNU make?)
+endif
+
 ifndef SIGWIN_INFRA_ROOT
 $(error SIGWIN_INFRA_ROOT must be defined before loading Common/default.mk)
 endif
@@ -29,6 +33,14 @@ else
 	endif
 	ifeq ($(UNAME_S),Darwin)
 		OS_FAMILY = Darwin
+	endif
+	UNAME_R := $(shell uname -r)
+	ifneq ($(findstring WSL2,$(UNAME_R)),)
+		OS_FAMILY = Linux
+	endif
+	UNAME_R := $(shell uname -r)
+	ifneq ($(findstring WSL2,$(UNAME_R)),)
+		OS_FAMILY = Linux
 	endif
 endif
 

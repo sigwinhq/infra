@@ -1,5 +1,12 @@
+SHELL := powershell.exe
+
+COMMA := ,
+EMPTY :=
+SPACE := $(empty) $(empty)
+
+# TODO: rewrite output with https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_special_characters?view=powershell-7.3#escape-e
 help: ## Prints this help
-	@grep --no-filename --extended-regexp '^ *[-a-zA-Z0-9_/]+ *:.*## ' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $$1, $$2}'
+	@Select-String -Pattern '^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)' $(subst $(SPACE),${COMMA},${MAKEFILE_LIST}) | ForEach-Object{"{0, -20}" -f $$_.Matches[0].Groups['name'] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $$_.Matches[0].Groups['help'] | Write-Host -ForegroundColor White}
 
 OS_CPUS:=4
 
