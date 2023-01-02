@@ -1,7 +1,7 @@
 SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
-include ${SIGWIN_INFRA_ROOT}/PHP/common.mk
-include ${SIGWIN_INFRA_ROOT}/YASSG/common.mk
-include ${SIGWIN_INFRA_ROOT}/Visual/common.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/PHP/common.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/YASSG/common.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/Visual/common.mk
 
 ifndef LYCHEE_DOCKER_IMAGE
 LYCHEE_DOCKER_IMAGE=lycheeverse/lychee:20220118134522908286

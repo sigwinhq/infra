@@ -32,4 +32,15 @@ else
 	endif
 endif
 
-include ${SIGWIN_INFRA_ROOT}/Common/Platform/${OS_FAMILY}/default.mk
+define dir_copy
+$(shell if [ -d "${1}" ]; then cp -a ${1}/. .; fi)
+endef
+
+define str_reverse
+$(if $(wordlist 2,2,$(1)),$(call str_reverse,$(wordlist 2,$(words $(1)),$(1))) $(firstword $(1)),$(1))
+endef
+
+include ${SIGWIN_INFRA_ROOT:%/=%}/Common/Platform/${OS_FAMILY}/default.mk
+
+init:
+	$(foreach MAKEFILE, $(call str_reverse, ${MAKEFILE_LIST}),$(call dir_copy,$(basename $(abspath ${MAKEFILE}))))

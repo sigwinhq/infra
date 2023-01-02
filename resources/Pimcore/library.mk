@@ -1,7 +1,7 @@
 ifndef SIGWIN_INFRA_ROOT
 SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
 endif
-include ${SIGWIN_INFRA_ROOT}/Pimcore/common.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/Pimcore/common.mk
 
 ifndef COMPOSE_PROJECT_NAME
 $(warning COMPOSE_PROJECT_NAME must be defined before loading Pimcore/library.mk to run functional tests)
