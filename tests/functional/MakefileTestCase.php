@@ -44,8 +44,13 @@ abstract class MakefileTestCase extends TestCase
     public function testMakefileHasHelp(): void
     {
         $actual = $this->execute($this->getMakefilePath());
+        $expected = $this->getExpectedHelp();
 
-        static::assertSame($this->getExpectedHelp(), $actual);
+        if (PHP_OS_FAMILY === 'Windows') {
+            $expected = str_replace("\r\n", "\n", preg_replace('/\033\[\d+m/', '', $expected));
+        }
+
+        static::assertSame($expected, $actual);
     }
 
     private function getMakefilePath(): string
