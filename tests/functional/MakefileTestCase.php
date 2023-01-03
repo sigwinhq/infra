@@ -72,6 +72,7 @@ abstract class MakefileTestCase extends TestCase
     protected function generateHelpList(array $commands): string
     {
         $help = [];
+        sort($commands);
         foreach ($commands as $command) {
             $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), self::HELP_MAP[$command] ?? '');
         }
