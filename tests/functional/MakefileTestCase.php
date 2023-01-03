@@ -74,7 +74,7 @@ abstract class MakefileTestCase extends TestCase
 
     protected function generateExpectedHelpExecutionPath(array $files = []): string
     {
-        $files = [
+        $files += [
             '$ROOT/resources/Common/default.mk',
             '$ROOT/resources/Common/Platform/$PLATFORM/default.mk',
         ];
@@ -82,7 +82,13 @@ abstract class MakefileTestCase extends TestCase
         return match (\PHP_OS_FAMILY) {
             'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
             'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
-            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(' ', $files).' | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
+            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(' ', array_map(static function (string $item): string {
+                if ($item === '$ROOT/resources/Common/default.mk') {
+                    return '$ROOT\\resources\\Common\\default.mk';
+                }
+
+                return str_replace('$ROOT/resources', '$ROOT\\resources', $item);
+            }, $files)).' | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
             default => throw new \LogicException('Unknown OS family'),
         };
     }
