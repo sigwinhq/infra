@@ -50,12 +50,12 @@ final class LibraryTest extends MakefileTestCase
         ];
 
         return [
-            'analyze' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $analyze),
-            'dist' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $prepareAndAnalyze, $test),
             'help' => [$this->generateHelpExecutionPath([
                 __DIR__.'/../../../resources/PHP/library.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
+            'analyze' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $analyze),
+            'dist' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $prepareAndAnalyze, $test),
             'sh/php' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $shell),
             'test' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $test),
         ];
