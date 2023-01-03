@@ -30,14 +30,14 @@ final class LibraryTest extends MakefileTestCase
             $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run'),
             $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run'),
             $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-            $this->generatePhpqaExecutionPath('psalm --php-version=8.1.12 --config psalm.xml.dist'),
+            $this->generatePhpqaExecutionPath('psalm --php-version=8.1 --config psalm.xml.dist'),
         ];
 
         $prepareAndAnalyze = [
             $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock'),
             $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv'),
             $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-            $this->generatePhpqaExecutionPath('psalm --php-version=8.1.12 --config psalm.xml.dist'),
+            $this->generatePhpqaExecutionPath('psalm --php-version=8.1 --config psalm.xml.dist'),
         ];
 
         $shell = [
