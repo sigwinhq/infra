@@ -25,37 +25,54 @@ use Symfony\Component\Process\Process;
  */
 abstract class MakefileTestCase extends TestCase
 {
-    private string $root;
-
-    protected function setUp(): void
-    {
-        /** @var string $root */
-        $root = realpath(__DIR__.'/../..');
-
-        $this->root = $root;
-    }
-
     abstract protected function getExpectedHelp(): string;
+
+    abstract protected function getExpectedHelpCommandsExecutionPath(): array;
 
     public function testMakefileExists(): void
     {
         static::assertFileExists(
-            $this->root.\DIRECTORY_SEPARATOR.$this->getMakefilePath()
+            $this->getRoot().\DIRECTORY_SEPARATOR.$this->getMakefilePath()
         );
     }
 
     public function testMakefileHasHelp(): void
     {
-        $actual = $this->execute($this->getMakefilePath());
+        $actual = $this->getMakefileHelp();
         $expected = $this->getExpectedHelp();
 
         if (\PHP_OS_FAMILY === 'Windows') {
-            /** @var string $expected */
-            $expected = preg_replace('/\033\[\d+m/', '', $expected);
-            $expected = str_replace("\r\n", "\n", $expected);
+            $expected = preg_replace('/\r\n|\r|\n/', "\n", $this->stripColoring($expected));
         }
 
         static::assertSame($expected, $actual);
+    }
+
+    /**
+     * @dataProvider generateHelpCommandsExecutionPath
+     */
+    public function testMakefileHelpCommandsWork(string $command, array $expected): void
+    {
+        $actual = $this->dryRun($this->getMakefilePath(), $command);
+
+        static::assertSame($expected, $actual);
+    }
+
+    private function generateHelpCommandsExecutionPath(): array
+    {
+        $expected = $this->getExpectedHelpCommandsExecutionPath();
+
+        $commands = $this->getMakefileHelpCommands();
+        foreach ($commands as $command) {
+            static::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
+        }
+
+        $fixtures = [];
+        foreach ($expected as $command => $path) {
+            $fixtures[] = [$command, $path];
+        }
+
+        return $fixtures;
     }
 
     private function getMakefilePath(): string
@@ -71,7 +88,6 @@ abstract class MakefileTestCase extends TestCase
         return sprintf('resources%2$s%1$s%2$s%3$s.mk', $dir, \DIRECTORY_SEPARATOR, mb_strtolower($name));
     }
 
-    /** @phpstan-ignore-next-line */
     private function dryRun(
         string $makefile,
         ?string $makeCommand = null,
@@ -90,7 +106,7 @@ abstract class MakefileTestCase extends TestCase
         string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..'
     ): string {
         $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile);
-        $command = ['make', '-f', $this->root.\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
+        $command = ['make', '-f', $this->getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
         if ($args !== null) {
             array_push($command, ...$args);
         }
@@ -103,10 +119,62 @@ abstract class MakefileTestCase extends TestCase
         $process = new Process(
             $command,
             $directory,
-            ['SIGWIN_INFRA_ROOT' => $this->root.\DIRECTORY_SEPARATOR.'resources'],
+            ['SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources'],
         );
         $process->mustRun();
+        $output = $process->getOutput();
 
-        return str_replace($this->root, '~', $process->getOutput());
+        if (\PHP_OS_FAMILY === 'Windows') {
+            $output = preg_replace('/\r\n|\r|\n/', "\n", $output);
+        }
+
+        return str_replace(
+            [
+                $this->getRoot(),
+                'Common/Platform/'.\PHP_OS_FAMILY,
+            ],
+            [
+                '$ROOT',
+                'Common/Platform/$PLATFORM',
+            ],
+            $output,
+        );
+    }
+
+    private function getMakefileHelp(): string
+    {
+        return $this->execute($this->getMakefilePath(), 'help');
+    }
+
+    private function getMakefileHelpCommands(): array
+    {
+        $help = explode("\n", trim($this->stripColoring($this->getMakefileHelp())));
+
+        $commands = [];
+        foreach ($help as $command) {
+            $index = mb_strpos($command, ' ');
+            if ($index === false) {
+                throw new \LogicException('Invalid command');
+            }
+            $commands[] = mb_substr($command, 0, $index);
+        }
+
+        return $commands;
+    }
+
+    private function getRoot(): string
+    {
+        /** @var string $root */
+        $root = realpath(__DIR__.'/../..');
+
+        return $root;
+    }
+
+    private function stripColoring(string $input): string
+    {
+        /** @var string $output */
+        $output = preg_replace('/\033\[\d+m/', '', $input);
+
+        return $output;
     }
 }
