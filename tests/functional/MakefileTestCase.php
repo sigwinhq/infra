@@ -25,6 +25,10 @@ use Symfony\Component\Process\Process;
  */
 abstract class MakefileTestCase extends TestCase
 {
+    private const HELP_MAP = [
+        'help' => 'Prints this help',
+    ];
+
     abstract protected function getExpectedHelp(): string;
 
     abstract protected function getExpectedHelpCommandsExecutionPath(): array;
@@ -49,7 +53,7 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
-     * @dataProvider generateHelpCommandsExecutionPath
+     * @dataProvider generateHelpCommandsExecutionPathFixtures
      */
     public function testMakefileHelpCommandsWork(string $command, array $expected): void
     {
@@ -58,7 +62,17 @@ abstract class MakefileTestCase extends TestCase
         static::assertSame($expected, $actual);
     }
 
-    private function generateHelpCommandsExecutionPath(): array
+    protected function generateExpectedHelpList(array $commands): string
+    {
+        $help = [];
+        foreach ($commands as $command) {
+            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), self::HELP_MAP[$command]);
+        }
+
+        return implode("\n", $help) ."\n";
+    }
+
+    private function generateHelpCommandsExecutionPathFixtures(): array
     {
         $expected = $this->getExpectedHelpCommandsExecutionPath();
 
