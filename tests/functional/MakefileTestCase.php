@@ -182,6 +182,12 @@ abstract class MakefileTestCase extends TestCase
                 'GITHUB_ACTIONS' => '',
             ],
         );
+
+        if (is_dir(__DIR__.'/../../var/phpqa')) {
+            // TODO: delete recursively
+            rmdir(__DIR__.'/../../var/phpqa');
+        }
+
         $process->mustRun();
         $output = $process->getOutput();
 
