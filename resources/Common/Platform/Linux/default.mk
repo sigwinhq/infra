@@ -4,7 +4,7 @@ help: ## Prints this help
 OS_CPUS:=$(shell nproc)
 
 define file_prefix
-	$(shell test -f ${2}${1} && echo -n ${2}${1} || echo ${1})
+$(shell test -f ${2}${1} && echo -n ${2}${1} || echo ${1})
 endef
 
 define permissions

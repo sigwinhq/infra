@@ -43,7 +43,7 @@ cs: | ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
 analyze/cs: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
+	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv --dry-run"
 	$(call block_end)
 
 analyze/phpstan: | ${HOME}/.composer var/phpqa composer.lock

@@ -103,6 +103,15 @@ abstract class MakefileTestCase extends TestCase
         return $this->normalize($command);
     }
 
+    protected function generatePhpqaExecutionPath(string $command): string
+    {
+        return sprintf(
+            'sh -c "docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "%2$d:%2$d" --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:$ROOT" --volume "//.composer:/composer" --workdir $ROOT jakzal/phpqa:1.79.1-php8.1.12-alpine %1$s"',
+            $command,
+            getmyuid()
+        );
+    }
+
     private function generateHelpCommandsExecutionPathFixtures(): array
     {
         $expected = $this->getExpectedHelpCommandsExecutionPath();

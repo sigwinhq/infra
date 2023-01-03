@@ -11,7 +11,7 @@ help: ## Prints this help
 OS_CPUS:=4
 
 define file_prefix
-	$(shell test -f ${2}${1} && echo -n ${2}${1} || echo ${1})
+$(shell test -f ${2}${1} && echo -n ${2}${1} || echo ${1})
 endef
 
 # TODO: review
