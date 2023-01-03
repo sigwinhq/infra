@@ -24,16 +24,11 @@ use Sigwin\Infra\Test\Functional\MakefileTestCase;
  */
 final class DefaultTest extends MakefileTestCase
 {
-    protected function getExpectedHelp(): string
-    {
-        return $this->generateExpectedHelpList(['help']);
-    }
-
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         return [
             'help' => [
-                $this->generateExpectedHelpExecutionPath(),
+                $this->generateHelpExecutionPath(),
             ],
         ];
     }

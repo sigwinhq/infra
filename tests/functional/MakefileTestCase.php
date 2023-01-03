@@ -26,12 +26,19 @@ use Symfony\Component\Process\Process;
 abstract class MakefileTestCase extends TestCase
 {
     private const HELP_MAP = [
+        'analyze' => 'Analyze the codebase',
+        'dist' => 'Prepare the codebase for commit',
         'help' => 'Prints this help',
+        'sh/php' => 'Run PHP shell',
+        'test' => 'Test the codebase',
     ];
 
-    abstract protected function getExpectedHelp(): string;
-
     abstract protected function getExpectedHelpCommandsExecutionPath(): array;
+
+    protected function getExpectedHelp(): string
+    {
+        return $this->generateHelpList(array_keys($this->getExpectedHelpCommandsExecutionPath()));
+    }
 
     public function testMakefileExists(): void
     {
@@ -62,35 +69,38 @@ abstract class MakefileTestCase extends TestCase
         static::assertSame($expected, $actual);
     }
 
-    protected function generateExpectedHelpList(array $commands): string
+    protected function generateHelpList(array $commands): string
     {
         $help = [];
         foreach ($commands as $command) {
-            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), self::HELP_MAP[$command]);
+            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), self::HELP_MAP[$command] ?? '');
         }
 
         return implode("\n", $help)."\n";
     }
 
-    protected function generateExpectedHelpExecutionPath(array $files = []): string
+    protected function generateHelpExecutionPath(array $files = []): string
     {
-        $files += [
-            '$ROOT/resources/Common/default.mk',
-            '$ROOT/resources/Common/Platform/$PLATFORM/default.mk',
-        ];
+        $files = array_merge($files, [
+            __DIR__.'/../../resources/Common/default.mk',
+            __DIR__.'/../../resources/Common/Platform/'.\PHP_OS_FAMILY.'/default.mk',
+        ]);
+        $files = array_map('realpath', $files);
 
-        return match (\PHP_OS_FAMILY) {
+        $command = match (\PHP_OS_FAMILY) {
             'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
             'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
-            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(static function (string $item): string {
-                if ($item === '$ROOT/resources/Common/default.mk') {
-                    return '$ROOT\\resources\\Common\\default.mk';
+            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(function (string $item, int $index): string {
+                if ($index === 0) {
+                    return $item;
                 }
 
-                return str_replace('$ROOT/resources', '$ROOT\\resources', $item);
-            }, $files)).' | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
+                return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', $this->normalize($item)));
+            }, $files, array_keys($files))).' | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
             default => throw new \LogicException('Unknown OS family'),
         };
+
+        return $this->normalize($command);
     }
 
     private function generateHelpCommandsExecutionPathFixtures(): array
@@ -164,17 +174,7 @@ abstract class MakefileTestCase extends TestCase
             $output = preg_replace('/\r\n|\r|\n/', "\n", $output);
         }
 
-        return str_replace(
-            [
-                $this->getRoot(),
-                'Common/Platform/'.\PHP_OS_FAMILY,
-            ],
-            [
-                '$ROOT',
-                'Common/Platform/$PLATFORM',
-            ],
-            $output,
-        );
+        return $this->normalize($output);
     }
 
     private function getMakefileHelp(): string
@@ -212,5 +212,20 @@ abstract class MakefileTestCase extends TestCase
         $output = preg_replace('/\033\[\d+m/', '', $input);
 
         return $output;
+    }
+
+    private function normalize(string $output): string
+    {
+        return str_replace(
+            [
+                $this->getRoot(),
+                'Common/Platform/'.\PHP_OS_FAMILY,
+            ],
+            [
+                '$ROOT',
+                'Common/Platform/$PLATFORM',
+            ],
+            $output,
+        );
     }
 }
