@@ -244,10 +244,12 @@ abstract class MakefileTestCase extends TestCase
         return str_replace(
             [
                 $this->getRoot(),
+                str_replace('\\', '/', $this->getRoot()),
                 '/home/user',
                 'Common/Platform/'.\PHP_OS_FAMILY,
             ],
             [
+                '$ROOT',
                 '$ROOT',
                 '$HOME',
                 'Common/Platform/$PLATFORM',
