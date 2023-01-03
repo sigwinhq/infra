@@ -27,26 +27,26 @@ final class LibraryTest extends MakefileTestCase
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         $analyze = [
-            $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run'),
-            $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run'),
-            $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-            $this->generatePhpqaExecutionPath('psalm --php-version=8.1 --config psalm.xml.dist'),
+            $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run', 8.1),
+            $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run', 8.1),
+            $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', 8.1),
+            $this->generatePhpqaExecutionPath('psalm --php-version=8.1 --config psalm.xml.dist', 8.1),
         ];
 
         $prepareAndAnalyze = [
-            $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock'),
-            $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv'),
-            $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-            $this->generatePhpqaExecutionPath('psalm --php-version=8.1 --config psalm.xml.dist'),
+            $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock', 8.1),
+            $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv', 8.1),
+            $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', 8.1),
+            $this->generatePhpqaExecutionPath('psalm --php-version=8.1 --config psalm.xml.dist', 8.1),
         ];
 
         $shell = [
-            $this->generatePhpqaExecutionPath('sh'),
+            $this->generatePhpqaExecutionPath('sh', 8.1),
         ];
 
         $test = [
-            $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/'),
-            $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max'),
+            $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/', 8.1),
+            $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max', 8.1),
         ];
 
         return [

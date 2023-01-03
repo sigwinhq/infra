@@ -15,6 +15,7 @@ EOF;
 
 $config = $configurator(__DIR__, $header);
 $config
+    ->setUsingCache(false)
     ->getFinder()
         ->exclude('resources/PHP');
 

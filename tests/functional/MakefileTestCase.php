@@ -90,6 +90,7 @@ abstract class MakefileTestCase extends TestCase
         $command = match (\PHP_OS_FAMILY) {
             'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
             'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
+            /** @phpstan-ignore-next-line */
             'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(function (string $item, int $index): string {
                 if ($index === 0) {
                     return $item;
@@ -103,13 +104,14 @@ abstract class MakefileTestCase extends TestCase
         return $this->normalize($command);
     }
 
-    protected function generatePhpqaExecutionPath(string $command): string
+    protected function generatePhpqaExecutionPath(string $command, float $phpVersion): string
     {
         return $this->normalize(sprintf(
-            'sh -c "docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "%2$d:%3$d" --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.83.2-php8.1-alpine %1$s"',
+            'sh -c "docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "%2$d:%3$d" --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.83.2-php%4$s-alpine %1$s"',
             $command,
             getmyuid(),
-            getmygid()
+            getmygid(),
+            $phpVersion
         ));
     }
 
