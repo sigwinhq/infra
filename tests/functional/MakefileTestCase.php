@@ -98,7 +98,7 @@ abstract class MakefileTestCase extends TestCase
                 }
 
                 return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', $this->normalize($item)));
-            }, $files, array_keys($files))).' | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White} | sort',
+            }, $files, array_keys($files))).' | Sort-Object -Property Line | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White} | sort',
             default => throw new \LogicException('Unknown OS family'),
         };
 
