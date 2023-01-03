@@ -108,10 +108,9 @@ abstract class MakefileTestCase extends TestCase
     protected function generatePhpqaExecutionPath(string $command, float $phpVersion): string
     {
         return $this->normalize(sprintf(
-            'sh -c "docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "%2$d:%3$d" --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.83.2-php%4$s-alpine %1$s"',
+            'sh -c "docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.83.2-php%3$s-alpine %1$s"',
             $command,
-            getmyuid(),
-            getmygid(),
+            \PHP_OS_FAMILY !== 'Windows' ? sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : null,
             $phpVersion
         ));
     }

@@ -10,7 +10,7 @@ help: ## Prints this help
 
 # TODO: review
 DOCKER_CWD := $(shell pwd)
-DOCKER_TTY := --tty
+DOCKER_TTY :=
 DOCKER_USER :=
 
 define file_prefix
