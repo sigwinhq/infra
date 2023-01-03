@@ -26,14 +26,14 @@ final class DefaultTest extends MakefileTestCase
 {
     protected function getExpectedHelp(): string
     {
-        return $this->generateExpectedHelpList(['help']);
+        return $this->generateHelpList(['help']);
     }
 
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         return [
             'help' => [
-                $this->generateExpectedHelpExecutionPath(),
+                $this->generateHelpExecutionPath(),
             ],
         ];
     }

@@ -62,7 +62,7 @@ abstract class MakefileTestCase extends TestCase
         static::assertSame($expected, $actual);
     }
 
-    protected function generateExpectedHelpList(array $commands): string
+    protected function generateHelpList(array $commands): string
     {
         $help = [];
         foreach ($commands as $command) {
@@ -72,7 +72,7 @@ abstract class MakefileTestCase extends TestCase
         return implode("\n", $help)."\n";
     }
 
-    protected function generateExpectedHelpExecutionPath(array $files = []): string
+    protected function generateHelpExecutionPath(array $files = []): string
     {
         $files += [
             '$ROOT/resources/Common/default.mk',
