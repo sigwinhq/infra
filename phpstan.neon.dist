@@ -6,7 +6,6 @@ includes:
 parameters:
     checkMissingIterableValueType: false
     checkGenericClassInNonGenericObjectType: false
-    tmpDir: %currentWorkingDirectory%/var/phpqa/phpstan
     level: max
     paths:
         - ./

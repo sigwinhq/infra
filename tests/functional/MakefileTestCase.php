@@ -72,6 +72,7 @@ abstract class MakefileTestCase extends TestCase
     protected function generateHelpList(array $commands): string
     {
         $help = [];
+        sort($commands);
         foreach ($commands as $command) {
             $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), self::HELP_MAP[$command] ?? '');
         }
@@ -88,22 +89,33 @@ abstract class MakefileTestCase extends TestCase
         $files = array_map('realpath', $files);
 
         $command = match (\PHP_OS_FAMILY) {
-            'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
-            'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
+            'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',
+            'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',
+            /** @phpstan-ignore-next-line */
             'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(function (string $item, int $index): string {
                 if ($index === 0) {
                     return $item;
                 }
 
                 return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', $this->normalize($item)));
-            }, $files, array_keys($files))).' | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
+            }, $files, array_keys($files))).' | Sort-Object -Property Line | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
             default => throw new \LogicException('Unknown OS family'),
         };
 
         return $this->normalize($command);
     }
 
-    private function generateHelpCommandsExecutionPathFixtures(): array
+    protected function generatePhpqaExecutionPath(string $command, float $phpVersion): string
+    {
+        return $this->normalize(sprintf(
+            'sh -c "docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.83.2-php%3$s-alpine %1$s"',
+            $command,
+            \PHP_OS_FAMILY !== 'Windows' ? sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : null,
+            $phpVersion
+        ));
+    }
+
+    public function generateHelpCommandsExecutionPathFixtures(): array
     {
         $expected = $this->getExpectedHelpCommandsExecutionPath();
 
@@ -164,8 +176,21 @@ abstract class MakefileTestCase extends TestCase
         $process = new Process(
             $command,
             $directory,
-            ['SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources'],
+            [
+                'HOME' => '/home/user',
+                'SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources',
+
+                // nulify these to ensure consistent runtime environment
+                'PHP_VERSION' => '',
+                'GITHUB_ACTIONS' => '',
+            ],
         );
+
+        if (is_dir(__DIR__.'/../../var/phpqa')) {
+            // TODO: delete recursively
+            rmdir(__DIR__.'/../../var/phpqa');
+        }
+
         $process->mustRun();
         $output = $process->getOutput();
 
@@ -219,10 +244,14 @@ abstract class MakefileTestCase extends TestCase
         return str_replace(
             [
                 $this->getRoot(),
+                str_replace('\\', '/', $this->getRoot()),
+                '/home/user',
                 'Common/Platform/'.\PHP_OS_FAMILY,
             ],
             [
                 '$ROOT',
+                '$ROOT',
+                '$HOME',
                 'Common/Platform/$PLATFORM',
             ],
             $output,

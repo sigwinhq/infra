@@ -7,16 +7,12 @@ ifndef PHP_VERSION
 PHP_VERSION=8.1
 endif
 
-ifndef TTY
-TTY:=$(shell [ -t 0 ] && echo --tty)
-endif
-
 ifndef PHPQA_DOCKER_IMAGE
-PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.79.1-php${PHP_VERSION}-alpine
+PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.83.2-php${PHP_VERSION}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
-PHPQA_DOCKER_COMMAND=docker run --init --interactive ${TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "$(shell id -u):$(shell id -g)" --volume "$(shell pwd)/var/phpqa:/cache" --volume "$(shell pwd):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
+PHPQA_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" ${DOCKER_USER} --volume "$(DOCKER_CWD)/var/phpqa:/cache" --volume "$(DOCKER_CWD):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
 endif
 
 sh/php: | ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
@@ -43,7 +39,7 @@ cs: | ${HOME}/.composer var/phpqa composer.lock
 	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
 analyze/cs: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --dry-run --diff -vvv"
+	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv --dry-run"
 	$(call block_end)
 
 analyze/phpstan: | ${HOME}/.composer var/phpqa composer.lock
@@ -66,7 +62,7 @@ test/phpunit-coverage: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_end)
 test/infection: test/phpunit-coverage
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads ${OS_CPUS}"
+	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max"
 	$(call block_end)
 
 ${HOME}/.composer:
