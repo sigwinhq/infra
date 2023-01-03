@@ -7,16 +7,12 @@ ifndef PHP_VERSION
 PHP_VERSION=8.1
 endif
 
-ifndef TTY
-TTY:=$(shell [ -t 0 ] && echo --tty)
-endif
-
 ifndef PHPQA_DOCKER_IMAGE
 PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.83.2-php${PHP_VERSION}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
-PHPQA_DOCKER_COMMAND=docker run --init --interactive ${TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" --user "$(shell id -u):$(shell id -g)" --volume "$(shell pwd)/var/phpqa:/cache" --volume "$(shell pwd):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
+PHPQA_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" ${DOCKER_USER} --volume "$(shell pwd)/var/phpqa:/cache" --volume "$(shell pwd):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
 endif
 
 sh/php: | ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell

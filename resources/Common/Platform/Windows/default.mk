@@ -8,7 +8,8 @@ SPACE := $(empty) $(empty)
 help: ## Prints this help
 	@Select-String -Pattern '^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)' $(subst $(SPACE),${COMMA},${MAKEFILE_LIST}) | Sort-Object -Property Line | ForEach-Object{"{0, -20}" -f $$_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $$_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}
 
-OS_CPUS:=4
+DOCKER_TTY :=
+DOCKER_USER :=
 
 define file_prefix
 $(shell test -f ${2}${1} && echo -n ${2}${1} || echo ${1})
