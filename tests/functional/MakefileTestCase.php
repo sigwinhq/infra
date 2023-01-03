@@ -25,6 +25,10 @@ use Symfony\Component\Process\Process;
  */
 abstract class MakefileTestCase extends TestCase
 {
+    private const HELP_MAP = [
+        'help' => 'Prints this help',
+    ];
+
     abstract protected function getExpectedHelp(): string;
 
     abstract protected function getExpectedHelpCommandsExecutionPath(): array;
@@ -49,7 +53,7 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
-     * @dataProvider generateHelpCommandsExecutionPath
+     * @dataProvider generateHelpCommandsExecutionPathFixtures
      */
     public function testMakefileHelpCommandsWork(string $command, array $expected): void
     {
@@ -58,7 +62,38 @@ abstract class MakefileTestCase extends TestCase
         static::assertSame($expected, $actual);
     }
 
-    private function generateHelpCommandsExecutionPath(): array
+    protected function generateExpectedHelpList(array $commands): string
+    {
+        $help = [];
+        foreach ($commands as $command) {
+            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), self::HELP_MAP[$command]);
+        }
+
+        return implode("\n", $help)."\n";
+    }
+
+    protected function generateExpectedHelpExecutionPath(array $files = []): string
+    {
+        $files += [
+            '$ROOT/resources/Common/default.mk',
+            '$ROOT/resources/Common/Platform/$PLATFORM/default.mk',
+        ];
+
+        return match (\PHP_OS_FAMILY) {
+            'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
+            'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | sort | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\'',
+            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(static function (string $item): string {
+                if ($item === '$ROOT/resources/Common/default.mk') {
+                    return '$ROOT\\resources\\Common\\default.mk';
+                }
+
+                return str_replace('$ROOT/resources', '$ROOT\\resources', $item);
+            }, $files)).' | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
+            default => throw new \LogicException('Unknown OS family'),
+        };
+    }
+
+    private function generateHelpCommandsExecutionPathFixtures(): array
     {
         $expected = $this->getExpectedHelpCommandsExecutionPath();
 
@@ -125,6 +160,7 @@ abstract class MakefileTestCase extends TestCase
         $output = $process->getOutput();
 
         if (\PHP_OS_FAMILY === 'Windows') {
+            /** @var string $output */
             $output = preg_replace('/\r\n|\r|\n/', "\n", $output);
         }
 
