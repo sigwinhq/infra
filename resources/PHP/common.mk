@@ -12,7 +12,7 @@ TTY:=$(shell [ -t 0 ] && echo --tty)
 endif
 
 ifndef PHPQA_DOCKER_IMAGE
-PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.79.1-php${PHP_VERSION}-alpine
+PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.83.2-php${PHP_VERSION}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
@@ -66,7 +66,7 @@ test/phpunit-coverage: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_end)
 test/infection: test/phpunit-coverage
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads ${OS_CPUS}"
+	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max"
 	$(call block_end)
 
 ${HOME}/.composer:
