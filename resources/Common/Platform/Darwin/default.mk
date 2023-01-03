@@ -3,6 +3,10 @@ help: ## Prints this help
 
 OS_CPUS:=$(shell sysctl -n hw.ncpu)
 
+define file_prefix
+$(shell test -f ${2}${1} && echo -n ${2}${1} || echo ${1})
+endef
+
 define permissions
 	setfacl -dRm          m:rwX  $(1)
 	setfacl -Rm           m:rwX  $(1)
