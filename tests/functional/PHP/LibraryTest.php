@@ -26,6 +26,11 @@ final class LibraryTest extends MakefileTestCase
 {
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
+        $mkdirs = [
+            'mkdir -p $HOME/.composer',
+            'mkdir -p var/phpqa',
+        ];
+
         $analyze = [
             $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run'),
             $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run'),
@@ -54,10 +59,10 @@ final class LibraryTest extends MakefileTestCase
                 __DIR__.'/../../../resources/PHP/library.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
-            'analyze' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $analyze),
-            'dist' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $prepareAndAnalyze, $test),
-            'sh/php' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $shell),
-            'test' => array_merge(['mkdir -p $HOME/.composer', 'mkdir -p var/phpqa'], $test),
+            'analyze' => array_merge($mkdirs, $analyze),
+            'dist' => array_merge($mkdirs, $prepareAndAnalyze, $test),
+            'sh/php' => array_merge($mkdirs, $shell),
+            'test' => array_merge($mkdirs, $test),
         ];
     }
 }
