@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Sigwin\Infra\Test\Functional\PHP;
 
 use Sigwin\Infra\Test\Functional\MakefileTestCase;
+use Sigwin\Infra\Test\Functional\PhpQaTrait;
 
 /**
  * @internal
@@ -24,6 +25,8 @@ use Sigwin\Infra\Test\Functional\MakefileTestCase;
  */
 final class LibraryTest extends MakefileTestCase
 {
+    use PhpQaTrait;
+
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         $mkdirs = [
