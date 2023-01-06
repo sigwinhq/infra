@@ -1,4 +1,5 @@
 /tests export-ignore
 /.* export-ignore
 /*dist export-ignore
-/composer.lock
+/composer.lock export-ignore
+/Makefile export-ignore
