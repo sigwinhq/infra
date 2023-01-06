@@ -27,10 +27,17 @@ abstract class MakefileTestCase extends TestCase
 {
     private const HELP_MAP = [
         'analyze' => 'Analyze the codebase',
+        'clean' => 'Clear library logs and system cache',
         'dist' => 'Prepare the codebase for commit',
         'help' => 'Prints this help',
+        'setup/test' => 'Setup: create a functional test runtime',
+        'sh/app' => 'Run application shell',
         'sh/php' => 'Run PHP shell',
+        'start/test' => 'Start app in "test" mode',
+        'stop' => 'Stop app',
         'test' => 'Test the codebase',
+        'test/functional' => 'Test the codebase, functional tests',
+        'test/unit' => 'Test the codebase, unit tests',
     ];
 
     abstract protected function getExpectedHelpCommandsExecutionPath(): array;
@@ -170,9 +177,11 @@ abstract class MakefileTestCase extends TestCase
                 'HOME' => '/home/user',
                 'SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources',
 
-                // nulify these to ensure consistent runtime environment
+                // nullify these to ensure consistent runtime environment
                 'PHP_VERSION' => '',
                 'GITHUB_ACTIONS' => '',
+                'COMPOSE_PROJECT_NAME' => 'infra',
+                'PIMCORE_KERNEL_CLASS' => 'App\\Kernel',
             ],
         );
 

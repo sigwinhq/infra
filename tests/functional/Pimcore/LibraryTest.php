@@ -11,9 +11,10 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sigwin\Infra\Test\Functional\PHP;
+namespace Sigwin\Infra\Test\Functional\Pimcore;
 
 use Sigwin\Infra\Test\Functional\MakefileTestCase;
+use Sigwin\Infra\Test\Functional\PHP\PhpTrait;
 
 /**
  * @internal
@@ -33,6 +34,14 @@ final class LibraryTest extends MakefileTestCase
             'mkdir -p var/phpqa',
         ];
 
+        $touches = [
+            'touch .env',
+        ];
+
+        $cleans = [
+            'rm -rf var/ tests/runtime/var',
+        ];
+
         $analyze = [
             $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run'),
             $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run'),
@@ -47,24 +56,53 @@ final class LibraryTest extends MakefileTestCase
             $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist'),
         ];
 
-        $shell = [
+        $dockerComposeStartTest = [
+            $this->generateDockerComposeExecutionPath('up --detach'),
+        ];
+        $dockerComposeStop = [
+            $this->generateDockerComposeExecutionPath('down --remove-orphans'),
+        ];
+
+        $setupTest = [
+            $this->generateDockerComposeExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:drop --if-exists --force'),
+            $this->generateDockerComposeExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create'),
+            $this->generateDockerComposeExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config'),
+            $this->generateDockerComposeExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup'),
+        ];
+
+        $shellApp = [
+            $this->generateDockerComposeExecExecutionPath('bash'),
+        ];
+        $shellPhp = [
             $this->generatePhpqaExecutionPath('sh'),
         ];
 
-        $test = [
+        $testUnit = [
             $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/'),
             $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max'),
         ];
 
+        $testFunctional = [
+            $this->generateDockerComposeExecExecutionPath('vendor/bin/behat --strict'),
+        ];
+
         return [
             'help' => [$this->generateHelpExecutionPath([
-                __DIR__.'/../../../resources/PHP/library.mk',
+                __DIR__.'/../../../resources/Pimcore/library.mk',
+                __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
             'analyze' => array_merge($mkdirs, $analyze),
-            'dist' => array_merge($mkdirs, $prepareAndAnalyze, $test),
-            'sh/php' => array_merge($mkdirs, $shell),
-            'test' => array_merge($mkdirs, $test),
+            'dist' => array_merge($mkdirs, $prepareAndAnalyze, $testUnit, $testFunctional),
+            'sh/php' => array_merge($mkdirs, $shellPhp),
+            'test' => array_merge($mkdirs, $testUnit, $testFunctional),
+            'clean' => $cleans,
+            'setup/test' => array_merge($dockerComposeStartTest, $touches, $setupTest),
+            'sh/app' => $shellApp,
+            'start/test' => $dockerComposeStartTest,
+            'stop' => $dockerComposeStop,
+            'test/functional' => $testFunctional,
+            'test/unit' => array_merge($mkdirs, $testUnit),
         ];
     }
 }
