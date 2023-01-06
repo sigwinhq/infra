@@ -48,7 +48,7 @@ clean: ## Clear logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*
 
 test/behat:
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app vendor/bin/behat --strict
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app vendor/bin/behat --colors --strict
 setup/test: ## Setup: create a functional test runtime
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction doctrine:database:drop --if-exists --force
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction doctrine:database:create
