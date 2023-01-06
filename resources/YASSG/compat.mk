@@ -1,4 +1,6 @@
+ifndef SIGWIN_INFRA_ROOT
 SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
+endif
 include ${SIGWIN_INFRA_ROOT:%/=%}/YASSG/common.mk
 include ${SIGWIN_INFRA_ROOT:%/=%}/Visual/common.mk
 include ${SIGWIN_INFRA_ROOT:%/=%}/PHP/common.mk
