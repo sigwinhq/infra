@@ -28,7 +28,7 @@ final class LibraryTest extends MakefileTestCase
 
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
-        $mkdir = $this->paths()['mkdir'];
+        $mkdir = $this->paths()['mkdir: phpqa'];
         $test = $this->paths()['test: unit'];
 
         return [

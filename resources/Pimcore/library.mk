@@ -20,7 +20,7 @@ test: test/unit test/functional ## Test the codebase
 
 ifneq ($(and $(COMPOSE_PROJECT_NAME),$(PIMCORE_KERNEL_CLASS)),)
 start/test: ## Start app in "test" mode
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml up --detach
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml up --detach --remove-orphans --no-build
 stop: ## Stop app
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml down --remove-orphans
 sh/app: ## Run application shell
@@ -32,7 +32,7 @@ setup/test: start/test .env ## Setup: create a functional test runtime
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup
 test/behat:
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/behat --strict
-clean: ## Clear library logs and system cache
+clean: ## Clear logs and system cache
 	rm -rf var/ tests/runtime/var
 .env:
 	touch .env

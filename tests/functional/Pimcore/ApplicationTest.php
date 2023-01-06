@@ -23,30 +23,37 @@ use Sigwin\Infra\Test\Functional\PHP\PhpTrait;
  *
  * @small
  */
-final class LibraryTest extends MakefileTestCase
+final class ApplicationTest extends MakefileTestCase
 {
     use PhpTrait;
 
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         $mkdir = $this->paths()['mkdir: phpqa'];
+        $clean = $this->paths()['clean: Pimcore application'];
         $testUnit = $this->paths()['test: unit'];
-        $testFunctional = $this->paths()['test: functional library'];
+        $testFunctional = $this->paths()['test: functional app'];
 
         return [
             'help' => [$this->generateHelpExecutionPath([
-                __DIR__.'/../../../resources/Pimcore/library.mk',
+                __DIR__.'/../../../resources/Pimcore/application.mk',
                 __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
             'analyze' => array_merge($mkdir, $this->paths()['analyze']),
-            'clean' => $this->paths()['clean: library'],
+            'build/dev' => $this->paths()['build: dev'],
+            'build/prod' => $this->paths()['build: prod'],
+            'clean' => $clean,
             'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $testUnit, $testFunctional),
-            'setup/test' => array_merge($this->paths()['docker compose: start library test'], $this->paths()['touch'], $this->paths()['setup: Pimcore library test']),
-            'sh/app' => $this->paths()['shell: app library'],
+            'setup/filesystem' => array_merge($this->paths()['mkdir: composer'], $clean, $this->paths()['permissions: Pimcore']),
+            'setup/test' => $this->paths()['setup: Pimcore app test'],
+            'sh/app' => $this->paths()['shell: app'],
             'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
-            'start/test' => $this->paths()['docker compose: start library test'],
-            'stop' => $this->paths()['docker compose: stop Pimcore library'],
+            'start' => $this->paths()['docker compose: start app'],
+            'start/dev' => $this->paths()['docker compose: start app dev'],
+            'start/prod' => $this->paths()['docker compose: start app prod'],
+            'start/test' => $this->paths()['docker compose: start app test'],
+            'stop' => $this->paths()['docker compose: stop Pimcore app'],
             'test' => array_merge($mkdir, $testUnit, $testFunctional),
             'test/functional' => $testFunctional,
             'test/unit' => array_merge($mkdir, $testUnit),
