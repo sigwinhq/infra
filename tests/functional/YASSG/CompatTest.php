@@ -49,7 +49,7 @@ final class CompatTest extends MakefileTestCase
             'mkdir -p public',
             'npm install',
             'BASE_URL=file://localhost$ROOT/public node_modules/.bin/encore production',
-            'php vendor/sigwin/yassg/bin/yassg yassg:generate --env prod "file://localhost$ROOT/public" ""',
+            'php vendor/sigwin/yassg/bin/yassg yassg:generate --env prod "file://localhost$ROOT/public" ',
         ];
 
         $start = [
@@ -105,7 +105,7 @@ final class CompatTest extends MakefileTestCase
     private function generateDockerLighthouseExecutionPath(string $command): string
     {
         return sprintf(
-            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/project:ro" --workdir /project cypress/browsers:node18.12.0-chrome107 %1$s',
+            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/project" --workdir /project cypress/browsers:node18.12.0-chrome107 %1$s',
             $command,
             $this->generateDockerComposeExecutionUser()
         );
