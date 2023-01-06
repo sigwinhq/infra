@@ -17,7 +17,7 @@ BASE_URL ?= http://example.com/
 SECRETS_DIR ?= ./.infra/secrets
 SECRETS_DIST ?= .dist
 
-dist: cs composer/normalize analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
+dist: composer/normalize cs analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
 test: test/unit test/functional ## Test the codebase
 test/unit: test/infection ## Test the codebase, unit tests
@@ -42,18 +42,18 @@ stop: ## Stop app
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans
 
 sh/app: ## Run application shell
-	VERSION=${VERSION} sh -c "${APP_DOCKER_COMMAND} sh"
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml exec --user "$(shell id -u):$(shell id -g)" app bash
 
 clean: ## Clear logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*
 
 test/behat:
-	sh -c "${APP_DOCKER_COMMAND} vendor/bin/behat --strict"
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app vendor/bin/behat --strict
 setup/test: ## Setup: create a functional test runtime
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction doctrine:database:drop --if-exists --force
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction doctrine:database:create
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test sigwin:testing:setup
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction sigwin:testing:setup
 start/test: secrets ## Start app in "test" mode
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml up --detach --remove-orphans --no-build
 

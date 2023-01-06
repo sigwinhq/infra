@@ -29,9 +29,9 @@ final class LibraryTest extends MakefileTestCase
 
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
-        $mkdir = $this->paths()['mkdir'];
+        $mkdir = $this->paths()['mkdir: phpqa'];
         $testUnit = $this->paths()['test: unit'];
-        $testFunctional = $this->paths()['test: functional'];
+        $testFunctional = $this->paths()['test: functional library'];
 
         return [
             'help' => [$this->generateHelpExecutionPath([
@@ -42,12 +42,8 @@ final class LibraryTest extends MakefileTestCase
             'analyze' => array_merge($mkdir, $this->paths()['analyze']),
             'clean' => $this->paths()['clean: library'],
             'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $testUnit, $testFunctional),
-            'setup/test' => array_merge(
-                $this->paths()['docker compose: start library test'],
-                $this->paths()['touch'],
-                $this->paths()['setup: Pimcore test']
-            ),
-            'sh/app' => $this->paths()['shell: app'],
+            'setup/test' => array_merge($this->paths()['docker compose: start library test'], $this->paths()['touch'], $this->paths()['setup: Pimcore library test']),
+            'sh/app' => $this->paths()['shell: app library'],
             'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
             'start/test' => $this->paths()['docker compose: start library test'],
             'stop' => $this->paths()['docker compose: stop Pimcore library'],

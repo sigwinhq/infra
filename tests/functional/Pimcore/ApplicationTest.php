@@ -29,9 +29,10 @@ final class ApplicationTest extends MakefileTestCase
 
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
-        $mkdir = $this->paths()['mkdir'];
+        $mkdir = $this->paths()['mkdir: phpqa'];
+        $clean = $this->paths()['clean: Pimcore application'];
         $testUnit = $this->paths()['test: unit'];
-        $testFunctional = $this->paths()['test: functional'];
+        $testFunctional = $this->paths()['test: functional app'];
 
         return [
             'help' => [$this->generateHelpExecutionPath([
@@ -40,9 +41,12 @@ final class ApplicationTest extends MakefileTestCase
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
             'analyze' => array_merge($mkdir, $this->paths()['analyze']),
-            'clean' => $this->paths()['clean: Pimcore application'],
+            'build/dev' => $this->paths()['build: dev'],
+            'build/prod' => $this->paths()['build: prod'],
+            'clean' => $clean,
             'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $testUnit, $testFunctional),
-            'setup/test' => array_merge($this->paths()['docker compose: start library test'], $this->paths()['touch'], $this->paths()['setup: Pimcore test']),
+            'setup/filesystem' => array_merge($this->paths()['mkdir: composer'], $clean, $this->paths()['permissions: Pimcore']),
+            'setup/test' => $this->paths()['setup: Pimcore app test'],
             'sh/app' => $this->paths()['shell: app'],
             'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
             'start' => $this->paths()['docker compose: start app'],
@@ -53,10 +57,6 @@ final class ApplicationTest extends MakefileTestCase
             'test' => array_merge($mkdir, $testUnit, $testFunctional),
             'test/functional' => $testFunctional,
             'test/unit' => array_merge($mkdir, $testUnit),
-
-            'build/dev' => $this->paths()['build: dev'],
-            'build/prod' => $this->paths()['build: prod'],
-            'setup/filesystem' => [],
         ];
     }
 }

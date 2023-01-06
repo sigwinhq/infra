@@ -60,7 +60,27 @@ trait PhpTrait
                 $this->generateDockerComposeTestExecutionPath('down --remove-orphans'),
             ],
 
-            'setup: Pimcore test' => [
+            'permissions: Pimcore' => $this->generatePermissionsExecutionPath([
+                'config/pimcore/classes',
+                'public/var/assets',
+                'public/var/tmp',
+                'var/tmp',
+                'var/admin',
+                'var/application-logger',
+                'var/cache',
+                'var/config',
+                'var/email',
+                'var/log',
+                'var/versions',
+            ]),
+
+            'setup: Pimcore app test' => [
+                $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:drop --if-exists --force', 'test'),
+                $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:create', 'test'),
+                $this->generateDockerComposeAppExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config', 'test'),
+                $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction sigwin:testing:setup', 'test'),
+            ],
+            'setup: Pimcore library test' => [
                 $this->generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:drop --if-exists --force'),
                 $this->generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create'),
                 $this->generateDockerComposeTestExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config'),
@@ -68,6 +88,9 @@ trait PhpTrait
             ],
 
             'shell: app' => [
+                $this->generateDockerComposeAppExecExecutionPath('bash'),
+            ],
+            'shell: app library' => [
                 $this->generateDockerComposeTestExecExecutionPath('bash'),
             ],
             'shell: PHP' => [
@@ -78,11 +101,17 @@ trait PhpTrait
                 $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/'),
                 $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max'),
             ],
-            'test: functional' => [
+            'test: functional app' => [
+                $this->generateDockerComposeAppExecExecutionPath('vendor/bin/behat --strict', 'test'),
+            ],
+            'test: functional library' => [
                 $this->generateDockerComposeTestExecExecutionPath('vendor/bin/behat --strict'),
             ],
 
-            'mkdir' => [
+            'mkdir: composer' => [
+                'mkdir -p $HOME/.composer',
+            ],
+            'mkdir: phpqa' => [
                 'mkdir -p $HOME/.composer',
                 'mkdir -p var/phpqa',
             ],
@@ -123,6 +152,15 @@ trait PhpTrait
     private function generateDockerComposeTestExecutionPath(string $command): string
     {
         return sprintf('COMPOSE_PROJECT_NAME=infra docker-compose --file tests/runtime/docker-compose.yaml %1$s', $command);
+    }
+
+    private function generateDockerComposeAppExecExecutionPath(string $command, string $env = 'env'): string
+    {
+        return $this->generateDockerComposeAppExecutionPath(sprintf(
+            'exec %2$s app %1$s',
+            $command,
+            $this->generateDockerComposeExecutionUser()
+        ), $env);
     }
 
     private function generateDockerComposeTestExecExecutionPath(string $command): string
