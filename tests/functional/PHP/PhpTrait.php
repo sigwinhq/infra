@@ -172,9 +172,4 @@ trait PhpTrait
             $this->generateDockerComposeExecutionUser()
         ));
     }
-
-    private function generateDockerComposeExecutionUser(): string
-    {
-        return \PHP_OS_FAMILY !== 'Windows' ? sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : '';
-    }
 }

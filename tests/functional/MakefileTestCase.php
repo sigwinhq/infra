@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Sigwin\Infra\Test\Functional;
 
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 /**
@@ -27,6 +28,7 @@ abstract class MakefileTestCase extends TestCase
 {
     private const HELP_MAP = [
         'analyze' => 'Analyze the codebase',
+        'build' => 'Build app for "APP_ENV" target (defaults to "prod")',
         'build/dev' => 'Build app for "dev" target',
         'build/prod' => 'Build app for "prod" target',
         'clean' => 'Clear logs and system cache',
@@ -44,6 +46,7 @@ abstract class MakefileTestCase extends TestCase
         'test' => 'Test the codebase',
         'test/functional' => 'Test the codebase, functional tests',
         'test/unit' => 'Test the codebase, unit tests',
+        'visual/reference' => 'Generate visual testing references',
     ];
 
     abstract protected function getExpectedHelpCommandsExecutionPath(): array;
@@ -75,7 +78,7 @@ abstract class MakefileTestCase extends TestCase
     /**
      * @dataProvider generateHelpCommandsExecutionPathFixtures
      */
-    public function testMakefileHelpCommandsWork(string $command, array $expected): void
+    public function testMakefileCommandsWork(string $command, array $expected): void
     {
         $actual = $this->dryRun($this->getMakefilePath(), $command);
 
@@ -205,6 +208,7 @@ abstract class MakefileTestCase extends TestCase
                 // TODO: allow passing these
                 'RUNNER' => '999',
                 'APP_ENV' => 'env',
+                'APP_ROOT' => $this->getRoot(),
                 'PHP_VERSION' => '',
                 'GITHUB_ACTIONS' => '',
                 'COMPOSE_PROJECT_NAME' => 'infra',
@@ -212,10 +216,8 @@ abstract class MakefileTestCase extends TestCase
             ],
         );
 
-        if (is_dir(__DIR__.'/../../var/phpqa')) {
-            // TODO: delete recursively
-            rmdir(__DIR__.'/../../var/phpqa');
-        }
+        $filesystem = new Filesystem();
+        $filesystem->remove(__DIR__.'/../../var');
 
         $process->mustRun();
         $output = $process->getOutput();
@@ -282,5 +284,10 @@ abstract class MakefileTestCase extends TestCase
             ],
             $output,
         );
+    }
+
+    protected function generateDockerComposeExecutionUser(): string
+    {
+        return \PHP_OS_FAMILY !== 'Windows' ? sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : '';
     }
 }
