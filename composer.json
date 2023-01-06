@@ -10,5 +10,8 @@
         "psr-4": {
             "Sigwin\\Infra\\Test\\Functional\\": "tests/functional"
         }
+    },
+    "require": {
+        "symfony/filesystem": "^6.0"
     }
 }
