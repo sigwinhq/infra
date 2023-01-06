@@ -16,53 +16,53 @@ PHPQA_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm --env "C
 endif
 
 sh/php: | ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
-	sh -c "${PHPQA_DOCKER_COMMAND} sh"
+	${PHPQA_DOCKER_COMMAND} sh
 
 composer/install: composer.lock
 composer/install-highest: composer.lock
 composer.lock: | ${HOME}/.composer var/phpqa
-	sh -c "${PHPQA_DOCKER_COMMAND} composer install"
+	${PHPQA_DOCKER_COMMAND} composer install
 	touch composer.lock
 composer/install-lowest: ${HOME}/.composer var/phpqa
-	sh -c "${PHPQA_DOCKER_COMMAND} composer upgrade --prefer-lowest"
+	${PHPQA_DOCKER_COMMAND} composer upgrade --prefer-lowest
 
 composer/validate: | ${HOME}/.composer var/phpqa composer.lock
-	sh -c "${PHPQA_DOCKER_COMMAND} composer validate --no-interaction"
+	${PHPQA_DOCKER_COMMAND} composer validate --no-interaction
 composer/normalize: | ${HOME}/.composer var/phpqa composer.lock
-	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock"
+	${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock
 analyze/composer: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run"
+	${PHPQA_DOCKER_COMMAND} composer normalize --no-interaction --no-update-lock --dry-run
 	$(call block_end)
 
 cs: | ${HOME}/.composer var/phpqa composer.lock
-	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv"
+	${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv
 analyze/cs: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv --dry-run"
+	${PHPQA_DOCKER_COMMAND} php-cs-fixer fix --diff -vvv --dry-run
 	$(call block_end)
 
 analyze/phpstan: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} phpstan analyse --configuration $(call file_prefix,phpstan.neon.dist,$(PHP_VERSION)-)"
+	${PHPQA_DOCKER_COMMAND} phpstan analyse --configuration $(call file_prefix,phpstan.neon.dist,$(PHP_VERSION)-)
 	$(call block_end)
 
 analyze/psalm: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} psalm --php-version=${PHP_VERSION} --config $(call file_prefix,psalm.xml.dist,$(PHP_VERSION)-)"
+	${PHPQA_DOCKER_COMMAND} psalm --php-version=${PHP_VERSION} --config $(call file_prefix,psalm.xml.dist,$(PHP_VERSION)-)
 	$(call block_end)
 
 test/phpunit: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} vendor/bin/phpunit --verbose"
+	${PHPQA_DOCKER_COMMAND} vendor/bin/phpunit --verbose
 	$(call block_end)
 test/phpunit-coverage: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/"
+	${PHPQA_DOCKER_COMMAND} php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/
 	$(call block_end)
 test/infection: test/phpunit-coverage
 	$(call block_start,$@)
-	sh -c "${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max"
+	${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max
 	$(call block_end)
 
 ${HOME}/.composer:

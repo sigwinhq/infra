@@ -27,10 +27,17 @@ abstract class MakefileTestCase extends TestCase
 {
     private const HELP_MAP = [
         'analyze' => 'Analyze the codebase',
+        'clean' => 'Clear library logs and system cache',
         'dist' => 'Prepare the codebase for commit',
         'help' => 'Prints this help',
+        'setup/test' => 'Setup: create a functional test runtime',
+        'sh/app' => 'Run application shell',
         'sh/php' => 'Run PHP shell',
+        'start/test' => 'Start app in "test" mode',
+        'stop' => 'Stop app',
         'test' => 'Test the codebase',
+        'test/functional' => 'Test the codebase, functional tests',
+        'test/unit' => 'Test the codebase, unit tests',
     ];
 
     abstract protected function getExpectedHelpCommandsExecutionPath(): array;
@@ -98,23 +105,11 @@ abstract class MakefileTestCase extends TestCase
                 }
 
                 return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', $this->normalize($item)));
-            }, $files, array_keys($files))).' | Sort-Object -Property Line | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
+            }, $files, array_keys($files))).' | Sort-Object {$_.Matches[0].Groups["name"]} | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
             default => throw new \LogicException('Unknown OS family'),
         };
 
         return $this->normalize($command);
-    }
-
-    protected function generatePhpqaExecutionPath(string $command, ?float $phpVersion = null): string
-    {
-        $phpVersion ??= 8.1;
-
-        return $this->normalize(sprintf(
-            'sh -c "docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.83.2-php%3$s-alpine %1$s"',
-            sprintf($command, $phpVersion),
-            \PHP_OS_FAMILY !== 'Windows' ? sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : null,
-            $phpVersion
-        ));
     }
 
     public function generateHelpCommandsExecutionPathFixtures(): array
@@ -182,9 +177,11 @@ abstract class MakefileTestCase extends TestCase
                 'HOME' => '/home/user',
                 'SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources',
 
-                // nulify these to ensure consistent runtime environment
+                // nullify these to ensure consistent runtime environment
                 'PHP_VERSION' => '',
                 'GITHUB_ACTIONS' => '',
+                'COMPOSE_PROJECT_NAME' => 'infra',
+                'PIMCORE_KERNEL_CLASS' => 'App\\Kernel',
             ],
         );
 
@@ -241,7 +238,7 @@ abstract class MakefileTestCase extends TestCase
         return $output;
     }
 
-    private function normalize(string $output): string
+    protected function normalize(string $output): string
     {
         return str_replace(
             [
