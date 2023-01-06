@@ -103,10 +103,10 @@ trait PhpTrait
                 $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max'),
             ],
             'test: functional app' => [
-                $this->generateDockerComposeAppExecExecutionPath('vendor/bin/behat --strict', 'test'),
+                $this->generateDockerComposeAppExecExecutionPath('vendor/bin/behat --colors --strict', 'test'),
             ],
             'test: functional library' => [
-                $this->generateDockerComposeTestExecExecutionPath('vendor/bin/behat --strict'),
+                $this->generateDockerComposeTestExecExecutionPath('vendor/bin/behat --colors --strict'),
             ],
 
             'mkdir: composer' => [
