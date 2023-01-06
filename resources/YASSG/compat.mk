@@ -3,6 +3,7 @@ SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword 
 endif
 include ${SIGWIN_INFRA_ROOT:%/=%}/YASSG/common.mk
 include ${SIGWIN_INFRA_ROOT:%/=%}/Visual/common.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/Lighthouse/common.mk
 include ${SIGWIN_INFRA_ROOT:%/=%}/PHP/common.mk
 
 ifndef LYCHEE_DOCKER_IMAGE
