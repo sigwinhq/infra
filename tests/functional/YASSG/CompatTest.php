@@ -35,6 +35,9 @@ final class CompatTest extends MakefileTestCase
     {
         $mkdir = $this->paths()['mkdir: phpqa'];
 
+        $lighthouse = [
+            $this->generateDockerLighthouseExecutionPath('npx lhci autorun --config=lighthouse.config.json'),
+        ];
         $test = [
             $this->generateDockerBackstopExecutionPath('test'),
         ];
@@ -59,9 +62,11 @@ final class CompatTest extends MakefileTestCase
                 __DIR__.'/../../../resources/YASSG/compat.mk',
                 __DIR__.'/../../../resources/YASSG/common.mk',
                 __DIR__.'/../../../resources/Visual/common.mk',
+                __DIR__.'/../../../resources/Lighthouse/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
             'analyze' => array_merge($mkdir, $this->paths()['analyze']),
+            'analyze/lighthouse' => $lighthouse,
             'build' => $build,
             'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $test),
             'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
@@ -92,6 +97,15 @@ final class CompatTest extends MakefileTestCase
     {
         return sprintf(
             'docker run --init --interactive  --shm-size 256MB --cap-add=SYS_ADMIN --rm --env PROJECT_ROOT=$ROOT --env BASE_URL=file://localhost$ROOT/public %2$s --tmpfs /tmp --volume "$ROOT:$ROOT" --workdir "$ROOT" backstopjs/backstopjs:6.1.4 --config backstop.config.js %1$s',
+            $command,
+            $this->generateDockerComposeExecutionUser()
+        );
+    }
+
+    private function generateDockerLighthouseExecutionPath(string $command): string
+    {
+        return sprintf(
+            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/project:ro" --workdir /project cypress/browsers:node18.12.0-chrome107 %1$s',
             $command,
             $this->generateDockerComposeExecutionUser()
         );

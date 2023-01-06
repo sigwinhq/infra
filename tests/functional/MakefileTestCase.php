@@ -28,6 +28,7 @@ abstract class MakefileTestCase extends TestCase
 {
     private array $help = [
         'analyze' => 'Analyze the codebase',
+        'analyze/lighthouse' => 'Analyze built files using Lighthouse',
         'build' => 'Build app for "APP_ENV" target (defaults to "prod")',
         'build/dev' => 'Build app for "dev" target',
         'build/prod' => 'Build app for "prod" target',
