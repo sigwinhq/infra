@@ -8,7 +8,7 @@ ifneq (,$(wildcard ./.env))
     export
 endif
 
-APP_DOCKER_COMMAND ?= docker-compose exec --user "$(shell id -u):$(shell id -g)" app
+APP_DOCKER_COMMAND ?= docker-compose exec ${DOCKER_USER} app
 
 VERSION ?= latest
 
@@ -42,18 +42,18 @@ stop: ## Stop app
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans
 
 sh/app: ## Run application shell
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml exec --user "$(shell id -u):$(shell id -g)" app bash
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml exec ${DOCKER_USER} app bash
 
 clean: ## Clear logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*
 
 test/behat:
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app vendor/bin/behat --strict
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app vendor/bin/behat --strict
 setup/test: ## Setup: create a functional test runtime
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction doctrine:database:drop --if-exists --force
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction doctrine:database:create
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec --user "$(shell id -u):$(shell id -g)" app bin/console --env test --no-interaction sigwin:testing:setup
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction doctrine:database:drop --if-exists --force
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction doctrine:database:create
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction sigwin:testing:setup
 start/test: secrets ## Start app in "test" mode
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml up --detach --remove-orphans --no-build
 
