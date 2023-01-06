@@ -19,7 +19,7 @@ index.php:
 	ln -s vendor/sigwin/yassg/web/index.php
 
 build: ${BUILD_DIR}/assets/entrypoints.json vendor ## Build app for "APP_ENV" target (defaults to "prod")
-	php vendor/sigwin/yassg/bin/yassg yassg:generate --env prod "$(BASE_URL)" "${BUILD_OPTS}"
+	php vendor/sigwin/yassg/bin/yassg yassg:generate --env prod "$(BASE_URL)" ${BUILD_OPTS}
 .PHONY: build
 
 ${BUILD_DIR}:
