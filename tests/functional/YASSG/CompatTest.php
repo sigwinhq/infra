@@ -90,6 +90,10 @@ final class CompatTest extends MakefileTestCase
 
     private function generateDockerBackstopExecutionPath(string $command): string
     {
-        return sprintf('docker run --init --interactive  --shm-size 256MB --cap-add=SYS_ADMIN --rm --env PROJECT_ROOT=$ROOT --env BASE_URL=file://localhost$ROOT/public --user "2000:2000" --tmpfs /tmp --volume "$ROOT:$ROOT" --workdir "$ROOT" backstopjs/backstopjs:6.1.4 --config backstop.config.js %1$s', $command);
+        return sprintf(
+            'docker run --init --interactive  --shm-size 256MB --cap-add=SYS_ADMIN --rm --env PROJECT_ROOT=$ROOT --env BASE_URL=file://localhost$ROOT/public %2$s --tmpfs /tmp --volume "$ROOT:$ROOT" --workdir "$ROOT" backstopjs/backstopjs:6.1.4 --config backstop.config.js %1$s',
+            $command,
+            $this->generateDockerComposeExecutionUser()
+        );
     }
 }
