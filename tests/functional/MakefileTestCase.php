@@ -26,7 +26,7 @@ use Symfony\Component\Process\Process;
  */
 abstract class MakefileTestCase extends TestCase
 {
-    private const HELP_MAP = [
+    private array $help = [
         'analyze' => 'Analyze the codebase',
         'build' => 'Build app for "APP_ENV" target (defaults to "prod")',
         'build/dev' => 'Build app for "dev" target',
@@ -48,6 +48,8 @@ abstract class MakefileTestCase extends TestCase
         'test/unit' => 'Test the codebase, unit tests',
         'visual/reference' => 'Generate visual testing references',
     ];
+
+    protected array $helpOverride = [];
 
     abstract protected function getExpectedHelpCommandsExecutionPath(): array;
 
@@ -90,7 +92,7 @@ abstract class MakefileTestCase extends TestCase
         $help = [];
         sort($commands);
         foreach ($commands as $command) {
-            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), self::HELP_MAP[$command] ?? '');
+            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), $this->helpOverride[$command] ?? $this->help[$command] ?? '');
         }
 
         return implode("\n", $help)."\n";

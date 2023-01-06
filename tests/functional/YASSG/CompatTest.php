@@ -27,6 +27,10 @@ final class CompatTest extends MakefileTestCase
 {
     use PhpTrait;
 
+    protected array $helpOverride = [
+        'start' => 'Start app in APP_ENV mode (defaults to "dev")',
+    ];
+
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         $mkdir = $this->paths()['mkdir: phpqa'];
@@ -72,7 +76,7 @@ final class CompatTest extends MakefileTestCase
     {
         $this->testMakefileCommandsWork('dev/assets', [
             'npm install',
-            'node_modules/.bin/encore dev-server'
+            'node_modules/.bin/encore dev-server',
         ]);
     }
 
@@ -80,7 +84,7 @@ final class CompatTest extends MakefileTestCase
     {
         $this->testMakefileCommandsWork('dev/server', [
             'ln -s vendor/sigwin/yassg/web/index.php',
-            'symfony server:start --no-tls --document-root=. --port=9988'
+            'symfony server:start --no-tls --document-root=. --port=9988',
         ]);
     }
 
