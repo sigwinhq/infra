@@ -57,7 +57,7 @@ setup/test: ## Setup: create a functional test runtime
 start/test: secrets ## Start app in "test" mode
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml up --detach --remove-orphans --no-build
 
-setup/filesystem: ${HOME}/.composer clean config/pimcore/classes public/var/assets public/var/tmp var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/versions ## Setup: filesystem (var, public/var folders)
+setup/filesystem: ${HOME}/.composer clean config/pimcore/classes public/var/assets public/var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/tmp var/versions ## Setup: filesystem (var, public/var folders)
 config/pimcore/classes:
 	mkdir -p config/pimcore/classes
 	$(call permissions,config/pimcore/classes)
