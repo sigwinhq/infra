@@ -28,43 +28,18 @@ final class LibraryTest extends MakefileTestCase
 
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
-        $mkdirs = [
-            'mkdir -p $HOME/.composer',
-            'mkdir -p var/phpqa',
-        ];
-
-        $analyze = [
-            $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run'),
-            $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run'),
-            $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-            $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist'),
-        ];
-
-        $prepareAndAnalyze = [
-            $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock'),
-            $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv'),
-            $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-            $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist'),
-        ];
-
-        $shell = [
-            $this->generatePhpqaExecutionPath('sh'),
-        ];
-
-        $test = [
-            $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/'),
-            $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max'),
-        ];
+        $mkdir = $this->paths()['mkdir'];
+        $test = $this->paths()['test: unit'];
 
         return [
             'help' => [$this->generateHelpExecutionPath([
                 __DIR__.'/../../../resources/PHP/library.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
-            'analyze' => array_merge($mkdirs, $analyze),
-            'dist' => array_merge($mkdirs, $prepareAndAnalyze, $test),
-            'sh/php' => array_merge($mkdirs, $shell),
-            'test' => array_merge($mkdirs, $test),
+            'analyze' => array_merge($mkdir, $this->paths()['analyze']),
+            'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $test),
+            'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
+            'test' => array_merge($mkdir, $test),
         ];
     }
 }

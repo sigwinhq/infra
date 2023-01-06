@@ -29,62 +29,9 @@ final class LibraryTest extends MakefileTestCase
 
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
-        $mkdirs = [
-            'mkdir -p $HOME/.composer',
-            'mkdir -p var/phpqa',
-        ];
-
-        $touches = [
-            'touch .env',
-        ];
-
-        $cleans = [
-            'rm -rf var/ tests/runtime/var',
-        ];
-
-        $analyze = [
-            $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run'),
-            $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run'),
-            $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-            $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist'),
-        ];
-
-        $prepareAndAnalyze = [
-            $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock'),
-            $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv'),
-            $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-            $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist'),
-        ];
-
-        $dockerComposeStartTest = [
-            $this->generateDockerComposeExecutionPath('up --detach'),
-        ];
-        $dockerComposeStop = [
-            $this->generateDockerComposeExecutionPath('down --remove-orphans'),
-        ];
-
-        $setupTest = [
-            $this->generateDockerComposeExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:drop --if-exists --force'),
-            $this->generateDockerComposeExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create'),
-            $this->generateDockerComposeExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config'),
-            $this->generateDockerComposeExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup'),
-        ];
-
-        $shellApp = [
-            $this->generateDockerComposeExecExecutionPath('bash'),
-        ];
-        $shellPhp = [
-            $this->generatePhpqaExecutionPath('sh'),
-        ];
-
-        $testUnit = [
-            $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/'),
-            $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max'),
-        ];
-
-        $testFunctional = [
-            $this->generateDockerComposeExecExecutionPath('vendor/bin/behat --strict'),
-        ];
+        $mkdir = $this->paths()['mkdir'];
+        $testUnit = $this->paths()['test: unit'];
+        $testFunctional = $this->paths()['test: functional'];
 
         return [
             'help' => [$this->generateHelpExecutionPath([
@@ -92,17 +39,21 @@ final class LibraryTest extends MakefileTestCase
                 __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
-            'analyze' => array_merge($mkdirs, $analyze),
-            'dist' => array_merge($mkdirs, $prepareAndAnalyze, $testUnit, $testFunctional),
-            'sh/php' => array_merge($mkdirs, $shellPhp),
-            'test' => array_merge($mkdirs, $testUnit, $testFunctional),
-            'clean' => $cleans,
-            'setup/test' => array_merge($dockerComposeStartTest, $touches, $setupTest),
-            'sh/app' => $shellApp,
-            'start/test' => $dockerComposeStartTest,
-            'stop' => $dockerComposeStop,
+            'analyze' => array_merge($mkdir, $this->paths()['analyze']),
+            'clean' => $this->paths()['clean'],
+            'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $testUnit, $testFunctional),
+            'setup/test' => array_merge(
+                $this->paths()['docker compose: start test'],
+                $this->paths()['touch'],
+                $this->paths()['setup: test']
+            ),
+            'sh/app' => $this->paths()['shell: app'],
+            'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
+            'start/test' => $this->paths()['docker compose: start test'],
+            'stop' => $this->paths()['docker compose: stop'],
+            'test' => array_merge($mkdir, $testUnit, $testFunctional),
             'test/functional' => $testFunctional,
-            'test/unit' => array_merge($mkdirs, $testUnit),
+            'test/unit' => array_merge($mkdir, $testUnit),
         ];
     }
 }
