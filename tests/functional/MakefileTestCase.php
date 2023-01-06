@@ -27,12 +27,18 @@ abstract class MakefileTestCase extends TestCase
 {
     private const HELP_MAP = [
         'analyze' => 'Analyze the codebase',
-        'clean' => 'Clear library logs and system cache',
+        'build/dev' => 'Build app for "dev" target',
+        'build/prod' => 'Build app for "prod" target',
+        'clean' => 'Clear logs and system cache',
         'dist' => 'Prepare the codebase for commit',
         'help' => 'Prints this help',
+        'setup/filesystem' => 'Setup: filesystem (var, public/var folders)',
         'setup/test' => 'Setup: create a functional test runtime',
         'sh/app' => 'Run application shell',
         'sh/php' => 'Run PHP shell',
+        'start' => 'Start app in APP_ENV mode (defined in .env)',
+        'start/dev' => 'Start app in "dev" mode',
+        'start/prod' => 'Start app in "prod" mode',
         'start/test' => 'Start app in "test" mode',
         'stop' => 'Stop app',
         'test' => 'Test the codebase',
@@ -177,7 +183,9 @@ abstract class MakefileTestCase extends TestCase
                 'HOME' => '/home/user',
                 'SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources',
 
-                // nullify these to ensure consistent runtime environment
+                // streamline these to ensure consistent runtime environment
+                // TODO: allow passing these
+                'APP_ENV' => 'env',
                 'PHP_VERSION' => '',
                 'GITHUB_ACTIONS' => '',
                 'COMPOSE_PROJECT_NAME' => 'infra',
