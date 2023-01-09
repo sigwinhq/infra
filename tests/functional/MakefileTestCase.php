@@ -78,6 +78,14 @@ abstract class MakefileTestCase extends TestCase
         static::assertSame($expected, $actual);
     }
 
+    public function testHelpIsTheDefaultCommand(): void
+    {
+        $expected = $this->dryRun($this->getMakefilePath(), 'help');
+        $actual = $this->dryRun($this->getMakefilePath());
+
+        static::assertSame($expected, $actual);
+    }
+
     /**
      * @dataProvider generateHelpCommandsExecutionPathFixtures
      */
