@@ -63,6 +63,17 @@ final class ApplicationTest extends MakefileTestCase
         ]);
     }
 
+    protected function getExpectedInitPaths(): array
+    {
+        return [
+            'Common/Platform/$PLATFORM/default',
+            'Common/default',
+            'PHP/common',
+            'Pimcore/common',
+            'Pimcore/application',
+        ];
+    }
+
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         $mkdir = $this->paths()['mkdir: phpqa'];

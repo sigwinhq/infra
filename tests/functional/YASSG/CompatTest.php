@@ -31,6 +31,19 @@ final class CompatTest extends MakefileTestCase
         'start' => 'Start app in APP_ENV mode (defaults to "dev")',
     ];
 
+    protected function getExpectedInitPaths(): array
+    {
+        return [
+            'Common/Platform/$PLATFORM/default',
+            'Common/default',
+            'PHP/common',
+            'Lighthouse/common',
+            'Visual/common',
+            'YASSG/common',
+            'YASSG/compat',
+        ];
+    }
+
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         $mkdir = $this->paths()['mkdir: phpqa'];

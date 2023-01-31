@@ -54,6 +54,8 @@ abstract class MakefileTestCase extends TestCase
 
     abstract protected function getExpectedHelpCommandsExecutionPath(): array;
 
+    abstract protected function getExpectedInitPaths(): array;
+
     protected function getExpectedHelp(): string
     {
         return $this->generateHelpList(array_keys($this->getExpectedHelpCommandsExecutionPath()));
@@ -82,6 +84,14 @@ abstract class MakefileTestCase extends TestCase
     {
         $expected = $this->dryRun($this->getMakefilePath(), 'help');
         $actual = $this->dryRun($this->getMakefilePath());
+
+        static::assertSame($expected, $actual);
+    }
+
+    public function testMakefileHasInit(): void
+    {
+        $expected = array_map(static fn (string $path): string => sprintf('if [ -d "$ROOT/resources/%1$s" ]; then cp -a $ROOT/resources/%1$s/. .; fi', $path), $this->getExpectedInitPaths());
+        $actual = $this->dryRun($this->getMakefilePath(), 'init');
 
         static::assertSame($expected, $actual);
     }

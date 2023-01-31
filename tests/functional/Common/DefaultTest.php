@@ -24,6 +24,14 @@ use Sigwin\Infra\Test\Functional\MakefileTestCase;
  */
 final class DefaultTest extends MakefileTestCase
 {
+    protected function getExpectedInitPaths(): array
+    {
+        return [
+            'Common/Platform/$PLATFORM/default',
+            'Common/default',
+        ];
+    }
+
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         return [
