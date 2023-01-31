@@ -228,7 +228,7 @@ abstract class MakefileTestCase extends TestCase
         );
 
         $filesystem = new Filesystem();
-        $filesystem->remove(__DIR__.'/../../var');
+        $filesystem->remove(__DIR__.'/../../var/phpqa');
 
         $process->mustRun();
         $output = $process->getOutput();

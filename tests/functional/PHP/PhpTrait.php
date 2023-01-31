@@ -64,7 +64,6 @@ trait PhpTrait
                 'config/pimcore/classes',
                 'public/var/assets',
                 'public/var/tmp',
-                'var',
                 'var/admin',
                 'var/application-logger',
                 'var/cache',

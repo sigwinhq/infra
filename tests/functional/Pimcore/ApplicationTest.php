@@ -15,6 +15,7 @@ namespace Sigwin\Infra\Test\Functional\Pimcore;
 
 use Sigwin\Infra\Test\Functional\MakefileTestCase;
 use Sigwin\Infra\Test\Functional\PHP\PhpTrait;
+use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
@@ -26,6 +27,41 @@ use Sigwin\Infra\Test\Functional\PHP\PhpTrait;
 final class ApplicationTest extends MakefileTestCase
 {
     use PhpTrait;
+
+    protected function setUp(): void
+    {
+        $filesystem = new Filesystem();
+        $filesystem->mkdir([
+            'config/pimcore/classes',
+            'public/var/assets',
+            'public/var/tmp',
+            'var/admin',
+            'var/application-logger',
+            'var/cache',
+            'var/config',
+            'var/email',
+            'var/log',
+            'var/tmp',
+            'var/versions',
+        ]);
+    }
+
+    protected function tearDown(): void
+    {
+        $filesystem = new Filesystem();
+        $filesystem->remove([
+            'config/',
+            'public/',
+            'var/admin',
+            'var/application-logger',
+            'var/cache',
+            'var/config',
+            'var/email',
+            'var/log',
+            'var/tmp',
+            'var/versions',
+        ]);
+    }
 
     protected function getExpectedHelpCommandsExecutionPath(): array
     {

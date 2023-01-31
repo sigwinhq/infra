@@ -94,6 +94,7 @@ var/tmp: var
 var/versions: var
 	mkdir -p var/versions
 	$(call permissions,var/versions)
+.PHONY: config/pimcore/classes public/var/assets public/var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/tmp var/versions
 
 secrets: $(patsubst %${SECRETS_DIST},%,$(wildcard ${SECRETS_DIR}/*.secret${SECRETS_DIST}))
 ${SECRETS_DIR}/%.secret:
