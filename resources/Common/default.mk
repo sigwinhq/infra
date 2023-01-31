@@ -46,7 +46,8 @@ else
 endif
 
 define dir_copy
-$(shell if [ -d "${1}" ]; then cp -a ${1}/. .; fi)
+if [ -d "${1}" ]; then cp -a ${1}/. .; fi
+
 endef
 
 define str_reverse

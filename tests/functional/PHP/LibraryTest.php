@@ -26,6 +26,16 @@ final class LibraryTest extends MakefileTestCase
 {
     use PhpTrait;
 
+    protected function getExpectedInitPaths(): array
+    {
+        return [
+            'Common/Platform/$PLATFORM/default',
+            'Common/default',
+            'PHP/common',
+            'PHP/library',
+        ];
+    }
+
     protected function getExpectedHelpCommandsExecutionPath(): array
     {
         $mkdir = $this->paths()['mkdir: phpqa'];
