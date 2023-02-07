@@ -3,3 +3,4 @@
 /*dist export-ignore
 /composer.lock export-ignore
 /Makefile export-ignore
+/package.json export-ignore
