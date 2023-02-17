@@ -8,11 +8,11 @@ jobs:
     ReleaseNPM:
         runs-on: ubuntu-latest
         steps:
-            -
-                name: Repo checkout
+            -   name: Repo checkout
                 uses: actions/checkout@v3
-            -
-                name: Set correct version
-                run: jq --indent 4 '.version = "1.2.3"' < package.json > package.json~ && mv package.json~ package.json
-            -
-                run: cat package.json
+            -   name: Set correct version
+                run: jq --indent 4 '.version = "${{ github.ref }}"' < package.json > package.json~ && mv package.json~ package.json
+            -   run: cat package.json
+            -   run: npm publish
+                env:
+                    NODE_AUTH_TOKEN: "${{ secrets.NPMJS_SECRET }}"
