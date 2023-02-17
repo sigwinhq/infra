@@ -5,7 +5,7 @@ on:
             - "npm"
 
 jobs:
-    Release NPM:
+    ReleaseNPM:
         runs-on: ubuntu-latest
         steps:
             -
