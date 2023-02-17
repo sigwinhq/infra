@@ -1,7 +1,7 @@
 {
     "name": "@sigwinhq/infra",
     "description": "Sigwin's default per-project infra",
-    "version": "1.1.3",
+    "version": "1.2.3",
     "repository": {
         "type": "git",
         "url": "git@github.com:sigwinhq/infra.git"
