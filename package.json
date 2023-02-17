@@ -1,0 +1,23 @@
+{
+    "name": "@sigwinhq/infra",
+    "description": "Sigwin's default per-project infra",
+    "version": "1.0.0",
+    "repository": {
+        "type": "git",
+        "url": "git@github.com:sigwinhq/infra.git"
+    },
+    "keywords": [
+        "sigwin",
+        "infra"
+    ],
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/sigwinhq/infra/issues"
+    },
+    "homepage": "https://github.com/sigwinhq/infra#readme",
+    "files": [
+        "resources",
+        "package.json",
+        "README.md"
+    ]
+}
