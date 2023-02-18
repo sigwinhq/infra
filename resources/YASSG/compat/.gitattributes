@@ -1,0 +1,15 @@
+/assets/ export-ignore
+/config/ export-ignore
+/templates/ export-ignore
+/tests/ export-ignore
+/.* export-ignore
+/*dist export-ignore
+/*baseline* export-ignore
+/backstop.config.js export-ignore
+/lighthouse.config.json export-ignore
+/composer.lock export-ignore
+/Makefile export-ignore
+/package-lock.json export-ignore
+/symfony.lock export-ignore
+/webpack.config.js export-ignore
+tests/visual/references/*.png filter=lfs diff=lfs merge=lfs -text
