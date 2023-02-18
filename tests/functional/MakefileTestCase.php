@@ -117,13 +117,14 @@ abstract class MakefileTestCase extends TestCase
         return implode("\n", $help)."\n";
     }
 
-    protected function generateHelpExecutionPath(array $files = []): string
+    protected function generateHelpExecutionPath(array $files = [], array $additionalFiles = []): string
     {
         $files = array_merge($files, [
             __DIR__.'/../../resources/Common/default.mk',
             __DIR__.'/../../resources/Common/Platform/'.\PHP_OS_FAMILY.'/default.mk',
         ]);
         $files = array_map('realpath', $files);
+        $files = array_merge($files, $additionalFiles);
 
         $command = match (\PHP_OS_FAMILY) {
             'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',

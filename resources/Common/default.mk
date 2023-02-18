@@ -57,4 +57,4 @@ endef
 include ${SIGWIN_INFRA_ROOT:%/=%}/Common/Platform/${OS_FAMILY}/default.mk
 
 init:
-	$(foreach MAKEFILE, $(call str_reverse, ${MAKEFILE_LIST}),$(call dir_copy,$(basename $(abspath ${MAKEFILE}))))
+	$(foreach MAKEFILE, $(call str_reverse, $(subst .env,,${MAKEFILE_LIST})),$(call dir_copy,$(basename $(abspath ${MAKEFILE}))))
