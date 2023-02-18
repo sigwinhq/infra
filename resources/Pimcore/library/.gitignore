@@ -1,0 +1,5 @@
+/tests/runtime/var/
+/var/
+/vendor/
+/.env
+/composer.lock
