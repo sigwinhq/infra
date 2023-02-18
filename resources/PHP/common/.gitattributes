@@ -1,5 +1,7 @@
+/docs export-ignore
 /tests export-ignore
 /.* export-ignore
 /*dist export-ignore
+/*baseline* export-ignore
 /composer.lock export-ignore
 /Makefile export-ignore
