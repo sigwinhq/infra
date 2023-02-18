@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<psalm xmlns="https://getpsalm.org/schema/config"
+       cacheDirectory="var/phpqa/psalm"
+       checkForThrowsInGlobalScope="true"
+       ensureArrayIntOffsetsExist="true"
+       ensureArrayStringOffsetsExist="true"
+       errorLevel="1"
+       findUnusedPsalmSuppress="true"
+       findUnusedVariablesAndParams="true"
+       limitMethodComplexity="true"
+       restrictReturnTypes="true"
+       strictBinaryOperands="true">
+    <projectFiles>
+        <directory name="./"/>
+        <ignoreFiles allowMissingFiles="true">
+            <file name=".php-cs-fixer.dist.php"/>
+            <directory name="var/"/>
+            <directory name="vendor/"/>
+        </ignoreFiles>
+    </projectFiles>
+
+    <plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+    </plugins>
+</psalm>

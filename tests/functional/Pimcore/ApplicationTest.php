@@ -31,6 +31,7 @@ final class ApplicationTest extends MakefileTestCase
     protected function setUp(): void
     {
         $filesystem = new Filesystem();
+        $filesystem->touch('.env');
         $filesystem->mkdir([
             'config/pimcore/classes',
             'public/var/assets',
@@ -50,6 +51,7 @@ final class ApplicationTest extends MakefileTestCase
     {
         $filesystem = new Filesystem();
         $filesystem->remove([
+            '.env',
             'config/',
             'public/',
             'var/admin',
@@ -86,7 +88,7 @@ final class ApplicationTest extends MakefileTestCase
                 __DIR__.'/../../../resources/Pimcore/application.mk',
                 __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
-            ])],
+            ], ['.env'])],
             'analyze' => array_merge($mkdir, $this->paths()['analyze']),
             'build/dev' => $this->paths()['build: dev'],
             'build/prod' => $this->paths()['build: prod'],

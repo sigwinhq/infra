@@ -1,0 +1,12 @@
+/.infra/secrets/
+!/.infra/secrets/*dist
+/public/assets/
+/public/bundles/
+/public/var/
+/var/*
+!/var/config
+/var/config/system.yml
+/node_modules/
+/vendor/
+/.env
+/auth.json

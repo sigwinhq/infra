@@ -1,0 +1,7 @@
+/.lighthouseci/
+node_modules/
+/public/
+/var/
+/vendor/
+/auth.json
+/index.php
