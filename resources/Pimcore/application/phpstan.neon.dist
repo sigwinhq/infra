@@ -1,0 +1,19 @@
+includes:
+    - /tools/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-doctrine/extension.neon
+    - /tools/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-deprecation-rules/rules.neon
+    - /tools/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-strict-rules/rules.neon
+    - /tools/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-phpunit/extension.neon
+    - /tools/.composer/vendor-bin/phpstan/vendor/phpstan/phpstan-symfony/extension.neon
+parameters:
+    tmpDir: %currentWorkingDirectory%/var/phpqa/phpstan
+    level: max
+    paths:
+        - ./bin
+        - ./config
+        - ./public/index.php
+        - ./src
+        - ./templates
+    excludePaths:
+        - config/pimcore/classes/
+        - var/
+        - vendor/
