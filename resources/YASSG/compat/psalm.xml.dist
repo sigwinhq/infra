@@ -16,10 +16,9 @@
         <directory name="./"/>
         <ignoreFiles allowMissingFiles="true">
             <file name=".php-cs-fixer.dist.php"/>
-            <directory name="node_modules/"/>
-            <directory name="vendor/"/>
-            <directory name="var/"/>
             <directory name="public/"/>
+            <directory name="var/"/>
+            <directory name="vendor/"/>
         </ignoreFiles>
     </projectFiles>
 
