@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <psalm xmlns="https://getpsalm.org/schema/config"
        cacheDirectory="/tmp"
+       findUnusedBaselineEntry="true"
+       findUnusedCode="true"
        findUnusedPsalmSuppress="true"
        findUnusedVariablesAndParams="true">
     <projectFiles>
