@@ -9,6 +9,7 @@
             <file name=".php-cs-fixer.dist.php"/>
             <file name="resources/PHP/php-cs-fixer.php"/>
             <file name="resources/PHP/library/.php-cs-fixer.dist.php"/>
+            <file name="resources/Pimcore/library/.php-cs-fixer.dist.php"/>
             <directory name="vendor/"/>
             <directory name="var/"/>
         </ignoreFiles>
