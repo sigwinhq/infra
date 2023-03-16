@@ -42,7 +42,7 @@ stop: ## Stop app
 	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans
 
 sh/app: ## Run application shell
-	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml exec ${DOCKER_USER} app bash
+	VERSION=${VERSION} docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml exec ${DOCKER_USER} app sh
 
 clean: ## Clear logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*

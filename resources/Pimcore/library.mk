@@ -24,7 +24,7 @@ start/test: ## Start app in "test" mode
 stop: ## Stop app
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml down --remove-orphans
 sh/app: ## Run application shell
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app bash
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app sh
 setup/test: start/test .env ## Setup: create a functional test runtime
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:drop --if-exists --force
 	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create

@@ -88,10 +88,10 @@ trait PhpTrait
             ],
 
             'shell: app' => [
-                $this->generateDockerComposeAppExecExecutionPath('bash'),
+                $this->generateDockerComposeAppExecExecutionPath('sh'),
             ],
             'shell: app library' => [
-                $this->generateDockerComposeTestExecExecutionPath('bash'),
+                $this->generateDockerComposeTestExecExecutionPath('sh'),
             ],
             'shell: PHP' => [
                 $this->generatePhpqaExecutionPath('sh'),
