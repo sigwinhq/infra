@@ -22,7 +22,7 @@ use Symfony\Component\Filesystem\Filesystem;
  *
  * @coversNothing
  *
- * @small
+ * @medium
  */
 final class ApplicationTest extends MakefileTestCase
 {
