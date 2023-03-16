@@ -29,7 +29,8 @@ jobs:
                 with:
                     php-version: 8.2
                     extensions: mbstring, intl
-                    ini-values: post_max_size=256M, max_execution_time=180
+                    coverage: xdebug
+                    ini-values: post_max_size=256M, max_execution_time=180, xdebug.mode=develop
             -
                 name: Repo checkout
                 uses: actions/checkout@v3
