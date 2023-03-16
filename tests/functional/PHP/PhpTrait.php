@@ -146,12 +146,12 @@ trait PhpTrait
 
     private function generateDockerComposeAppExecutionPath(string $command, string $env = 'env'): string
     {
-        return sprintf('VERSION=latest docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.%2$s.yaml %1$s', $command, $env);
+        return sprintf('VERSION=latest docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.%2$s.yaml %1$s', $command, $env);
     }
 
     private function generateDockerComposeTestExecutionPath(string $command): string
     {
-        return sprintf('COMPOSE_PROJECT_NAME=infra docker-compose --file tests/runtime/docker-compose.yaml %1$s', $command);
+        return sprintf('COMPOSE_PROJECT_NAME=infra docker compose --file tests/runtime/docker-compose.yaml %1$s', $command);
     }
 
     private function generateDockerComposeAppExecExecutionPath(string $command, string $env = 'env'): string
