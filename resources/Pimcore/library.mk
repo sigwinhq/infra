@@ -20,18 +20,18 @@ test: test/unit test/functional ## Test the codebase
 
 ifneq ($(and $(COMPOSE_PROJECT_NAME),$(PIMCORE_KERNEL_CLASS)),)
 start/test: ## Start app in "test" mode
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml up --detach --remove-orphans --no-build
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml up --detach --remove-orphans --no-build
 stop: ## Stop app
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml down --remove-orphans
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml down --remove-orphans
 sh/app: ## Run application shell
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app bash
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app sh
 setup/test: start/test .env ## Setup: create a functional test runtime
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:drop --if-exists --force
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:drop --if-exists --force
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup
 test/behat:
-	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker-compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/behat --colors --strict
+	COMPOSE_PROJECT_NAME=${COMPOSE_PROJECT_NAME} docker compose --file ${TESTS_RUNTIME_ROOT}/docker-compose.yaml exec ${DOCKER_USER} --env PIMCORE_KERNEL_CLASS=${PIMCORE_KERNEL_CLASS} app vendor/bin/behat --colors --strict
 clean: ## Clear logs and system cache
 	rm -rf var/ tests/runtime/var
 .env:

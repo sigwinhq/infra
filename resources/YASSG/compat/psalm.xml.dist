@@ -5,6 +5,8 @@
        ensureArrayIntOffsetsExist="true"
        ensureArrayStringOffsetsExist="true"
        errorLevel="1"
+       findUnusedBaselineEntry="true"
+       findUnusedCode="true"
        findUnusedPsalmSuppress="true"
        findUnusedVariablesAndParams="true"
        limitMethodComplexity="true"
@@ -14,15 +16,14 @@
         <directory name="./"/>
         <ignoreFiles allowMissingFiles="true">
             <file name=".php-cs-fixer.dist.php"/>
-            <directory name="node_modules/"/>
-            <directory name="vendor/"/>
-            <directory name="var/"/>
             <directory name="public/"/>
+            <directory name="var/"/>
+            <directory name="vendor/"/>
         </ignoreFiles>
     </projectFiles>
 
     <plugins>
-        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
     </plugins>
 </psalm>

@@ -5,6 +5,8 @@
        ensureArrayIntOffsetsExist="true"
        ensureArrayStringOffsetsExist="true"
        errorLevel="1"
+       findUnusedBaselineEntry="true"
+       findUnusedCode="true"
        findUnusedPsalmSuppress="true"
        findUnusedVariablesAndParams="true"
        limitMethodComplexity="true"

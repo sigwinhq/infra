@@ -20,7 +20,7 @@ use Sigwin\Infra\Test\Functional\MakefileTestCase;
  *
  * @coversNothing
  *
- * @small
+ * @medium
  */
 final class DefaultTest extends MakefileTestCase
 {

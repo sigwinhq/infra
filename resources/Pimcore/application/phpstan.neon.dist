@@ -8,11 +8,7 @@ parameters:
     tmpDir: %currentWorkingDirectory%/var/phpqa/phpstan
     level: max
     paths:
-        - ./bin
-        - ./config
-        - ./public/index.php
-        - ./src
-        - ./templates
+        - ./
     excludePaths:
         - config/pimcore/classes/
         - var/

@@ -88,10 +88,10 @@ trait PhpTrait
             ],
 
             'shell: app' => [
-                $this->generateDockerComposeAppExecExecutionPath('bash'),
+                $this->generateDockerComposeAppExecExecutionPath('sh'),
             ],
             'shell: app library' => [
-                $this->generateDockerComposeTestExecExecutionPath('bash'),
+                $this->generateDockerComposeTestExecExecutionPath('sh'),
             ],
             'shell: PHP' => [
                 $this->generatePhpqaExecutionPath('sh'),
@@ -132,7 +132,7 @@ trait PhpTrait
         $phpVersion ??= 8.1;
 
         return $this->normalize(sprintf(
-            'docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.83.2-php%3$s-alpine %1$s',
+            'docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.85.2-php%3$s-alpine %1$s',
             sprintf($command, $phpVersion),
             $this->generateDockerComposeExecutionUser(),
             $phpVersion
@@ -146,12 +146,12 @@ trait PhpTrait
 
     private function generateDockerComposeAppExecutionPath(string $command, string $env = 'env'): string
     {
-        return sprintf('VERSION=latest docker-compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.%2$s.yaml %1$s', $command, $env);
+        return sprintf('VERSION=latest docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.%2$s.yaml %1$s', $command, $env);
     }
 
     private function generateDockerComposeTestExecutionPath(string $command): string
     {
-        return sprintf('COMPOSE_PROJECT_NAME=infra docker-compose --file tests/runtime/docker-compose.yaml %1$s', $command);
+        return sprintf('COMPOSE_PROJECT_NAME=infra docker compose --file tests/runtime/docker-compose.yaml %1$s', $command);
     }
 
     private function generateDockerComposeAppExecExecutionPath(string $command, string $env = 'env'): string

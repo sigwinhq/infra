@@ -21,7 +21,7 @@ use Sigwin\Infra\Test\Functional\PHP\PhpTrait;
  *
  * @coversNothing
  *
- * @small
+ * @medium
  */
 final class LibraryTest extends MakefileTestCase
 {
