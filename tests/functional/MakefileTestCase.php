@@ -22,7 +22,7 @@ use Symfony\Component\Process\Process;
  *
  * @internal
  *
- * @small
+ * @medium
  */
 abstract class MakefileTestCase extends TestCase
 {
