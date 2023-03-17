@@ -48,6 +48,8 @@ endif
 define dir_copy
 if [ -d "${1}" ]; then cp -a ${1}/. .; fi
 
+if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi
+
 endef
 
 define str_reverse
