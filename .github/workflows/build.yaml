@@ -29,8 +29,9 @@ jobs:
                     FOLDER_FILES=$(find resources/ -type f | sort)
                     git archive --output=archive.zip HEAD && ZIP_FILES=$(zipinfo -1 archive.zip | grep resources/ | grep -v /$ | sort) && rm -f archive.zip
                     DIFF=$(diff <(echo "$FOLDER_FILES") <(echo "$ZIP_FILES"))
-                    echo "$FOLDER_FILES"
-                    echo "$ZIP_FILES"
+                    echo here
+                    echo "$DIFF"
+                    echo there
     Test:
         runs-on: ${{ matrix.operating-system }}
         strategy:
