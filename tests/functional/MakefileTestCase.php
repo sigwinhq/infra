@@ -91,6 +91,7 @@ abstract class MakefileTestCase extends TestCase
     public function testMakefileHasInit(): void
     {
         $expected = array_map(static fn (string $path): string => sprintf('if [ -d "$ROOT/resources/%1$s" ]; then cp -a $ROOT/resources/%1$s/. .; fi', $path), $this->getExpectedInitPaths());
+        $expected = array_merge(...array_values(array_map(static fn ($value) => [$value, 'if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi'], $expected)));
         $actual = $this->dryRun($this->getMakefilePath(), 'init');
 
         static::assertSame($expected, $actual);
