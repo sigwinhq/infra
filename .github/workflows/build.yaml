@@ -28,10 +28,8 @@ jobs:
                 run: |
                     FOLDER_FILES=$(find resources/ -type f | sort)
                     git archive --output=archive.zip HEAD && ZIP_FILES=$(zipinfo -1 archive.zip | grep resources/ | grep -v /$ | sort) && rm -f archive.zip
-                    DIFF=$(diff <(echo "$FOLDER_FILES") <(echo "$ZIP_FILES"))
-                    echo here
-                    echo "$DIFF"
-                    echo there
+                    DIFF=$(diff <(echo "$FOLDER_FILES") <(echo "$ZIP_FILES") | tr -d '\n')
+                    [ -n "$DIFF" ] && echo "There are files missing from the zip archive:" && echo "$DIFF" && exit 1
     Test:
         runs-on: ${{ matrix.operating-system }}
         strategy:
