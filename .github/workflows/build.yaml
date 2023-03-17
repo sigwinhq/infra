@@ -17,6 +17,19 @@ jobs:
             -
                 name: Run code quality analysis
                 run: make analyze
+    TestArchive:
+        runs-on: ubuntu-latest
+        steps:
+            -
+                name: Repo checkout
+                uses: actions/checkout@v3
+            -
+                name: Compare resources/ folder against Git archive
+                run: |
+                    FOLDER_FILES=$(find resources/ -type f | sort)
+                    git archive --output=archive.zip HEAD && ZIP_FILES=$(zipinfo -1 archive.zip | grep resources/ | grep -v /$ | sort) && rm -f archive.zip
+                    DIFF=$(diff <(echo "$FOLDER_FILES") <(echo "$ZIP_FILES"))
+                    [ -n "$DIFF" ] && echo "There are files missing from the archive:" && echo "$DIFF" && exit 1
     Test:
         runs-on: ${{ matrix.operating-system }}
         strategy:
