@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.5/phpunit.xsd"
+         xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd"
          beStrictAboutChangesToGlobalState="true"
          beStrictAboutCoversAnnotation="true"
          beStrictAboutOutputDuringTests="true"
@@ -17,6 +17,11 @@
          failOnWarning="true"
          forceCoversAnnotation="true"
          verbose="true">
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+    </coverage>
     <testsuites>
         <testsuite name="Suite">
             <directory>./tests</directory>
