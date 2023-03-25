@@ -7,6 +7,11 @@ on:
 jobs:
     CodeQualityAnalysis:
         runs-on: ubuntu-latest
+        env:
+            PHP_VERSION: ${{ matrix.php }}
+        strategy:
+            matrix:
+                php: [ "8.1", "8.2" ]
         steps:
             -
                 name: Repo checkout
