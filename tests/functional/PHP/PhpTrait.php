@@ -132,7 +132,7 @@ trait PhpTrait
         $phpVersion ??= 8.2;
 
         return $this->normalize(sprintf(
-            'docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.86.0-php%3$s-alpine %1$s',
+            'docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.86.1-php%3$s-alpine %1$s',
             sprintf($command, $phpVersion),
             $this->generateDockerComposeExecutionUser(),
             $phpVersion
