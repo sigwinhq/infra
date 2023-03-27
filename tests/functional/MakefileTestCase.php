@@ -178,7 +178,7 @@ abstract class MakefileTestCase extends TestCase
         return $fixtures;
     }
 
-    private function getMakefilePath(): string
+    protected function getMakefilePath(): string
     {
         $path = str_replace([__NAMESPACE__.'\\', '\\'], ['', \DIRECTORY_SEPARATOR], static::class);
         $dir = pathinfo($path, \PATHINFO_DIRNAME);
@@ -191,7 +191,7 @@ abstract class MakefileTestCase extends TestCase
         return sprintf('resources%2$s%1$s%2$s%3$s.mk', $dir, \DIRECTORY_SEPARATOR, mb_strtolower($name));
     }
 
-    private function dryRun(
+    protected function dryRun(
         string $makefile,
         ?string $makeCommand = null,
         ?array $args = null,
@@ -202,7 +202,7 @@ abstract class MakefileTestCase extends TestCase
         return array_filter(explode("\n", $this->execute($makefile, $makeCommand, $args, $directory)));
     }
 
-    private function execute(
+    protected function execute(
         string $makefile,
         ?string $makeCommand = null,
         ?array $args = null,

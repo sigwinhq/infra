@@ -38,6 +38,13 @@ trait PhpTrait
                 $this->generateDockerBuildxExecutionPath('prod'),
             ],
 
+            'composer: install-lowest' => [
+                $this->generatePhpqaExecutionPath('composer upgrade --prefer-lowest'),
+            ],
+            'composer: install-highest' => [
+                $this->generatePhpqaExecutionPath('composer upgrade'),
+            ],
+
             'docker compose: start app dev' => [
                 $this->generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build', 'dev'),
             ],
