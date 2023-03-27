@@ -28,6 +28,23 @@ final class ApplicationTest extends MakefileTestCase
 {
     use PhpTrait;
 
+    public function testCanRunComposerInstall(): void
+    {
+        $filesystem = new Filesystem();
+        $filesystem->rename('composer.lock', 'composer.lock.old');
+
+        $mkdir = $this->paths()['mkdir: phpqa'];
+        $composer = $this->paths()['composer: install'];
+        $touch = $this->paths()['touch: composer.lock'];
+        $expected = array_merge($mkdir, $composer, $touch);
+
+        $actual = $this->dryRun($this->getMakefilePath(), 'composer/install');
+
+        $filesystem->rename('composer.lock.old', 'composer.lock');
+
+        static::assertSame($expected, $actual);
+    }
+
     protected function setUp(): void
     {
         $filesystem = new Filesystem();
