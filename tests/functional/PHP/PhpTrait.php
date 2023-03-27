@@ -38,6 +38,16 @@ trait PhpTrait
                 $this->generateDockerBuildxExecutionPath('prod'),
             ],
 
+            'composer: install' => [
+                $this->generatePhpqaExecutionPath('composer install --audit'),
+            ],
+            'composer: install-lowest' => [
+                $this->generatePhpqaExecutionPath('composer upgrade --prefer-lowest'),
+            ],
+            'composer: install-highest' => [
+                $this->generatePhpqaExecutionPath('composer upgrade'),
+            ],
+
             'docker compose: start app dev' => [
                 $this->generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build', 'dev'),
             ],
@@ -115,8 +125,11 @@ trait PhpTrait
                 'mkdir -p $HOME/.composer',
                 'mkdir -p var/phpqa',
             ],
-            'touch' => [
+            'touch: .env' => [
                 'touch .env',
+            ],
+            'touch: composer.lock' => [
+                'touch composer.lock',
             ],
             'clean: Pimcore application' => [
                 'rm -rf var/admin/* var/cache/* var/log/* var/tmp/*',

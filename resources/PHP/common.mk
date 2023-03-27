@@ -19,12 +19,13 @@ sh/php: | ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
 	${PHPQA_DOCKER_COMMAND} sh
 
 composer/install: composer.lock
-composer/install-highest: composer.lock
 composer.lock: | ${HOME}/.composer var/phpqa
 	${PHPQA_DOCKER_COMMAND} composer install --audit
 	touch composer.lock
 composer/install-lowest: ${HOME}/.composer var/phpqa
 	${PHPQA_DOCKER_COMMAND} composer upgrade --prefer-lowest
+composer/install-highest: ${HOME}/.composer var/phpqa
+	${PHPQA_DOCKER_COMMAND} composer upgrade
 
 composer/validate: | ${HOME}/.composer var/phpqa composer.lock
 	${PHPQA_DOCKER_COMMAND} composer validate --no-interaction

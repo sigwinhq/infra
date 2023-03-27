@@ -26,6 +26,26 @@ final class LibraryTest extends MakefileTestCase
 {
     use PhpTrait;
 
+    public function testCanRunComposerInstallLowest(): void
+    {
+        $mkdir = $this->paths()['mkdir: phpqa'];
+        $composer = $this->paths()['composer: install-lowest'];
+        $expected = array_merge($mkdir, $composer);
+        $actual = $this->dryRun($this->getMakefilePath(), 'composer/install-lowest');
+
+        static::assertSame($expected, $actual);
+    }
+
+    public function testCanRunComposerInstallHighest(): void
+    {
+        $mkdir = $this->paths()['mkdir: phpqa'];
+        $composer = $this->paths()['composer: install-highest'];
+        $expected = array_merge($mkdir, $composer);
+        $actual = $this->dryRun($this->getMakefilePath(), 'composer/install-highest');
+
+        static::assertSame($expected, $actual);
+    }
+
     protected function getExpectedInitPaths(): array
     {
         return [

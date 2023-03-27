@@ -3,7 +3,6 @@
   <file src="tests/functional/MakefileTestCase.php">
     <LessSpecificReturnType>
       <code>array</code>
-      <code>array</code>
     </LessSpecificReturnType>
     <MixedArgument>
       <code>$command</code>
@@ -44,6 +43,10 @@
   </file>
   <file src="tests/functional/PHP/LibraryTest.php">
     <MixedArgument>
+      <code>$composer</code>
+      <code>$composer</code>
+      <code>$mkdir</code>
+      <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$mkdir</code>
@@ -55,11 +58,19 @@
       <code><![CDATA[$this->paths()['shell: PHP']]]></code>
     </MixedArgument>
     <MixedAssignment>
+      <code>$composer</code>
+      <code>$composer</code>
+      <code>$mkdir</code>
+      <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$test</code>
     </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$this->paths()['analyze']]]></code>
+      <code><![CDATA[$this->paths()['composer: install-highest']]]></code>
+      <code><![CDATA[$this->paths()['composer: install-lowest']]]></code>
+      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
+      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
       <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
       <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
       <code><![CDATA[$this->paths()['shell: PHP']]]></code>
@@ -74,6 +85,8 @@
   <file src="tests/functional/Pimcore/ApplicationTest.php">
     <MixedArgument>
       <code>$clean</code>
+      <code>$composer</code>
+      <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$mkdir</code>
@@ -89,24 +102,30 @@
       <code><![CDATA[$this->paths()['permissions: Pimcore']]]></code>
       <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
       <code><![CDATA[$this->paths()['shell: PHP']]]></code>
+      <code>$touch</code>
     </MixedArgument>
     <MixedAssignment>
       <code>$clean</code>
+      <code>$composer</code>
+      <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$testFunctional</code>
       <code>$testUnit</code>
+      <code>$touch</code>
     </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$this->paths()['analyze']]]></code>
       <code><![CDATA[$this->paths()['build: dev']]]></code>
       <code><![CDATA[$this->paths()['build: prod']]]></code>
       <code><![CDATA[$this->paths()['clean: Pimcore application']]]></code>
+      <code><![CDATA[$this->paths()['composer: install']]]></code>
       <code><![CDATA[$this->paths()['docker compose: start app dev']]]></code>
       <code><![CDATA[$this->paths()['docker compose: start app prod']]]></code>
       <code><![CDATA[$this->paths()['docker compose: start app test']]]></code>
       <code><![CDATA[$this->paths()['docker compose: start app']]]></code>
       <code><![CDATA[$this->paths()['docker compose: stop Pimcore app']]]></code>
       <code><![CDATA[$this->paths()['mkdir: composer']]]></code>
+      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
       <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
       <code><![CDATA[$this->paths()['permissions: Pimcore']]]></code>
       <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
@@ -115,6 +134,7 @@
       <code><![CDATA[$this->paths()['shell: app']]]></code>
       <code><![CDATA[$this->paths()['test: functional app']]]></code>
       <code><![CDATA[$this->paths()['test: unit']]]></code>
+      <code><![CDATA[$this->paths()['touch: composer.lock']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="tests/functional/Pimcore/LibraryTest.php">
@@ -134,7 +154,7 @@
       <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
       <code><![CDATA[$this->paths()['setup: Pimcore library test']]]></code>
       <code><![CDATA[$this->paths()['shell: PHP']]]></code>
-      <code><![CDATA[$this->paths()['touch']]]></code>
+      <code><![CDATA[$this->paths()['touch: .env']]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code>$mkdir</code>
@@ -154,7 +174,7 @@
       <code><![CDATA[$this->paths()['shell: app library']]]></code>
       <code><![CDATA[$this->paths()['test: functional library']]]></code>
       <code><![CDATA[$this->paths()['test: unit']]]></code>
-      <code><![CDATA[$this->paths()['touch']]]></code>
+      <code><![CDATA[$this->paths()['touch: .env']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="tests/functional/YASSG/CompatTest.php">
