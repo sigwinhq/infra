@@ -61,6 +61,11 @@ parameters:
 			path: tests/functional/MakefileTestCase.php
 
 		-
+			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:testMakefileCommandsWork\\(\\) has parameter \\$env with no value type specified in iterable type array\\.$#"
+			count: 1
+			path: tests/functional/MakefileTestCase.php
+
+		-
 			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:testMakefileCommandsWork\\(\\) has parameter \\$expected with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/functional/MakefileTestCase.php

@@ -98,9 +98,9 @@ abstract class MakefileTestCase extends TestCase
     /**
      * @dataProvider provideHelpCommandsExecutionPathFixtures
      */
-    public function testMakefileCommandsWork(string $command, array $expected): void
+    public function testMakefileCommandsWork(string $command, array $expected, array $env): void
     {
-        $actual = $this->dryRun($command);
+        $actual = $this->dryRun($command, env: $env);
 
         static::assertSame($expected, $actual);
     }
@@ -173,7 +173,7 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
-     * @return iterable<array-key, array{string, list<string>}>
+     * @return iterable<array-key, array{string, list<string>, array<string, int|string>}>
      */
     public function provideHelpCommandsExecutionPathFixtures(): iterable
     {
@@ -187,7 +187,7 @@ abstract class MakefileTestCase extends TestCase
             }
 
             foreach ($expected as $command => $path) {
-                yield [$command, $path];
+                yield [$command, $path, $env];
             }
         }
     }

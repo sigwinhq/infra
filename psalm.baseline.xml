@@ -19,6 +19,7 @@
       <code><![CDATA[$this->helpOverride[$command] ?? $this->help[$command] ?? '']]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
+      <code>$env</code>
       <code>$files</code>
       <code>$files</code>
       <code><![CDATA[function (string $item, int $index): string {
@@ -35,7 +36,7 @@
       <code>$path</code>
     </MixedAssignment>
     <MoreSpecificReturnType>
-      <code><![CDATA[iterable<array-key, array{string, list<string>}>]]></code>
+      <code><![CDATA[iterable<array-key, array{string, list<string>, array<string, int|string>}>]]></code>
     </MoreSpecificReturnType>
   </file>
   <file src="tests/functional/PHP/LibraryTest.php">
@@ -75,12 +76,12 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="tests/functional/PHP/PhpTrait.php">
+    <LessSpecificImplementedReturnType>
+      <code>iterable</code>
+    </LessSpecificImplementedReturnType>
     <LessSpecificReturnType>
       <code>array</code>
     </LessSpecificReturnType>
-    <UnusedParam>
-      <code>$env</code>
-    </UnusedParam>
   </file>
   <file src="tests/functional/Pimcore/ApplicationTest.php">
     <MixedArgument>

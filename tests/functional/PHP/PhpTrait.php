@@ -15,23 +15,32 @@ namespace Sigwin\Infra\Test\Functional\PHP;
 
 trait PhpTrait
 {
+    protected function getEnvs(): iterable
+    {
+        yield ['PHP_VERSION' => '8.0'];
+        yield ['PHP_VERSION' => '8.1'];
+        yield ['PHP_VERSION' => '8.2'];
+    }
+
     /**
      * @param null|array<string, int|string> $env
      */
     private function paths(?array $env): array
     {
+        $phpVersion = (string) ($env['PHP_VERSION'] ?? '8.2');
+
         return [
             'analyze' => [
-                $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run'),
-                $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run'),
-                $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-                $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist'),
+                $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run', phpVersion: $phpVersion),
+                $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run', phpVersion: $phpVersion),
+                $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion),
+                $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion),
             ],
             'prepareAndAnalyze' => [
-                $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock'),
-                $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv'),
-                $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist'),
-                $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist'),
+                $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock', phpVersion: $phpVersion),
+                $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv', phpVersion: $phpVersion),
+                $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion),
+                $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion),
             ],
 
             'build: dev' => [
@@ -42,13 +51,13 @@ trait PhpTrait
             ],
 
             'composer: install' => [
-                $this->generatePhpqaExecutionPath('composer install --audit'),
+                $this->generatePhpqaExecutionPath('composer install --audit', phpVersion: $phpVersion),
             ],
             'composer: install-lowest' => [
-                $this->generatePhpqaExecutionPath('composer upgrade --prefer-lowest'),
+                $this->generatePhpqaExecutionPath('composer upgrade --prefer-lowest', phpVersion: $phpVersion),
             ],
             'composer: install-highest' => [
-                $this->generatePhpqaExecutionPath('composer upgrade'),
+                $this->generatePhpqaExecutionPath('composer upgrade', phpVersion: $phpVersion),
             ],
 
             'docker compose: start app dev' => [
@@ -107,12 +116,12 @@ trait PhpTrait
                 $this->generateDockerComposeTestExecExecutionPath('sh'),
             ],
             'shell: PHP' => [
-                $this->generatePhpqaExecutionPath('sh'),
+                $this->generatePhpqaExecutionPath('sh', phpVersion: $phpVersion),
             ],
 
             'test: unit' => [
-                $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/'),
-                $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max'),
+                $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/', phpVersion: $phpVersion),
+                $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion),
             ],
             'test: functional app' => [
                 $this->generateDockerComposeAppExecExecutionPath('vendor/bin/behat --colors --strict', 'test'),
@@ -143,10 +152,8 @@ trait PhpTrait
         ];
     }
 
-    private function generatePhpqaExecutionPath(string $command, ?float $phpVersion = null): string
+    private function generatePhpqaExecutionPath(string $command, string $phpVersion): string
     {
-        $phpVersion ??= 8.2;
-
         return $this->normalize(sprintf(
             'docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project jakzal/phpqa:1.86.1-php%3$s-alpine %1$s',
             sprintf($command, $phpVersion),

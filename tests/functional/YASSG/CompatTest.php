@@ -97,7 +97,7 @@ final class CompatTest extends MakefileTestCase
         $this->testMakefileCommandsWork('dev/assets', [
             'npm install',
             'node_modules/.bin/encore dev-server',
-        ]);
+        ], []);
     }
 
     public function testDevServerWorks(): void
@@ -105,7 +105,7 @@ final class CompatTest extends MakefileTestCase
         $this->testMakefileCommandsWork('dev/server', [
             'ln -s vendor/sigwin/yassg/web/index.php',
             'symfony server:start --no-tls --document-root=. --port=9988',
-        ]);
+        ], []);
     }
 
     private function generateDockerBackstopExecutionPath(string $command): string
