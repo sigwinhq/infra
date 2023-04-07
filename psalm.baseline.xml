@@ -36,7 +36,7 @@
       <code>$path</code>
     </MixedAssignment>
     <MoreSpecificReturnType>
-      <code><![CDATA[iterable<array-key, array{string, list<string>, array<string, int|string>}>]]></code>
+      <code><![CDATA[iterable<array-key, array{string, list<string>, array<string, string>}>]]></code>
     </MoreSpecificReturnType>
   </file>
   <file src="tests/functional/PHP/LibraryTest.php">

@@ -53,7 +53,7 @@ abstract class MakefileTestCase extends TestCase
     protected array $helpOverride = [];
 
     /**
-     * @param null|array<string, int|string> $env
+     * @param null|array<string, string> $env
      */
     abstract protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array;
 
@@ -106,7 +106,7 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
-     * @return iterable<array<string, int|string>>
+     * @return iterable<array<string, string>>
      */
     protected function getEnvs(): iterable
     {
@@ -173,7 +173,7 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
-     * @return iterable<array-key, array{string, list<string>, array<string, int|string>}>
+     * @return iterable<array-key, array{string, list<string>, array<string, string>}>
      */
     public function provideHelpCommandsExecutionPathFixtures(): iterable
     {
