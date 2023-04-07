@@ -82,8 +82,8 @@ abstract class MakefileTestCase extends TestCase
 
     public function testHelpIsTheDefaultCommand(): void
     {
-        $expected = $this->dryRun($this->getMakefilePath(), 'help');
-        $actual = $this->dryRun($this->getMakefilePath());
+        $expected = $this->dryRun('help');
+        $actual = $this->dryRun();
 
         static::assertSame($expected, $actual);
     }
@@ -92,7 +92,7 @@ abstract class MakefileTestCase extends TestCase
     {
         $expected = array_map(static fn (string $path): string => sprintf('if [ -d "$ROOT/resources/%1$s" ]; then cp -a $ROOT/resources/%1$s/. .; fi', $path), $this->getExpectedInitPaths());
         $expected = array_merge(...array_values(array_map(static fn ($value) => [$value, 'if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi'], $expected)));
-        $actual = $this->dryRun($this->getMakefilePath(), 'init');
+        $actual = $this->dryRun('init');
 
         static::assertSame($expected, $actual);
     }
@@ -102,7 +102,7 @@ abstract class MakefileTestCase extends TestCase
      */
     public function testMakefileCommandsWork(string $command, array $expected): void
     {
-        $actual = $this->dryRun($this->getMakefilePath(), $command);
+        $actual = $this->dryRun($command);
 
         static::assertSame($expected, $actual);
     }
@@ -192,35 +192,35 @@ abstract class MakefileTestCase extends TestCase
     }
 
     protected function dryRun(
-        string $makefile,
         ?string $makeCommand = null,
         ?array $args = null,
+        ?string $makefile = null,
         string $directory = __DIR__.'/../..'
     ): array {
         $args[] = '--dry-run';
 
-        return array_filter(explode("\n", $this->execute($makefile, $makeCommand, $args, $directory)));
+        return array_filter(explode("\n", $this->execute($makeCommand, $args, $makefile, $directory)));
     }
 
     protected function execute(
-        string $makefile,
-        ?string $makeCommand = null,
+        ?string $command = null,
         ?array $args = null,
+        ?string $makefile = null,
         string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..'
     ): string {
-        $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile);
-        $command = ['make', '-f', $this->getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
+        $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile ?? $this->getMakefilePath());
+        $fullCommand = ['make', '-f', $this->getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
         if ($args !== null) {
-            array_push($command, ...$args);
+            array_push($fullCommand, ...$args);
         }
-        if ($makeCommand !== null) {
-            $command[] = $makeCommand;
+        if ($command !== null) {
+            $fullCommand[] = $command;
         }
 
         /** @var string $directory */
         $directory = realpath($directory);
         $process = new Process(
-            $command,
+            $fullCommand,
             $directory,
             [
                 'HOME' => '/home/user',
@@ -254,7 +254,7 @@ abstract class MakefileTestCase extends TestCase
 
     private function getMakefileHelp(): string
     {
-        return $this->execute($this->getMakefilePath(), 'help');
+        return $this->execute('help');
     }
 
     private function getMakefileHelpCommands(): array

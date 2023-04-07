@@ -31,7 +31,7 @@ final class LibraryTest extends MakefileTestCase
         $mkdir = $this->paths()['mkdir: phpqa'];
         $composer = $this->paths()['composer: install-lowest'];
         $expected = array_merge($mkdir, $composer);
-        $actual = $this->dryRun($this->getMakefilePath(), 'composer/install-lowest');
+        $actual = $this->dryRun('composer/install-lowest');
 
         static::assertSame($expected, $actual);
     }
@@ -41,7 +41,7 @@ final class LibraryTest extends MakefileTestCase
         $mkdir = $this->paths()['mkdir: phpqa'];
         $composer = $this->paths()['composer: install-highest'];
         $expected = array_merge($mkdir, $composer);
-        $actual = $this->dryRun($this->getMakefilePath(), 'composer/install-highest');
+        $actual = $this->dryRun('composer/install-highest');
 
         static::assertSame($expected, $actual);
     }

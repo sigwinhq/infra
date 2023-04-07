@@ -38,7 +38,7 @@ final class ApplicationTest extends MakefileTestCase
         $touch = $this->paths()['touch: composer.lock'];
         $expected = array_merge($mkdir, $composer, $touch);
 
-        $actual = $this->dryRun($this->getMakefilePath(), 'composer/install');
+        $actual = $this->dryRun('composer/install');
 
         $filesystem->rename('composer.lock.old', 'composer.lock');
 
