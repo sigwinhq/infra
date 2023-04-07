@@ -52,14 +52,12 @@ abstract class MakefileTestCase extends TestCase
 
     protected array $helpOverride = [];
 
-    abstract protected function getExpectedHelpCommandsExecutionPath(): array;
+    /**
+     * @param null|array<string, string> $env
+     */
+    abstract protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array;
 
     abstract protected function getExpectedInitPaths(): array;
-
-    protected function getExpectedHelp(): string
-    {
-        return $this->generateHelpList(array_keys($this->getExpectedHelpCommandsExecutionPath()));
-    }
 
     public function testMakefileExists(): void
     {
@@ -82,8 +80,8 @@ abstract class MakefileTestCase extends TestCase
 
     public function testHelpIsTheDefaultCommand(): void
     {
-        $expected = $this->dryRun($this->getMakefilePath(), 'help');
-        $actual = $this->dryRun($this->getMakefilePath());
+        $expected = $this->dryRun('help');
+        $actual = $this->dryRun();
 
         static::assertSame($expected, $actual);
     }
@@ -92,19 +90,32 @@ abstract class MakefileTestCase extends TestCase
     {
         $expected = array_map(static fn (string $path): string => sprintf('if [ -d "$ROOT/resources/%1$s" ]; then cp -a $ROOT/resources/%1$s/. .; fi', $path), $this->getExpectedInitPaths());
         $expected = array_merge(...array_values(array_map(static fn ($value) => [$value, 'if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi'], $expected)));
-        $actual = $this->dryRun($this->getMakefilePath(), 'init');
+        $actual = $this->dryRun('init');
 
         static::assertSame($expected, $actual);
     }
 
     /**
-     * @dataProvider generateHelpCommandsExecutionPathFixtures
+     * @dataProvider provideHelpCommandsExecutionPathFixtures
      */
-    public function testMakefileCommandsWork(string $command, array $expected): void
+    public function testMakefileCommandsWork(string $command, array $expected, array $env): void
     {
-        $actual = $this->dryRun($this->getMakefilePath(), $command);
+        $actual = $this->dryRun($command, env: $env);
 
         static::assertSame($expected, $actual);
+    }
+
+    /**
+     * @return iterable<array<string, string>>
+     */
+    protected function getEnvs(): iterable
+    {
+        yield [];
+    }
+
+    protected function getExpectedHelp(): string
+    {
+        return $this->generateHelpList(array_keys($this->getExpectedHelpCommandsExecutionPath([])));
     }
 
     protected function generateHelpList(array $commands): string
@@ -161,21 +172,24 @@ abstract class MakefileTestCase extends TestCase
         return $commands;
     }
 
-    public function generateHelpCommandsExecutionPathFixtures(): array
+    /**
+     * @return iterable<array-key, array{string, list<string>, array<string, string>}>
+     */
+    public function provideHelpCommandsExecutionPathFixtures(): iterable
     {
-        $expected = $this->getExpectedHelpCommandsExecutionPath();
-
         $commands = $this->getMakefileHelpCommands();
-        foreach ($commands as $command) {
-            static::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
-        }
 
-        $fixtures = [];
-        foreach ($expected as $command => $path) {
-            $fixtures[] = [$command, $path];
-        }
+        $envs = $this->getEnvs();
+        foreach ($envs as $env) {
+            $expected = $this->getExpectedHelpCommandsExecutionPath($env);
+            foreach ($commands as $command) {
+                static::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
+            }
 
-        return $fixtures;
+            foreach ($expected as $command => $path) {
+                yield [$command, $path, $env];
+            }
+        }
     }
 
     protected function getMakefilePath(): string
@@ -191,43 +205,50 @@ abstract class MakefileTestCase extends TestCase
         return sprintf('resources%2$s%1$s%2$s%3$s.mk', $dir, \DIRECTORY_SEPARATOR, mb_strtolower($name));
     }
 
+    /**
+     * @param null|array<string, int|string> $env
+     */
     protected function dryRun(
-        string $makefile,
         ?string $makeCommand = null,
         ?array $args = null,
+        ?array $env = null,
+        ?string $makefile = null,
         string $directory = __DIR__.'/../..'
     ): array {
         $args[] = '--dry-run';
 
-        return array_filter(explode("\n", $this->execute($makefile, $makeCommand, $args, $directory)));
+        return array_filter(explode("\n", $this->execute($makeCommand, $args, $env, $makefile, $directory)));
     }
 
+    /**
+     * @param null|array<string, int|string> $env
+     */
     protected function execute(
-        string $makefile,
-        ?string $makeCommand = null,
+        ?string $command = null,
         ?array $args = null,
+        ?array $env = null,
+        ?string $makefile = null,
         string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..'
     ): string {
-        $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile);
-        $command = ['make', '-f', $this->getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
+        $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile ?? $this->getMakefilePath());
+        $fullCommand = ['make', '-f', $this->getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
         if ($args !== null) {
-            array_push($command, ...$args);
+            array_push($fullCommand, ...$args);
         }
-        if ($makeCommand !== null) {
-            $command[] = $makeCommand;
+        if ($command !== null) {
+            $fullCommand[] = $command;
         }
 
         /** @var string $directory */
         $directory = realpath($directory);
         $process = new Process(
-            $command,
+            $fullCommand,
             $directory,
-            [
+            array_replace([
                 'HOME' => '/home/user',
                 'SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources',
 
                 // streamline these to ensure consistent runtime environment
-                // TODO: allow passing these
                 'RUNNER' => '999',
                 'APP_ENV' => 'env',
                 'APP_ROOT' => $this->getRoot(),
@@ -235,7 +256,7 @@ abstract class MakefileTestCase extends TestCase
                 'GITHUB_ACTIONS' => '',
                 'COMPOSE_PROJECT_NAME' => 'infra',
                 'PIMCORE_KERNEL_CLASS' => 'App\\Kernel',
-            ],
+            ], $env ?? []),
         );
 
         $filesystem = new Filesystem();
@@ -254,9 +275,12 @@ abstract class MakefileTestCase extends TestCase
 
     private function getMakefileHelp(): string
     {
-        return $this->execute($this->getMakefilePath(), 'help');
+        return $this->execute('help');
     }
 
+    /**
+     * @return list<string>
+     */
     private function getMakefileHelpCommands(): array
     {
         $help = explode("\n", trim($this->stripColoring($this->getMakefileHelp())));

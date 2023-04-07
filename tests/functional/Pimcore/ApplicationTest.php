@@ -33,12 +33,14 @@ final class ApplicationTest extends MakefileTestCase
         $filesystem = new Filesystem();
         $filesystem->rename('composer.lock', 'composer.lock.old');
 
-        $mkdir = $this->paths()['mkdir: phpqa'];
-        $composer = $this->paths()['composer: install'];
-        $touch = $this->paths()['touch: composer.lock'];
+        $paths = $this->paths(null);
+
+        $mkdir = $paths['mkdir: phpqa'];
+        $composer = $paths['composer: install'];
+        $touch = $paths['touch: composer.lock'];
         $expected = array_merge($mkdir, $composer, $touch);
 
-        $actual = $this->dryRun($this->getMakefilePath(), 'composer/install');
+        $actual = $this->dryRun('composer/install');
 
         $filesystem->rename('composer.lock.old', 'composer.lock');
 
@@ -93,12 +95,14 @@ final class ApplicationTest extends MakefileTestCase
         ];
     }
 
-    protected function getExpectedHelpCommandsExecutionPath(): array
+    protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        $mkdir = $this->paths()['mkdir: phpqa'];
-        $clean = $this->paths()['clean: Pimcore application'];
-        $testUnit = $this->paths()['test: unit'];
-        $testFunctional = $this->paths()['test: functional app'];
+        $paths = $this->paths($env);
+
+        $mkdir = $paths['mkdir: phpqa'];
+        $clean = $paths['clean: Pimcore application'];
+        $testUnit = $paths['test: unit'];
+        $testFunctional = $paths['test: functional app'];
 
         return [
             'help' => [$this->generateHelpExecutionPath([
@@ -106,20 +110,20 @@ final class ApplicationTest extends MakefileTestCase
                 __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ], ['.env'])],
-            'analyze' => array_merge($mkdir, $this->paths()['analyze']),
-            'build/dev' => $this->paths()['build: dev'],
-            'build/prod' => $this->paths()['build: prod'],
+            'analyze' => array_merge($mkdir, $paths['analyze']),
+            'build/dev' => $paths['build: dev'],
+            'build/prod' => $paths['build: prod'],
             'clean' => $clean,
-            'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $testUnit, $testFunctional),
-            'setup/filesystem' => array_merge($this->paths()['mkdir: composer'], $clean, $this->paths()['permissions: Pimcore']),
-            'setup/test' => $this->paths()['setup: Pimcore app test'],
-            'sh/app' => $this->paths()['shell: app'],
-            'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
-            'start' => $this->paths()['docker compose: start app'],
-            'start/dev' => $this->paths()['docker compose: start app dev'],
-            'start/prod' => $this->paths()['docker compose: start app prod'],
-            'start/test' => $this->paths()['docker compose: start app test'],
-            'stop' => $this->paths()['docker compose: stop Pimcore app'],
+            'dist' => array_merge($mkdir, $paths['prepareAndAnalyze'], $testUnit, $testFunctional),
+            'setup/filesystem' => array_merge($paths['mkdir: composer'], $clean, $paths['permissions: Pimcore']),
+            'setup/test' => $paths['setup: Pimcore app test'],
+            'sh/app' => $paths['shell: app'],
+            'sh/php' => array_merge($mkdir, $paths['shell: PHP']),
+            'start' => $paths['docker compose: start app'],
+            'start/dev' => $paths['docker compose: start app dev'],
+            'start/prod' => $paths['docker compose: start app prod'],
+            'start/test' => $paths['docker compose: start app test'],
+            'stop' => $paths['docker compose: stop Pimcore app'],
             'test' => array_merge($mkdir, $testUnit, $testFunctional),
             'test/functional' => $testFunctional,
             'test/unit' => array_merge($mkdir, $testUnit),

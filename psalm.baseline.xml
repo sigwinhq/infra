@@ -2,11 +2,9 @@
 <files psalm-version="5.8.0@9cf4f60a333f779ad3bc704a555920e81d4fdcda">
   <file src="tests/functional/MakefileTestCase.php">
     <LessSpecificReturnType>
-      <code>array</code>
+      <code><![CDATA[list<string>]]></code>
     </LessSpecificReturnType>
     <MixedArgument>
-      <code>$command</code>
-      <code>$command</code>
       <code>$command</code>
       <code>$dir</code>
       <code>$dir</code>
@@ -21,6 +19,7 @@
       <code><![CDATA[$this->helpOverride[$command] ?? $this->help[$command] ?? '']]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
+      <code>$env</code>
       <code>$files</code>
       <code>$files</code>
       <code><![CDATA[function (string $item, int $index): string {
@@ -33,13 +32,12 @@
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code>$command</code>
-      <code>$command</code>
       <code>$dir</code>
       <code>$path</code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code>array</code>
-    </MixedInferredReturnType>
+    <MoreSpecificReturnType>
+      <code><![CDATA[iterable<array-key, array{string, list<string>, array<string, string>}>]]></code>
+    </MoreSpecificReturnType>
   </file>
   <file src="tests/functional/PHP/LibraryTest.php">
     <MixedArgument>
@@ -51,11 +49,11 @@
       <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$mkdir</code>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
       <code>$test</code>
       <code>$test</code>
-      <code><![CDATA[$this->paths()['analyze']]]></code>
-      <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$this->paths()['shell: PHP']]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code>$composer</code>
@@ -66,18 +64,21 @@
       <code>$test</code>
     </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
-      <code><![CDATA[$this->paths()['analyze']]]></code>
-      <code><![CDATA[$this->paths()['composer: install-highest']]]></code>
-      <code><![CDATA[$this->paths()['composer: install-lowest']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
-      <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$this->paths()['shell: PHP']]]></code>
-      <code><![CDATA[$this->paths()['test: unit']]]></code>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['composer: install-highest']]]></code>
+      <code><![CDATA[$paths['composer: install-lowest']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
+      <code><![CDATA[$paths['test: unit']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="tests/functional/PHP/PhpTrait.php">
+    <LessSpecificImplementedReturnType>
+      <code>iterable</code>
+    </LessSpecificImplementedReturnType>
     <LessSpecificReturnType>
       <code>array</code>
     </LessSpecificReturnType>
@@ -92,16 +93,16 @@
       <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$mkdir</code>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['mkdir: composer']]]></code>
+      <code><![CDATA[$paths['permissions: Pimcore']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
       <code>$testFunctional</code>
       <code>$testFunctional</code>
       <code>$testUnit</code>
       <code>$testUnit</code>
       <code>$testUnit</code>
-      <code><![CDATA[$this->paths()['analyze']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: composer']]]></code>
-      <code><![CDATA[$this->paths()['permissions: Pimcore']]]></code>
-      <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$this->paths()['shell: PHP']]]></code>
       <code>$touch</code>
     </MixedArgument>
     <MixedAssignment>
@@ -114,27 +115,27 @@
       <code>$touch</code>
     </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
-      <code><![CDATA[$this->paths()['analyze']]]></code>
-      <code><![CDATA[$this->paths()['build: dev']]]></code>
-      <code><![CDATA[$this->paths()['build: prod']]]></code>
-      <code><![CDATA[$this->paths()['clean: Pimcore application']]]></code>
-      <code><![CDATA[$this->paths()['composer: install']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: start app dev']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: start app prod']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: start app test']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: start app']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: stop Pimcore app']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: composer']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
-      <code><![CDATA[$this->paths()['permissions: Pimcore']]]></code>
-      <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$this->paths()['setup: Pimcore app test']]]></code>
-      <code><![CDATA[$this->paths()['shell: PHP']]]></code>
-      <code><![CDATA[$this->paths()['shell: app']]]></code>
-      <code><![CDATA[$this->paths()['test: functional app']]]></code>
-      <code><![CDATA[$this->paths()['test: unit']]]></code>
-      <code><![CDATA[$this->paths()['touch: composer.lock']]]></code>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['build: dev']]]></code>
+      <code><![CDATA[$paths['build: prod']]]></code>
+      <code><![CDATA[$paths['clean: Pimcore application']]]></code>
+      <code><![CDATA[$paths['composer: install']]]></code>
+      <code><![CDATA[$paths['docker compose: start app dev']]]></code>
+      <code><![CDATA[$paths['docker compose: start app prod']]]></code>
+      <code><![CDATA[$paths['docker compose: start app test']]]></code>
+      <code><![CDATA[$paths['docker compose: start app']]]></code>
+      <code><![CDATA[$paths['docker compose: stop Pimcore app']]]></code>
+      <code><![CDATA[$paths['mkdir: composer']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['permissions: Pimcore']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['setup: Pimcore app test']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
+      <code><![CDATA[$paths['shell: app']]]></code>
+      <code><![CDATA[$paths['test: functional app']]]></code>
+      <code><![CDATA[$paths['test: unit']]]></code>
+      <code><![CDATA[$paths['touch: composer.lock']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="tests/functional/Pimcore/LibraryTest.php">
@@ -144,17 +145,17 @@
       <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$mkdir</code>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['docker compose: start library test']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['setup: Pimcore library test']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
+      <code><![CDATA[$paths['touch: .env']]]></code>
       <code>$testFunctional</code>
       <code>$testFunctional</code>
       <code>$testUnit</code>
       <code>$testUnit</code>
       <code>$testUnit</code>
-      <code><![CDATA[$this->paths()['analyze']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: start library test']]]></code>
-      <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$this->paths()['setup: Pimcore library test']]]></code>
-      <code><![CDATA[$this->paths()['shell: PHP']]]></code>
-      <code><![CDATA[$this->paths()['touch: .env']]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code>$mkdir</code>
@@ -162,19 +163,19 @@
       <code>$testUnit</code>
     </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
-      <code><![CDATA[$this->paths()['analyze']]]></code>
-      <code><![CDATA[$this->paths()['clean: library']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: start library test']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: start library test']]]></code>
-      <code><![CDATA[$this->paths()['docker compose: stop Pimcore library']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
-      <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$this->paths()['setup: Pimcore library test']]]></code>
-      <code><![CDATA[$this->paths()['shell: PHP']]]></code>
-      <code><![CDATA[$this->paths()['shell: app library']]]></code>
-      <code><![CDATA[$this->paths()['test: functional library']]]></code>
-      <code><![CDATA[$this->paths()['test: unit']]]></code>
-      <code><![CDATA[$this->paths()['touch: .env']]]></code>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['clean: library']]]></code>
+      <code><![CDATA[$paths['docker compose: start library test']]]></code>
+      <code><![CDATA[$paths['docker compose: start library test']]]></code>
+      <code><![CDATA[$paths['docker compose: stop Pimcore library']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['setup: Pimcore library test']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
+      <code><![CDATA[$paths['shell: app library']]]></code>
+      <code><![CDATA[$paths['test: functional library']]]></code>
+      <code><![CDATA[$paths['test: unit']]]></code>
+      <code><![CDATA[$paths['touch: .env']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="tests/functional/YASSG/CompatTest.php">
@@ -182,18 +183,18 @@
       <code>$mkdir</code>
       <code>$mkdir</code>
       <code>$mkdir</code>
-      <code><![CDATA[$this->paths()['analyze']]]></code>
-      <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$this->paths()['shell: PHP']]]></code>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
     </MixedArgument>
     <MixedAssignment>
       <code>$mkdir</code>
     </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
-      <code><![CDATA[$this->paths()['analyze']]]></code>
-      <code><![CDATA[$this->paths()['mkdir: phpqa']]]></code>
-      <code><![CDATA[$this->paths()['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$this->paths()['shell: PHP']]]></code>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
 </files>

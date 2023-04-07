@@ -32,7 +32,7 @@ final class DefaultTest extends MakefileTestCase
         ];
     }
 
-    protected function getExpectedHelpCommandsExecutionPath(): array
+    protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
         return [
             'help' => [

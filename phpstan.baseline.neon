@@ -26,11 +26,6 @@ parameters:
 			path: tests/functional/MakefileTestCase.php
 
 		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:generateHelpCommandsExecutionPathFixtures\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/MakefileTestCase.php
-
-		-
 			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:generateHelpExecutionPath\\(\\) has parameter \\$additionalFiles with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/functional/MakefileTestCase.php
@@ -66,7 +61,7 @@ parameters:
 			path: tests/functional/MakefileTestCase.php
 
 		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:getMakefileHelpCommands\\(\\) return type has no value type specified in iterable type array\\.$#"
+			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:testMakefileCommandsWork\\(\\) has parameter \\$env with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/functional/MakefileTestCase.php
 
