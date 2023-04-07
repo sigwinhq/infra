@@ -46,7 +46,9 @@ final class CompatTest extends MakefileTestCase
 
     protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        $mkdir = $this->paths()['mkdir: phpqa'];
+        $paths = $this->paths($env);
+
+        $mkdir = $paths['mkdir: phpqa'];
 
         $lighthouse = [
             $this->generateDockerLighthouseExecutionPath('npx lhci autorun --config=lighthouse.config.json'),
@@ -78,11 +80,11 @@ final class CompatTest extends MakefileTestCase
                 __DIR__.'/../../../resources/Lighthouse/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
-            'analyze' => array_merge($mkdir, $this->paths()['analyze']),
+            'analyze' => array_merge($mkdir, $paths['analyze']),
             'analyze/lighthouse' => $lighthouse,
             'build' => $build,
-            'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $test),
-            'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
+            'dist' => array_merge($mkdir, $paths['prepareAndAnalyze'], $test),
+            'sh/php' => array_merge($mkdir, $paths['shell: PHP']),
             'start' => $start,
             'start/dev' => $start,
             'test' => $test,

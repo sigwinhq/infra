@@ -15,7 +15,10 @@ namespace Sigwin\Infra\Test\Functional\PHP;
 
 trait PhpTrait
 {
-    private function paths(): array
+    /**
+     * @param null|array<string, int|string> $env
+     */
+    private function paths(?array $env): array
     {
         return [
             'analyze' => [

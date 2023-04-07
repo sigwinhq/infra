@@ -28,8 +28,10 @@ final class LibraryTest extends MakefileTestCase
 
     public function testCanRunComposerInstallLowest(): void
     {
-        $mkdir = $this->paths()['mkdir: phpqa'];
-        $composer = $this->paths()['composer: install-lowest'];
+        $paths = $this->paths(null);
+
+        $mkdir = $paths['mkdir: phpqa'];
+        $composer = $paths['composer: install-lowest'];
         $expected = array_merge($mkdir, $composer);
         $actual = $this->dryRun('composer/install-lowest');
 
@@ -38,8 +40,10 @@ final class LibraryTest extends MakefileTestCase
 
     public function testCanRunComposerInstallHighest(): void
     {
-        $mkdir = $this->paths()['mkdir: phpqa'];
-        $composer = $this->paths()['composer: install-highest'];
+        $paths = $this->paths(null);
+
+        $mkdir = $paths['mkdir: phpqa'];
+        $composer = $paths['composer: install-highest'];
         $expected = array_merge($mkdir, $composer);
         $actual = $this->dryRun('composer/install-highest');
 
@@ -58,17 +62,19 @@ final class LibraryTest extends MakefileTestCase
 
     protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        $mkdir = $this->paths()['mkdir: phpqa'];
-        $test = $this->paths()['test: unit'];
+        $paths = $this->paths($env);
+
+        $mkdir = $paths['mkdir: phpqa'];
+        $test = $paths['test: unit'];
 
         return [
             'help' => [$this->generateHelpExecutionPath([
                 __DIR__.'/../../../resources/PHP/library.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
-            'analyze' => array_merge($mkdir, $this->paths()['analyze']),
-            'dist' => array_merge($mkdir, $this->paths()['prepareAndAnalyze'], $test),
-            'sh/php' => array_merge($mkdir, $this->paths()['shell: PHP']),
+            'analyze' => array_merge($mkdir, $paths['analyze']),
+            'dist' => array_merge($mkdir, $paths['prepareAndAnalyze'], $test),
+            'sh/php' => array_merge($mkdir, $paths['shell: PHP']),
             'test' => array_merge($mkdir, $test),
         ];
     }
