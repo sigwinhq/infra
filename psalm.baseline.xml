@@ -2,11 +2,9 @@
 <files psalm-version="5.8.0@9cf4f60a333f779ad3bc704a555920e81d4fdcda">
   <file src="tests/functional/MakefileTestCase.php">
     <LessSpecificReturnType>
-      <code>array</code>
+      <code><![CDATA[list<string>]]></code>
     </LessSpecificReturnType>
     <MixedArgument>
-      <code>$command</code>
-      <code>$command</code>
       <code>$command</code>
       <code>$dir</code>
       <code>$dir</code>
@@ -33,13 +31,12 @@
     </MixedArgumentTypeCoercion>
     <MixedAssignment>
       <code>$command</code>
-      <code>$command</code>
       <code>$dir</code>
       <code>$path</code>
     </MixedAssignment>
-    <MixedInferredReturnType>
-      <code>array</code>
-    </MixedInferredReturnType>
+    <MoreSpecificReturnType>
+      <code><![CDATA[iterable<array-key, array{string, list<string>}>]]></code>
+    </MoreSpecificReturnType>
   </file>
   <file src="tests/functional/PHP/LibraryTest.php">
     <MixedArgument>

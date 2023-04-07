@@ -52,14 +52,12 @@ abstract class MakefileTestCase extends TestCase
 
     protected array $helpOverride = [];
 
-    abstract protected function getExpectedHelpCommandsExecutionPath(): array;
+    /**
+     * @param null|array<string, int|string> $env
+     */
+    abstract protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array;
 
     abstract protected function getExpectedInitPaths(): array;
-
-    protected function getExpectedHelp(): string
-    {
-        return $this->generateHelpList(array_keys($this->getExpectedHelpCommandsExecutionPath()));
-    }
 
     public function testMakefileExists(): void
     {
@@ -98,13 +96,26 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
-     * @dataProvider generateHelpCommandsExecutionPathFixtures
+     * @dataProvider provideHelpCommandsExecutionPathFixtures
      */
     public function testMakefileCommandsWork(string $command, array $expected): void
     {
         $actual = $this->dryRun($command);
 
         static::assertSame($expected, $actual);
+    }
+
+    /**
+     * @return iterable<array<string, int|string>>
+     */
+    protected function getEnvs(): iterable
+    {
+        yield [];
+    }
+
+    protected function getExpectedHelp(): string
+    {
+        return $this->generateHelpList(array_keys($this->getExpectedHelpCommandsExecutionPath([])));
     }
 
     protected function generateHelpList(array $commands): string
@@ -161,21 +172,24 @@ abstract class MakefileTestCase extends TestCase
         return $commands;
     }
 
-    public function generateHelpCommandsExecutionPathFixtures(): array
+    /**
+     * @return iterable<array-key, array{string, list<string>}>
+     */
+    public function provideHelpCommandsExecutionPathFixtures(): iterable
     {
-        $expected = $this->getExpectedHelpCommandsExecutionPath();
-
         $commands = $this->getMakefileHelpCommands();
-        foreach ($commands as $command) {
-            static::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
-        }
 
-        $fixtures = [];
-        foreach ($expected as $command => $path) {
-            $fixtures[] = [$command, $path];
-        }
+        $envs = $this->getEnvs();
+        foreach ($envs as $env) {
+            $expected = $this->getExpectedHelpCommandsExecutionPath($env);
+            foreach ($commands as $command) {
+                static::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
+            }
 
-        return $fixtures;
+            foreach ($expected as $command => $path) {
+                yield [$command, $path];
+            }
+        }
     }
 
     protected function getMakefilePath(): string
@@ -264,6 +278,9 @@ abstract class MakefileTestCase extends TestCase
         return $this->execute('help');
     }
 
+    /**
+     * @return list<string>
+     */
     private function getMakefileHelpCommands(): array
     {
         $help = explode("\n", trim($this->stripColoring($this->getMakefileHelp())));

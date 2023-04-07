@@ -44,7 +44,7 @@ final class CompatTest extends MakefileTestCase
         ];
     }
 
-    protected function getExpectedHelpCommandsExecutionPath(): array
+    protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
         $mkdir = $this->paths()['mkdir: phpqa'];
 
