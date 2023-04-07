@@ -191,20 +191,28 @@ abstract class MakefileTestCase extends TestCase
         return sprintf('resources%2$s%1$s%2$s%3$s.mk', $dir, \DIRECTORY_SEPARATOR, mb_strtolower($name));
     }
 
+    /**
+     * @param null|array<string, int|string> $env
+     */
     protected function dryRun(
         ?string $makeCommand = null,
         ?array $args = null,
+        ?array $env = null,
         ?string $makefile = null,
         string $directory = __DIR__.'/../..'
     ): array {
         $args[] = '--dry-run';
 
-        return array_filter(explode("\n", $this->execute($makeCommand, $args, $makefile, $directory)));
+        return array_filter(explode("\n", $this->execute($makeCommand, $args, $env, $makefile, $directory)));
     }
 
+    /**
+     * @param null|array<string, int|string> $env
+     */
     protected function execute(
         ?string $command = null,
         ?array $args = null,
+        ?array $env = null,
         ?string $makefile = null,
         string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..'
     ): string {
@@ -222,12 +230,11 @@ abstract class MakefileTestCase extends TestCase
         $process = new Process(
             $fullCommand,
             $directory,
-            [
+            array_replace([
                 'HOME' => '/home/user',
                 'SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources',
 
                 // streamline these to ensure consistent runtime environment
-                // TODO: allow passing these
                 'RUNNER' => '999',
                 'APP_ENV' => 'env',
                 'APP_ROOT' => $this->getRoot(),
@@ -235,7 +242,7 @@ abstract class MakefileTestCase extends TestCase
                 'GITHUB_ACTIONS' => '',
                 'COMPOSE_PROJECT_NAME' => 'infra',
                 'PIMCORE_KERNEL_CLASS' => 'App\\Kernel',
-            ],
+            ], $env ?? []),
         );
 
         $filesystem = new Filesystem();
