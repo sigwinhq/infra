@@ -48,6 +48,10 @@ trait PhpTrait
                 $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
 
+            'box: build' => [
+                $this->generatePhpqaExecutionPath('box compile', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+            ],
+
             'build: dev' => [
                 $this->generateDockerBuildxExecutionPath('dev'),
             ],
