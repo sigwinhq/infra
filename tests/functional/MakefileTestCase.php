@@ -26,6 +26,9 @@ use Symfony\Component\Process\Process;
  */
 abstract class MakefileTestCase extends TestCase
 {
+    /**
+     * @var array<string, string>
+     */
     private array $help = [
         'analyze' => 'Analyze the codebase',
         'analyze/lighthouse' => 'Analyze built files using Lighthouse',
@@ -50,13 +53,21 @@ abstract class MakefileTestCase extends TestCase
         'visual/reference' => 'Generate visual testing references',
     ];
 
+    /**
+     * @var array<string, string>
+     */
     protected array $helpOverride = [];
 
     /**
      * @param null|array<string, string> $env
+     *
+     * @return array<string, list<string>>
      */
     abstract protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array;
 
+    /**
+     * @return list<string>
+     */
     abstract protected function getExpectedInitPaths(): array;
 
     public function testMakefileExists(): void
@@ -97,6 +108,8 @@ abstract class MakefileTestCase extends TestCase
 
     /**
      * @dataProvider provideHelpCommandsExecutionPathFixtures
+     *
+     * @param array<string, string> $env
      */
     public function testMakefileCommandsWork(string $command, array $expected, array $env): void
     {

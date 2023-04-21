@@ -27,6 +27,8 @@ trait PhpTrait
 
     /**
      * @param null|array<string, string> $env
+     *
+     * @return array<string, list<string>>
      */
     private function paths(?array $env): array
     {
@@ -46,6 +48,10 @@ trait PhpTrait
                 $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
                 $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
                 $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+            ],
+
+            'box: build' => [
+                $this->generatePhpqaExecutionPath('box compile', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
 
             'build: dev' => [
