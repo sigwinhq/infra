@@ -126,7 +126,7 @@ trait PhpTrait
 
             'test: unit' => [
                 $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
             'test: functional app' => [
                 $this->generateDockerComposeAppExecExecutionPath('vendor/bin/behat --colors --strict', 'test'),
