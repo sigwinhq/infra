@@ -16,10 +16,8 @@
       <code>$dir</code>
       <code>$dir</code>
       <code>$files</code>
-      <code><![CDATA[$this->helpOverride[$command] ?? $this->help[$command] ?? '']]></code>
     </MixedArgument>
     <MixedArgumentTypeCoercion>
-      <code>$env</code>
       <code>$files</code>
       <code>$files</code>
       <code><![CDATA[function (string $item, int $index): string {
@@ -33,38 +31,31 @@
     <MixedAssignment>
       <code>$command</code>
       <code>$dir</code>
-      <code>$path</code>
     </MixedAssignment>
-    <MoreSpecificReturnType>
-      <code><![CDATA[iterable<array-key, array{string, list<string>, array<string, string>}>]]></code>
-    </MoreSpecificReturnType>
+    <RedundantFunctionCall>
+      <code>array_values</code>
+    </RedundantFunctionCall>
   </file>
   <file src="tests/functional/PHP/LibraryTest.php">
-    <MixedArgument>
-      <code>$composer</code>
-      <code>$composer</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code><![CDATA[$paths['analyze']]]></code>
-      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$paths['shell: PHP']]]></code>
-      <code>$test</code>
-      <code>$test</code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code>$composer</code>
-      <code>$composer</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$test</code>
-    </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['composer: install-highest']]]></code>
+      <code><![CDATA[$paths['composer: install-lowest']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
+      <code><![CDATA[$paths['test: unit']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
+  </file>
+  <file src="tests/functional/PHP/PharTest.php">
+    <NonInvariantDocblockPropertyType>
+      <code>$helpOverride</code>
+    </NonInvariantDocblockPropertyType>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$paths['analyze']]]></code>
+      <code><![CDATA[$paths['box: build']]]></code>
       <code><![CDATA[$paths['composer: install-highest']]]></code>
       <code><![CDATA[$paths['composer: install-lowest']]]></code>
       <code><![CDATA[$paths['mkdir: phpqa']]]></code>
@@ -79,41 +70,11 @@
     <LessSpecificImplementedReturnType>
       <code>iterable</code>
     </LessSpecificImplementedReturnType>
-    <LessSpecificReturnType>
-      <code>array</code>
-    </LessSpecificReturnType>
+    <MoreSpecificReturnType>
+      <code><![CDATA[array<string, list<string>>]]></code>
+    </MoreSpecificReturnType>
   </file>
   <file src="tests/functional/Pimcore/ApplicationTest.php">
-    <MixedArgument>
-      <code>$clean</code>
-      <code>$composer</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code><![CDATA[$paths['analyze']]]></code>
-      <code><![CDATA[$paths['mkdir: composer']]]></code>
-      <code><![CDATA[$paths['permissions: Pimcore']]]></code>
-      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$paths['shell: PHP']]]></code>
-      <code>$testFunctional</code>
-      <code>$testFunctional</code>
-      <code>$testUnit</code>
-      <code>$testUnit</code>
-      <code>$testUnit</code>
-      <code>$touch</code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code>$clean</code>
-      <code>$composer</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$testFunctional</code>
-      <code>$testUnit</code>
-      <code>$touch</code>
-    </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$paths['analyze']]]></code>
       <code><![CDATA[$paths['build: dev']]]></code>
@@ -139,33 +100,9 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="tests/functional/Pimcore/LibraryTest.php">
-    <MixedArgument>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code><![CDATA[$paths['analyze']]]></code>
-      <code><![CDATA[$paths['docker compose: start library test']]]></code>
-      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$paths['setup: Pimcore library test']]]></code>
-      <code><![CDATA[$paths['shell: PHP']]]></code>
-      <code><![CDATA[$paths['touch: .env']]]></code>
-      <code>$testFunctional</code>
-      <code>$testFunctional</code>
-      <code>$testUnit</code>
-      <code>$testUnit</code>
-      <code>$testUnit</code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code>$mkdir</code>
-      <code>$testFunctional</code>
-      <code>$testUnit</code>
-    </MixedAssignment>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$paths['analyze']]]></code>
       <code><![CDATA[$paths['clean: library']]]></code>
-      <code><![CDATA[$paths['docker compose: start library test']]]></code>
       <code><![CDATA[$paths['docker compose: start library test']]]></code>
       <code><![CDATA[$paths['docker compose: stop Pimcore library']]]></code>
       <code><![CDATA[$paths['mkdir: phpqa']]]></code>
@@ -179,17 +116,9 @@
     </PossiblyUndefinedStringArrayOffset>
   </file>
   <file src="tests/functional/YASSG/CompatTest.php">
-    <MixedArgument>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code>$mkdir</code>
-      <code><![CDATA[$paths['analyze']]]></code>
-      <code><![CDATA[$paths['prepareAndAnalyze']]]></code>
-      <code><![CDATA[$paths['shell: PHP']]]></code>
-    </MixedArgument>
-    <MixedAssignment>
-      <code>$mkdir</code>
-    </MixedAssignment>
+    <NonInvariantDocblockPropertyType>
+      <code>$helpOverride</code>
+    </NonInvariantDocblockPropertyType>
     <PossiblyUndefinedStringArrayOffset>
       <code><![CDATA[$paths['analyze']]]></code>
       <code><![CDATA[$paths['mkdir: phpqa']]]></code>

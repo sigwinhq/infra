@@ -1,16 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\Common\\\\DefaultTest\\:\\:getExpectedHelpCommandsExecutionPath\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/Common/DefaultTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\Common\\\\DefaultTest\\:\\:getExpectedInitPaths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/Common/DefaultTest.php
-
-		-
 			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:dryRun\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/functional/MakefileTestCase.php
@@ -51,96 +41,6 @@ parameters:
 			path: tests/functional/MakefileTestCase.php
 
 		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:getExpectedHelpCommandsExecutionPath\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/MakefileTestCase.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:getExpectedInitPaths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/MakefileTestCase.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:testMakefileCommandsWork\\(\\) has parameter \\$env with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/MakefileTestCase.php
-
-		-
 			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:testMakefileCommandsWork\\(\\) has parameter \\$expected with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/functional/MakefileTestCase.php
-
-		-
-			message: "#^Property Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:\\$help type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/MakefileTestCase.php
-
-		-
-			message: "#^Property Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:\\$helpOverride type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/MakefileTestCase.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\PHP\\\\LibraryTest\\:\\:getExpectedHelpCommandsExecutionPath\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/PHP/LibraryTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\PHP\\\\LibraryTest\\:\\:getExpectedInitPaths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/PHP/LibraryTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\PHP\\\\LibraryTest\\:\\:paths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/PHP/LibraryTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\Pimcore\\\\ApplicationTest\\:\\:getExpectedHelpCommandsExecutionPath\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/Pimcore/ApplicationTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\Pimcore\\\\ApplicationTest\\:\\:getExpectedInitPaths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/Pimcore/ApplicationTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\Pimcore\\\\ApplicationTest\\:\\:paths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/Pimcore/ApplicationTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\Pimcore\\\\LibraryTest\\:\\:getExpectedHelpCommandsExecutionPath\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/Pimcore/LibraryTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\Pimcore\\\\LibraryTest\\:\\:getExpectedInitPaths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/Pimcore/LibraryTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\Pimcore\\\\LibraryTest\\:\\:paths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/Pimcore/LibraryTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\YASSG\\\\CompatTest\\:\\:getExpectedHelpCommandsExecutionPath\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/YASSG/CompatTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\YASSG\\\\CompatTest\\:\\:getExpectedInitPaths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/YASSG/CompatTest.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\YASSG\\\\CompatTest\\:\\:paths\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/YASSG/CompatTest.php
-
-		-
-			message: "#^Property Sigwin\\\\Infra\\\\Test\\\\Functional\\\\YASSG\\\\CompatTest\\:\\:\\$helpOverride type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/YASSG/CompatTest.php

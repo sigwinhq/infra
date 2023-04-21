@@ -27,6 +27,8 @@ trait PhpTrait
 
     /**
      * @param null|array<string, string> $env
+     *
+     * @return array<string, list<string>>
      */
     private function paths(?array $env): array
     {
