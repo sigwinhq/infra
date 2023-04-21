@@ -1,0 +1,7 @@
+{
+    "files": [
+        "config/bundles.php",
+        "config/services.yaml"
+    ],
+    "compression": "GZ"
+}
