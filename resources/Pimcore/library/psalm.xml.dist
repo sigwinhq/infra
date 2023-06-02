@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<psalm xmlns="https://getpsalm.org/schema/config"
+       cacheDirectory="var/phpqa/psalm"
+       checkForThrowsInGlobalScope="true"
+       ensureArrayIntOffsetsExist="true"
+       ensureArrayStringOffsetsExist="true"
+       errorLevel="1"
+       findUnusedBaselineEntry="true"
+       findUnusedCode="false"
+       findUnusedPsalmSuppress="true"
+       findUnusedVariablesAndParams="true"
+       limitMethodComplexity="true"
+       restrictReturnTypes="true"
+       strictBinaryOperands="true">
+    <projectFiles>
+        <directory name="./"/>
+        <ignoreFiles allowMissingFiles="true">
+            <file name=".php-cs-fixer.dist.php"/>
+            <directory name="var/"/>
+            <directory name="vendor/"/>
+        </ignoreFiles>
+    </projectFiles>
+
+    <stubs>
+        <file name="vendor/pimcore/pimcore/stubs/dynamic-constants.php"/>
+    </stubs>
+
+    <plugins>
+        <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
+        <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
+    </plugins>
+</psalm>
