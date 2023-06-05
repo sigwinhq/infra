@@ -7,7 +7,7 @@ include ${SIGWIN_INFRA_ROOT:%/=%}/Lighthouse/common.mk
 include ${SIGWIN_INFRA_ROOT:%/=%}/PHP/common.mk
 
 ifndef LYCHEE_DOCKER_IMAGE
-LYCHEE_DOCKER_IMAGE=lycheeverse/lychee:0.12.0
+LYCHEE_DOCKER_IMAGE=lycheeverse/lychee:0.13.0
 endif
 
 ifndef LYCHEE_DOCKER_COMMAND
