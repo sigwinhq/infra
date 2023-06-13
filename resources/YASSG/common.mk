@@ -12,6 +12,7 @@ start/dev: dev ## Start app in "dev" mode
 dev: clean
 	@make dev/assets dev/server -j2
 dev/server: vendor index.php
+	export YASSG_SKIP_BUNDLES=${YASSG_SKIP_BUNDLES}; \
 	symfony server:start --no-tls --document-root=. --port=${APP_PORT}
 dev/assets: node_modules
 	node_modules/.bin/encore dev-server
@@ -19,6 +20,7 @@ index.php:
 	ln -s vendor/sigwin/yassg/web/index.php
 
 build: ${BUILD_DIR}/assets/entrypoints.json vendor ## Build app for "APP_ENV" target (defaults to "prod")
+	export YASSG_SKIP_BUNDLES=${YASSG_SKIP_BUNDLES}; \
 	php vendor/sigwin/yassg/bin/yassg yassg:generate --env prod "$(BASE_URL)" ${BUILD_OPTS}
 .PHONY: build
 
