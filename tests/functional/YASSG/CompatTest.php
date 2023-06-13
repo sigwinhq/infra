@@ -64,6 +64,7 @@ final class CompatTest extends MakefileTestCase
             'mkdir -p public',
             'npm install',
             'BASE_URL=file://localhost$ROOT/public node_modules/.bin/encore production',
+            'export YASSG_SKIP_BUNDLES=; \\',
             'php vendor/sigwin/yassg/bin/yassg yassg:generate --env prod "file://localhost$ROOT/public" ',
         ];
 
@@ -104,6 +105,7 @@ final class CompatTest extends MakefileTestCase
     {
         $this->testMakefileCommandsWork('dev/server', [
             'ln -s vendor/sigwin/yassg/web/index.php',
+            'export YASSG_SKIP_BUNDLES=; \\',
             'symfony server:start --no-tls --document-root=. --port=9988',
         ], []);
     }
