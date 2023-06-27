@@ -55,11 +55,11 @@ analyze/psalm: | ${HOME}/.composer var/phpqa composer.lock
 
 test/phpunit: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	${PHPQA_DOCKER_COMMAND} vendor/bin/phpunit --verbose
+	${PHPQA_DOCKER_COMMAND} vendor/bin/phpunit
 	$(call block_end)
 test/phpunit-coverage: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_start,$@)
-	${PHPQA_DOCKER_COMMAND} php -d pcov.enabled=1 vendor/bin/phpunit --verbose --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/
+	${PHPQA_DOCKER_COMMAND} php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/
 	$(call block_end)
 test/infection: test/phpunit-coverage
 	$(call block_start,$@)
