@@ -72,7 +72,7 @@ abstract class MakefileTestCase extends TestCase
 
     public function testMakefileExists(): void
     {
-        static::assertFileExists(
+        self::assertFileExists(
             $this->getRoot().\DIRECTORY_SEPARATOR.$this->getMakefilePath()
         );
     }
@@ -86,7 +86,7 @@ abstract class MakefileTestCase extends TestCase
             $expected = preg_replace('/\r\n|\r|\n/', "\n", $this->stripColoring($expected));
         }
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     public function testHelpIsTheDefaultCommand(): void
@@ -94,7 +94,7 @@ abstract class MakefileTestCase extends TestCase
         $expected = $this->dryRun('help');
         $actual = $this->dryRun();
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     public function testMakefileHasInit(): void
@@ -103,11 +103,11 @@ abstract class MakefileTestCase extends TestCase
         $expected = array_merge(...array_values(array_map(static fn ($value) => [$value, 'if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi'], $expected)));
         $actual = $this->dryRun('init');
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
-     * @dataProvider provideHelpCommandsExecutionPathFixtures
+     * @dataProvider provideMakefileCommandsWorkCases
      *
      * @param array<string, string> $env
      */
@@ -115,7 +115,7 @@ abstract class MakefileTestCase extends TestCase
     {
         $actual = $this->dryRun($command, env: $env);
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     /**
@@ -188,7 +188,7 @@ abstract class MakefileTestCase extends TestCase
     /**
      * @return iterable<array-key, array{string, list<string>, array<string, string>}>
      */
-    public function provideHelpCommandsExecutionPathFixtures(): iterable
+    public function provideMakefileCommandsWorkCases(): iterable
     {
         $commands = $this->getMakefileHelpCommands();
 
@@ -196,7 +196,7 @@ abstract class MakefileTestCase extends TestCase
         foreach ($envs as $env) {
             $expected = $this->getExpectedHelpCommandsExecutionPath($env);
             foreach ($commands as $command) {
-                static::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
+                self::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
             }
 
             foreach ($expected as $command => $path) {

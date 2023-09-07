@@ -46,6 +46,7 @@ return static function (string $root, ?string $header = null): Config {
                 'method_chaining_indentation' => false,
                 'multiline_whitespace_before_semicolons' => ['strategy' => 'new_line_for_chained_calls'],
                 'not_operator_with_successor_space' => true,
+                'nullable_type_declaration_for_default_null_value' => true,
                 'ordered_interfaces' => true,
                 'php_unit_internal_class' => true,
                 'php_unit_size_class' => true,
