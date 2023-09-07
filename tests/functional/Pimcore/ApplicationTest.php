@@ -44,7 +44,7 @@ final class ApplicationTest extends MakefileTestCase
 
         $filesystem->rename('composer.lock.old', 'composer.lock');
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     protected function setUp(): void

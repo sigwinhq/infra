@@ -35,7 +35,7 @@ final class LibraryTest extends MakefileTestCase
         $expected = array_merge($mkdir, $composer);
         $actual = $this->dryRun('composer/install-lowest');
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     public function testCanRunComposerInstallHighest(): void
@@ -47,7 +47,7 @@ final class LibraryTest extends MakefileTestCase
         $expected = array_merge($mkdir, $composer);
         $actual = $this->dryRun('composer/install-highest');
 
-        static::assertSame($expected, $actual);
+        self::assertSame($expected, $actual);
     }
 
     protected function getExpectedInitPaths(): array

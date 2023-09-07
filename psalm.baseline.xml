@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.8.0@9cf4f60a333f779ad3bc704a555920e81d4fdcda">
+<files psalm-version="5.14.1@b9d355e0829c397b9b3b47d0c0ed042a8a70284d">
   <file src="tests/functional/MakefileTestCase.php">
-    <LessSpecificReturnType>
-      <code><![CDATA[list<string>]]></code>
-    </LessSpecificReturnType>
     <MixedArgument>
       <code>$command</code>
       <code>$dir</code>
