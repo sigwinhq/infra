@@ -10,12 +10,4 @@ $(shell test -f ${2}${1} && echo -n ${2}${1} || echo ${1})
 endef
 
 define permissions
-	setfacl -dRm          m:rwX  $(1)
-	setfacl -Rm           m:rwX  $(1)
-	setfacl -dRm u:`whoami`:rwX  $(1)
-	setfacl -Rm  u:`whoami`:rwX  $(1)
-	setfacl -dRm u:${RUNNER}:rwX $(1)
-	setfacl -Rm  u:${RUNNER}:rwX $(1)
-	setfacl -dRm u:root:rwX      $(1)
-	setfacl -Rm  u:root:rwX      $(1)
 endef
