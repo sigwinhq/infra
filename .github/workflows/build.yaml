@@ -57,10 +57,4 @@ jobs:
                 run: composer install --prefer-dist
             -
                 name: Run PHPUnit
-                run: make -v
-            -
-                name: Run PHPUnit
-                run: $PSVersionTable
-            -
-                name: Run PHPUnit
                 run: vendor/bin/phpunit
