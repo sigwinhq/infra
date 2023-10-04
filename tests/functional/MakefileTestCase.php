@@ -172,14 +172,16 @@ abstract class MakefileTestCase extends TestCase
         $commands = [];
         foreach ($dirs as $dir) {
             $commands[] = sprintf('mkdir -p %1$s', $dir);
-            $commands[] = sprintf('setfacl -dRm          m:rwX  %1$s', $dir);
-            $commands[] = sprintf('setfacl -Rm           m:rwX  %1$s', $dir);
-            $commands[] = sprintf('setfacl -dRm u:`whoami`:rwX  %1$s', $dir);
-            $commands[] = sprintf('setfacl -Rm  u:`whoami`:rwX  %1$s', $dir);
-            $commands[] = sprintf('setfacl -dRm u:999:rwX %1$s', $dir);
-            $commands[] = sprintf('setfacl -Rm  u:999:rwX %1$s', $dir);
-            $commands[] = sprintf('setfacl -dRm u:root:rwX      %1$s', $dir);
-            $commands[] = sprintf('setfacl -Rm  u:root:rwX      %1$s', $dir);
+            if (\PHP_OS_FAMILY === 'Linux') {
+                $commands[] = sprintf('setfacl -dRm          m:rwX  %1$s', $dir);
+                $commands[] = sprintf('setfacl -Rm           m:rwX  %1$s', $dir);
+                $commands[] = sprintf('setfacl -dRm u:`whoami`:rwX  %1$s', $dir);
+                $commands[] = sprintf('setfacl -Rm  u:`whoami`:rwX  %1$s', $dir);
+                $commands[] = sprintf('setfacl -dRm u:999:rwX %1$s', $dir);
+                $commands[] = sprintf('setfacl -Rm  u:999:rwX %1$s', $dir);
+                $commands[] = sprintf('setfacl -dRm u:root:rwX      %1$s', $dir);
+                $commands[] = sprintf('setfacl -Rm  u:root:rwX      %1$s', $dir);
+            }
         }
 
         return $commands;
