@@ -52,7 +52,7 @@ test/behat:
 setup/test: ## Setup: create a functional test runtime
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction doctrine:database:drop --if-exists --force
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction doctrine:database:create
-	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config
+	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app vendor/bin/pimcore-install --env test --no-interaction --skip-database-config
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction sigwin:testing:setup
 start/test: secrets ## Start app in "test" mode
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml up --detach --remove-orphans --no-build
