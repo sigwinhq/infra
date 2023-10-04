@@ -110,7 +110,7 @@ trait PhpTrait
             'setup: Pimcore app test' => [
                 $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:drop --if-exists --force', 'test'),
                 $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:create', 'test'),
-                $this->generateDockerComposeAppExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config', 'test'),
+                $this->generateDockerComposeAppExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --skip-database-config', 'test'),
                 $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction sigwin:testing:setup', 'test'),
             ],
             'setup: Pimcore library test' => [
