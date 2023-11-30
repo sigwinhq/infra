@@ -33,14 +33,14 @@ final class ApplicationTest extends MakefileTestCase
         $filesystem = new Filesystem();
         $filesystem->rename('composer.lock', 'composer.lock.old');
 
-        $paths = $this->paths(null);
+        $paths = self::paths(null);
 
         $mkdir = $paths['mkdir: phpqa'];
         $composer = $paths['composer: install'];
         $touch = $paths['touch: composer.lock'];
         $expected = array_merge($mkdir, $composer, $touch);
 
-        $actual = $this->dryRun('composer/install');
+        $actual = self::dryRun('composer/install');
 
         $filesystem->rename('composer.lock.old', 'composer.lock');
 
@@ -95,9 +95,9 @@ final class ApplicationTest extends MakefileTestCase
         ];
     }
 
-    protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
+    protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        $paths = $this->paths($env);
+        $paths = self::paths($env);
 
         $mkdir = $paths['mkdir: phpqa'];
         $clean = $paths['clean: Pimcore application'];
@@ -105,7 +105,7 @@ final class ApplicationTest extends MakefileTestCase
         $testFunctional = $paths['test: functional app'];
 
         return [
-            'help' => [$this->generateHelpExecutionPath([
+            'help' => [self::generateHelpExecutionPath([
                 __DIR__.'/../../../resources/Pimcore/application.mk',
                 __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',

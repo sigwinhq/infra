@@ -63,7 +63,7 @@ abstract class MakefileTestCase extends TestCase
      *
      * @return array<string, list<string>>
      */
-    abstract protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array;
+    abstract protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array;
 
     /**
      * @return list<string>
@@ -73,17 +73,17 @@ abstract class MakefileTestCase extends TestCase
     public function testMakefileExists(): void
     {
         self::assertFileExists(
-            $this->getRoot().\DIRECTORY_SEPARATOR.$this->getMakefilePath()
+            self::getRoot().\DIRECTORY_SEPARATOR.self::getMakefilePath()
         );
     }
 
     public function testMakefileHasHelp(): void
     {
-        $actual = $this->getMakefileHelp();
+        $actual = self::getMakefileHelp();
         $expected = $this->getExpectedHelp();
 
         if (\PHP_OS_FAMILY === 'Windows') {
-            $expected = preg_replace('/\r\n|\r|\n/', "\n", $this->stripColoring($expected));
+            $expected = preg_replace('/\r\n|\r|\n/', "\n", self::stripColoring($expected));
         }
 
         self::assertSame($expected, $actual);
@@ -91,8 +91,8 @@ abstract class MakefileTestCase extends TestCase
 
     public function testHelpIsTheDefaultCommand(): void
     {
-        $expected = $this->dryRun('help');
-        $actual = $this->dryRun();
+        $expected = self::dryRun('help');
+        $actual = self::dryRun();
 
         self::assertSame($expected, $actual);
     }
@@ -101,7 +101,7 @@ abstract class MakefileTestCase extends TestCase
     {
         $expected = array_map(static fn (string $path): string => sprintf('if [ -d "$ROOT/resources/%1$s" ]; then cp -a $ROOT/resources/%1$s/. .; fi', $path), $this->getExpectedInitPaths());
         $expected = array_merge(...array_values(array_map(static fn ($value) => [$value, 'if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi'], $expected)));
-        $actual = $this->dryRun('init');
+        $actual = self::dryRun('init');
 
         self::assertSame($expected, $actual);
     }
@@ -113,7 +113,7 @@ abstract class MakefileTestCase extends TestCase
      */
     public function testMakefileCommandsWork(string $command, array $expected, array $env): void
     {
-        $actual = $this->dryRun($command, env: $env);
+        $actual = self::dryRun($command, env: $env);
 
         self::assertSame($expected, $actual);
     }
@@ -121,14 +121,14 @@ abstract class MakefileTestCase extends TestCase
     /**
      * @return iterable<array<string, string>>
      */
-    protected function getEnvs(): iterable
+    protected static function getEnvs(): iterable
     {
         yield [];
     }
 
     protected function getExpectedHelp(): string
     {
-        return $this->generateHelpList(array_keys($this->getExpectedHelpCommandsExecutionPath([])));
+        return $this->generateHelpList(array_keys(static::getExpectedHelpCommandsExecutionPath([])));
     }
 
     protected function generateHelpList(array $commands): string
@@ -142,7 +142,7 @@ abstract class MakefileTestCase extends TestCase
         return implode("\n", $help)."\n";
     }
 
-    protected function generateHelpExecutionPath(array $files = [], array $additionalFiles = []): string
+    protected static function generateHelpExecutionPath(array $files = [], array $additionalFiles = []): string
     {
         $files = array_merge($files, [
             __DIR__.'/../../resources/Common/default.mk',
@@ -154,20 +154,20 @@ abstract class MakefileTestCase extends TestCase
         $command = match (\PHP_OS_FAMILY) {
             'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',
             'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',
-            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(function (string $item, int $index): string {
+            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(static function (string $item, int $index): string {
                 if ($index === 0) {
                     return $item;
                 }
 
-                return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', $this->normalize($item)));
+                return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', self::normalize($item)));
             }, $files, array_keys($files))).' | Sort-Object {$_.Matches[0].Groups["name"]} | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
             default => throw new \LogicException('Unknown OS family'),
         };
 
-        return $this->normalize($command);
+        return self::normalize($command);
     }
 
-    protected function generatePermissionsExecutionPath(array $dirs): array
+    protected static function generatePermissionsExecutionPath(array $dirs): array
     {
         $commands = [];
         foreach ($dirs as $dir) {
@@ -190,13 +190,13 @@ abstract class MakefileTestCase extends TestCase
     /**
      * @return iterable<array-key, array{string, list<string>, array<string, string>}>
      */
-    public function provideMakefileCommandsWorkCases(): iterable
+    public static function provideMakefileCommandsWorkCases(): iterable
     {
-        $commands = $this->getMakefileHelpCommands();
+        $commands = self::getMakefileHelpCommands();
 
-        $envs = $this->getEnvs();
+        $envs = self::getEnvs();
         foreach ($envs as $env) {
-            $expected = $this->getExpectedHelpCommandsExecutionPath($env);
+            $expected = static::getExpectedHelpCommandsExecutionPath($env);
             foreach ($commands as $command) {
                 self::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
             }
@@ -207,7 +207,7 @@ abstract class MakefileTestCase extends TestCase
         }
     }
 
-    protected function getMakefilePath(): string
+    protected static function getMakefilePath(): string
     {
         $path = str_replace([__NAMESPACE__.'\\', '\\'], ['', \DIRECTORY_SEPARATOR], static::class);
         $dir = pathinfo($path, \PATHINFO_DIRNAME);
@@ -223,7 +223,7 @@ abstract class MakefileTestCase extends TestCase
     /**
      * @param null|array<string, int|string> $env
      */
-    protected function dryRun(
+    protected static function dryRun(
         ?string $makeCommand = null,
         ?array $args = null,
         ?array $env = null,
@@ -232,21 +232,21 @@ abstract class MakefileTestCase extends TestCase
     ): array {
         $args[] = '--dry-run';
 
-        return array_filter(explode("\n", $this->execute($makeCommand, $args, $env, $makefile, $directory)));
+        return array_filter(explode("\n", self::execute($makeCommand, $args, $env, $makefile, $directory)));
     }
 
     /**
      * @param null|array<string, int|string> $env
      */
-    protected function execute(
+    protected static function execute(
         ?string $command = null,
         ?array $args = null,
         ?array $env = null,
         ?string $makefile = null,
         string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..'
     ): string {
-        $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile ?? $this->getMakefilePath());
-        $fullCommand = ['make', '-f', $this->getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
+        $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile ?? self::getMakefilePath());
+        $fullCommand = ['make', '-f', self::getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
         if ($args !== null) {
             array_push($fullCommand, ...$args);
         }
@@ -261,12 +261,12 @@ abstract class MakefileTestCase extends TestCase
             $directory,
             array_replace([
                 'HOME' => '/home/user',
-                'SIGWIN_INFRA_ROOT' => $this->getRoot().\DIRECTORY_SEPARATOR.'resources',
+                'SIGWIN_INFRA_ROOT' => self::getRoot().\DIRECTORY_SEPARATOR.'resources',
 
                 // streamline these to ensure consistent runtime environment
                 'RUNNER' => '999',
                 'APP_ENV' => 'env',
-                'APP_ROOT' => $this->getRoot(),
+                'APP_ROOT' => self::getRoot(),
                 'PHP_VERSION' => '',
                 'GITHUB_ACTIONS' => '',
                 'COMPOSE_PROJECT_NAME' => 'infra',
@@ -285,20 +285,20 @@ abstract class MakefileTestCase extends TestCase
             $output = preg_replace('/\r\n|\r|\n/', "\n", $output);
         }
 
-        return $this->normalize($output);
+        return self::normalize($output);
     }
 
-    private function getMakefileHelp(): string
+    private static function getMakefileHelp(): string
     {
-        return $this->execute('help');
+        return self::execute('help');
     }
 
     /**
      * @return list<string>
      */
-    private function getMakefileHelpCommands(): array
+    private static function getMakefileHelpCommands(): array
     {
-        $help = explode("\n", trim($this->stripColoring($this->getMakefileHelp())));
+        $help = explode("\n", trim(self::stripColoring(self::getMakefileHelp())));
 
         $commands = [];
         foreach ($help as $command) {
@@ -312,7 +312,7 @@ abstract class MakefileTestCase extends TestCase
         return $commands;
     }
 
-    private function getRoot(): string
+    private static function getRoot(): string
     {
         /** @var string $root */
         $root = realpath(__DIR__.'/../..');
@@ -320,7 +320,7 @@ abstract class MakefileTestCase extends TestCase
         return $root;
     }
 
-    private function stripColoring(string $input): string
+    private static function stripColoring(string $input): string
     {
         /** @var string $output */
         $output = preg_replace('/\033\[\d+m/', '', $input);
@@ -328,12 +328,12 @@ abstract class MakefileTestCase extends TestCase
         return $output;
     }
 
-    protected function normalize(string $output): string
+    protected static function normalize(string $output): string
     {
         return str_replace(
             [
-                $this->getRoot(),
-                str_replace('\\', '/', $this->getRoot()),
+                self::getRoot(),
+                str_replace('\\', '/', self::getRoot()),
                 '/home/user',
                 'Common/Platform/'.\PHP_OS_FAMILY,
             ],
@@ -347,7 +347,7 @@ abstract class MakefileTestCase extends TestCase
         );
     }
 
-    protected function generateDockerComposeExecutionUser(): string
+    protected static function generateDockerComposeExecutionUser(): string
     {
         return \PHP_OS_FAMILY !== 'Windows' ? sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : '';
     }

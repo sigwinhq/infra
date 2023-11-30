@@ -32,24 +32,24 @@ final class PharTest extends MakefileTestCase
 
     public function testCanRunComposerInstallLowest(): void
     {
-        $paths = $this->paths(null);
+        $paths = self::paths(null);
 
         $mkdir = $paths['mkdir: phpqa'];
         $composer = $paths['composer: install-lowest'];
         $expected = array_merge($mkdir, $composer);
-        $actual = $this->dryRun('composer/install-lowest');
+        $actual = self::dryRun('composer/install-lowest');
 
         self::assertSame($expected, $actual);
     }
 
     public function testCanRunComposerInstallHighest(): void
     {
-        $paths = $this->paths(null);
+        $paths = self::paths(null);
 
         $mkdir = $paths['mkdir: phpqa'];
         $composer = $paths['composer: install-highest'];
         $expected = array_merge($mkdir, $composer);
-        $actual = $this->dryRun('composer/install-highest');
+        $actual = self::dryRun('composer/install-highest');
 
         self::assertSame($expected, $actual);
     }
@@ -64,15 +64,15 @@ final class PharTest extends MakefileTestCase
         ];
     }
 
-    protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
+    protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        $paths = $this->paths($env);
+        $paths = self::paths($env);
 
         $mkdir = $paths['mkdir: phpqa'];
         $test = $paths['test: unit'];
 
         return [
-            'help' => [$this->generateHelpExecutionPath([
+            'help' => [self::generateHelpExecutionPath([
                 __DIR__.'/../../../resources/PHP/phar.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
             ])],
