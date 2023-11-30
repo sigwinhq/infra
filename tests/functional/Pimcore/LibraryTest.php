@@ -38,16 +38,16 @@ final class LibraryTest extends MakefileTestCase
         ];
     }
 
-    protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
+    protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        $paths = $this->paths($env);
+        $paths = self::paths($env);
 
         $mkdir = $paths['mkdir: phpqa'];
         $testUnit = $paths['test: unit'];
         $testFunctional = $paths['test: functional library'];
 
         return [
-            'help' => [$this->generateHelpExecutionPath([
+            'help' => [self::generateHelpExecutionPath([
                 __DIR__.'/../../../resources/Pimcore/library.mk',
                 __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.14.1@b9d355e0829c397b9b3b47d0c0ed042a8a70284d">
+<files psalm-version="5.16.0@2897ba636551a8cb61601cc26f6ccfbba6c36591">
   <file src="tests/functional/MakefileTestCase.php">
     <MixedArgument>
       <code>$command</code>
@@ -17,12 +17,12 @@
     <MixedArgumentTypeCoercion>
       <code>$files</code>
       <code>$files</code>
-      <code><![CDATA[function (string $item, int $index): string {
+      <code><![CDATA[static function (string $item, int $index): string {
                 if ($index === 0) {
                     return $item;
                 }
 
-                return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', $this->normalize($item)));
+                return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', self::normalize($item)));
             }]]></code>
     </MixedArgumentTypeCoercion>
     <MixedAssignment>

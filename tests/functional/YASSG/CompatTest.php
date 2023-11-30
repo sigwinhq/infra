@@ -44,20 +44,20 @@ final class CompatTest extends MakefileTestCase
         ];
     }
 
-    protected function getExpectedHelpCommandsExecutionPath(?array $env = null): array
+    protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        $paths = $this->paths($env);
+        $paths = self::paths($env);
 
         $mkdir = $paths['mkdir: phpqa'];
 
         $lighthouse = [
-            $this->generateDockerLighthouseExecutionPath('npx lhci autorun --config=lighthouse.config.json'),
+            self::generateDockerLighthouseExecutionPath('npx lhci autorun --config=lighthouse.config.json'),
         ];
         $test = [
-            $this->generateDockerBackstopExecutionPath('test'),
+            self::generateDockerBackstopExecutionPath('test'),
         ];
         $reference = [
-            $this->generateDockerBackstopExecutionPath('reference'),
+            self::generateDockerBackstopExecutionPath('reference'),
         ];
 
         $build = [
@@ -73,7 +73,7 @@ final class CompatTest extends MakefileTestCase
         ];
 
         return [
-            'help' => [$this->generateHelpExecutionPath([
+            'help' => [self::generateHelpExecutionPath([
                 __DIR__.'/../../../resources/YASSG/compat.mk',
                 __DIR__.'/../../../resources/YASSG/common.mk',
                 __DIR__.'/../../../resources/Visual/common.mk',
@@ -108,21 +108,21 @@ final class CompatTest extends MakefileTestCase
         ], []);
     }
 
-    private function generateDockerBackstopExecutionPath(string $command): string
+    private static function generateDockerBackstopExecutionPath(string $command): string
     {
         return sprintf(
             'docker run --init --interactive  --shm-size 256MB --cap-add=SYS_ADMIN --rm --env PROJECT_ROOT=$ROOT --env BASE_URL=file://localhost$ROOT/public %2$s --tmpfs /tmp --volume "$ROOT:$ROOT" --workdir "$ROOT" backstopjs/backstopjs:6.2.2 --config backstop.config.js %1$s',
             $command,
-            $this->generateDockerComposeExecutionUser()
+            self::generateDockerComposeExecutionUser()
         );
     }
 
-    private function generateDockerLighthouseExecutionPath(string $command): string
+    private static function generateDockerLighthouseExecutionPath(string $command): string
     {
         return sprintf(
             'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-20.5.0-chrome-114.0.5735.133-1-ff-114.0.2-edge-114.0.1823.51-1 %1$s',
             $command,
-            $this->generateDockerComposeExecutionUser()
+            self::generateDockerComposeExecutionUser()
         );
     }
 }

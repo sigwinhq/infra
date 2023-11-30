@@ -15,11 +15,11 @@ namespace Sigwin\Infra\Test\Functional\PHP;
 
 trait PhpTrait
 {
-    protected function getEnvs(): iterable
+    protected static function getEnvs(): iterable
     {
-        yield ['PHP_VERSION' => '8.0'];
         yield ['PHP_VERSION' => '8.1'];
         yield ['PHP_VERSION' => '8.2'];
+        yield ['PHP_VERSION' => '8.3'];
 
         yield ['PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
         yield ['PHP_VERSION' => '8.2', 'PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
@@ -30,70 +30,70 @@ trait PhpTrait
      *
      * @return array<string, list<string>>
      */
-    private function paths(?array $env): array
+    private static function paths(?array $env): array
     {
         // defaults which are also defined in the Makefile
-        $phpVersion = $env['PHP_VERSION'] ?? '8.2';
-        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.91.0-php%1$s-alpine';
+        $phpVersion = $env['PHP_VERSION'] ?? '8.3';
+        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.93.0-php%1$s-alpine';
 
         return [
             'analyze' => [
-                $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
             'prepareAndAnalyze' => [
-                $this->generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                $this->generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                $this->generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                $this->generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
 
             'box: build' => [
-                $this->generatePhpqaExecutionPath('box compile', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('box compile', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
 
             'build: dev' => [
-                $this->generateDockerBuildxExecutionPath('dev'),
+                self::generateDockerBuildxExecutionPath('dev'),
             ],
             'build: prod' => [
-                $this->generateDockerBuildxExecutionPath('prod'),
+                self::generateDockerBuildxExecutionPath('prod'),
             ],
 
             'composer: install' => [
-                $this->generatePhpqaExecutionPath('composer install --audit', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer install --audit', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
             'composer: install-lowest' => [
-                $this->generatePhpqaExecutionPath('composer upgrade --prefer-lowest', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer upgrade --prefer-lowest', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
             'composer: install-highest' => [
-                $this->generatePhpqaExecutionPath('composer upgrade', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer upgrade', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
 
             'docker compose: start app dev' => [
-                $this->generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build', 'dev'),
+                self::generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build', 'dev'),
             ],
             'docker compose: start app prod' => [
-                $this->generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build', 'prod'),
+                self::generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build', 'prod'),
             ],
             'docker compose: start app test' => [
-                $this->generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build', 'test'),
+                self::generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build', 'test'),
             ],
             'docker compose: start app' => [
-                $this->generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build'),
+                self::generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build'),
             ],
             'docker compose: start library test' => [
-                $this->generateDockerComposeTestExecutionPath('up --detach --remove-orphans --no-build'),
+                self::generateDockerComposeTestExecutionPath('up --detach --remove-orphans --no-build'),
             ],
             'docker compose: stop Pimcore app' => [
-                $this->generateDockerComposeAppExecutionPath('down --remove-orphans'),
+                self::generateDockerComposeAppExecutionPath('down --remove-orphans'),
             ],
             'docker compose: stop Pimcore library' => [
-                $this->generateDockerComposeTestExecutionPath('down --remove-orphans'),
+                self::generateDockerComposeTestExecutionPath('down --remove-orphans'),
             ],
 
-            'permissions: Pimcore' => $this->generatePermissionsExecutionPath([
+            'permissions: Pimcore' => self::generatePermissionsExecutionPath([
                 'config/pimcore/classes',
                 'public/var/assets',
                 'public/var/tmp',
@@ -108,37 +108,37 @@ trait PhpTrait
             ]),
 
             'setup: Pimcore app test' => [
-                $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:drop --if-exists --force', 'test'),
-                $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:create', 'test'),
-                $this->generateDockerComposeAppExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --skip-database-config', 'test'),
-                $this->generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction sigwin:testing:setup', 'test'),
+                self::generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:drop --if-exists --force', 'test'),
+                self::generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:create', 'test'),
+                self::generateDockerComposeAppExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --skip-database-config', 'test'),
+                self::generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction sigwin:testing:setup', 'test'),
             ],
             'setup: Pimcore library test' => [
-                $this->generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:drop --if-exists --force'),
-                $this->generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create'),
-                $this->generateDockerComposeTestExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config'),
-                $this->generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup'),
+                self::generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:drop --if-exists --force'),
+                self::generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create'),
+                self::generateDockerComposeTestExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config'),
+                self::generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup'),
             ],
 
             'shell: app' => [
-                $this->generateDockerComposeAppExecExecutionPath('sh'),
+                self::generateDockerComposeAppExecExecutionPath('sh'),
             ],
             'shell: app library' => [
-                $this->generateDockerComposeTestExecExecutionPath('sh'),
+                self::generateDockerComposeTestExecExecutionPath('sh'),
             ],
             'shell: PHP' => [
-                $this->generatePhpqaExecutionPath('sh', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('sh', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
 
             'test: unit' => [
-                $this->generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                $this->generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
             ],
             'test: functional app' => [
-                $this->generateDockerComposeAppExecExecutionPath('vendor/bin/behat --colors --strict', 'test'),
+                self::generateDockerComposeAppExecExecutionPath('vendor/bin/behat --colors --strict', 'test'),
             ],
             'test: functional library' => [
-                $this->generateDockerComposeTestExecExecutionPath('vendor/bin/behat --colors --strict'),
+                self::generateDockerComposeTestExecExecutionPath('vendor/bin/behat --colors --strict'),
             ],
 
             'mkdir: composer' => [
@@ -163,46 +163,46 @@ trait PhpTrait
         ];
     }
 
-    private function generatePhpqaExecutionPath(string $command, string $phpVersion, string $dockerImage): string
+    private static function generatePhpqaExecutionPath(string $command, string $phpVersion, string $dockerImage): string
     {
-        return $this->normalize(sprintf(
+        return self::normalize(sprintf(
             'docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project %3$s %1$s',
             sprintf($command, $phpVersion),
-            $this->generateDockerComposeExecutionUser(),
+            self::generateDockerComposeExecutionUser(),
             sprintf($dockerImage, $phpVersion)
         ));
     }
 
-    private function generateDockerBuildxExecutionPath(string $env): string
+    private static function generateDockerBuildxExecutionPath(string $env): string
     {
         return sprintf('VERSION=latest docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=http://example.com/ --file .infra/docker-buildx/docker-buildx.%1$s.hcl', $env);
     }
 
-    private function generateDockerComposeAppExecutionPath(string $command, string $env = 'env'): string
+    private static function generateDockerComposeAppExecutionPath(string $command, string $env = 'env'): string
     {
         return sprintf('VERSION=latest docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.%2$s.yaml %1$s', $command, $env);
     }
 
-    private function generateDockerComposeTestExecutionPath(string $command): string
+    private static function generateDockerComposeTestExecutionPath(string $command): string
     {
         return sprintf('COMPOSE_PROJECT_NAME=infra docker compose --file tests/runtime/docker-compose.yaml %1$s', $command);
     }
 
-    private function generateDockerComposeAppExecExecutionPath(string $command, string $env = 'env'): string
+    private static function generateDockerComposeAppExecExecutionPath(string $command, string $env = 'env'): string
     {
-        return $this->generateDockerComposeAppExecutionPath(sprintf(
+        return self::generateDockerComposeAppExecutionPath(sprintf(
             'exec %2$s app %1$s',
             $command,
-            $this->generateDockerComposeExecutionUser()
+            self::generateDockerComposeExecutionUser()
         ), $env);
     }
 
-    private function generateDockerComposeTestExecExecutionPath(string $command): string
+    private static function generateDockerComposeTestExecExecutionPath(string $command): string
     {
-        return $this->generateDockerComposeTestExecutionPath(sprintf(
+        return self::generateDockerComposeTestExecutionPath(sprintf(
             'exec %2$s --env PIMCORE_KERNEL_CLASS=App\Kernel app %1$s',
             $command,
-            $this->generateDockerComposeExecutionUser()
+            self::generateDockerComposeExecutionUser()
         ));
     }
 }
