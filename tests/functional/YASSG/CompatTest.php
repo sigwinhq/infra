@@ -69,7 +69,7 @@ final class CompatTest extends MakefileTestCase
 
         $start = [
             'rm -rf var/cache/* var/log/* public',
-            'make dev/assets dev/server -j2',
+            'make dev/assets dev/server dev/compose -j3',
         ];
 
         return [
@@ -105,6 +105,13 @@ final class CompatTest extends MakefileTestCase
         $this->testMakefileCommandsWork('dev/server', [
             'ln -s vendor/sigwin/yassg/web/index.php',
             'YASSG_SKIP_BUNDLES= symfony server:start --no-tls --document-root=. --port=9988',
+        ], []);
+    }
+
+    public function testDevComposeWorks(): void
+    {
+        $this->testMakefileCommandsWork('dev/compose', [
+            'docker compose up',
         ], []);
     }
 
