@@ -27,6 +27,9 @@ final class CompatTest extends MakefileTestCase
 {
     use PhpTrait;
 
+    /**
+     * @var array<string, string>
+     */
     protected array $helpOverride = [
         'start' => 'Start app in APP_ENV mode (defaults to "dev")',
     ];
