@@ -6,16 +6,6 @@ parameters:
 			path: tests/functional/MakefileTestCase.php
 
 		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:dryRun\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/MakefileTestCase.php
-
-		-
 			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:execute\\(\\) has parameter \\$args with no value type specified in iterable type array\\.$#"
-			count: 1
-			path: tests/functional/MakefileTestCase.php
-
-		-
-			message: "#^Method Sigwin\\\\Infra\\\\Test\\\\Functional\\\\MakefileTestCase\\:\\:testMakefileCommandsWork\\(\\) has parameter \\$expected with no value type specified in iterable type array\\.$#"
 			count: 1
 			path: tests/functional/MakefileTestCase.php

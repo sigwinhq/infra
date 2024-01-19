@@ -109,6 +109,7 @@ abstract class MakefileTestCase extends TestCase
     /**
      * @dataProvider provideMakefileCommandsWorkCases
      *
+     * @param list<string>          $expected
      * @param array<string, string> $env
      */
     public function testMakefileCommandsWork(string $command, array $expected, array $env): void
@@ -237,6 +238,8 @@ abstract class MakefileTestCase extends TestCase
 
     /**
      * @param null|array<string, int|string> $env
+     *
+     * @return list<string>
      */
     protected static function dryRun(
         ?string $makeCommand = null,
