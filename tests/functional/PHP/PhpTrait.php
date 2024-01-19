@@ -63,8 +63,6 @@ trait PhpTrait
      *     "clean: Pimcore application": list<string>,
      *     "clean: library": list<string>
      * }
-     *
-     * @psalm-suppress MoreSpecificReturnType
      */
     private static function paths(?array $env): array
     {
