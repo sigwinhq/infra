@@ -241,6 +241,9 @@ abstract class MakefileTestCase extends TestCase
      * @param null|array<string, int|string> $env
      *
      * @return list<string>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
      */
     protected static function dryRun(
         ?string $makeCommand = null,
