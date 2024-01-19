@@ -237,6 +237,7 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
+     * @param list<string>                   $args
      * @param null|array<string, int|string> $env
      *
      * @return list<string>
@@ -254,6 +255,7 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
+     * @param list<string>                   $args
      * @param null|array<string, int|string> $env
      */
     protected static function execute(
