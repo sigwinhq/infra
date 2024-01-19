@@ -5,14 +5,6 @@
       <code>$helpOverride</code>
     </NonInvariantDocblockPropertyType>
   </file>
-  <file src="tests/functional/PHP/PhpTrait.php">
-    <LessSpecificImplementedReturnType>
-      <code>iterable</code>
-    </LessSpecificImplementedReturnType>
-    <MoreSpecificReturnType>
-      <code><![CDATA[array<string, list<string>>]]></code>
-    </MoreSpecificReturnType>
-  </file>
   <file src="tests/functional/YASSG/CompatTest.php">
     <NonInvariantDocblockPropertyType>
       <code>$helpOverride</code>
