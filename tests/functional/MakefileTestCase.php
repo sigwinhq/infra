@@ -179,6 +179,8 @@ abstract class MakefileTestCase extends TestCase
 
     /**
      * @param list<string> $dirs
+     *
+     * @return list<string>
      */
     protected static function generatePermissionsExecutionPath(array $dirs): array
     {
