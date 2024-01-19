@@ -100,7 +100,7 @@ abstract class MakefileTestCase extends TestCase
     public function testMakefileHasInit(): void
     {
         $expected = array_map(static fn (string $path): string => sprintf('if [ -d "$ROOT/resources/%1$s" ]; then cp -a $ROOT/resources/%1$s/. .; fi', $path), $this->getExpectedInitPaths());
-        $expected = array_merge(...array_values(array_map(static fn ($value) => [$value, 'if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi'], $expected)));
+        $expected = array_merge(...array_map(static fn ($value) => [$value, 'if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi'], $expected));
         $actual = self::dryRun('init');
 
         self::assertSame($expected, $actual);
@@ -109,6 +109,7 @@ abstract class MakefileTestCase extends TestCase
     /**
      * @dataProvider provideMakefileCommandsWorkCases
      *
+     * @param list<string>          $expected
      * @param array<string, string> $env
      */
     public function testMakefileCommandsWork(string $command, array $expected, array $env): void
@@ -131,17 +132,24 @@ abstract class MakefileTestCase extends TestCase
         return $this->generateHelpList(array_keys(static::getExpectedHelpCommandsExecutionPath([])));
     }
 
+    /**
+     * @param list<string> $commands
+     */
     protected function generateHelpList(array $commands): string
     {
         $help = [];
         sort($commands);
         foreach ($commands as $command) {
-            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", str_pad($command, 20), $this->helpOverride[$command] ?? $this->help[$command] ?? '');
+            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", mb_str_pad($command, 20), $this->helpOverride[$command] ?? $this->help[$command] ?? '');
         }
 
         return implode("\n", $help)."\n";
     }
 
+    /**
+     * @param list<string> $files
+     * @param list<string> $additionalFiles
+     */
     protected static function generateHelpExecutionPath(array $files = [], array $additionalFiles = []): string
     {
         $files = array_merge($files, [
@@ -154,7 +162,10 @@ abstract class MakefileTestCase extends TestCase
         $command = match (\PHP_OS_FAMILY) {
             'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',
             'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',
-            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(static function (string $item, int $index): string {
+            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(static function (false|string $item, int $index): string {
+                if ($item === false) {
+                    throw new \LogicException('Invalid item');
+                }
                 if ($index === 0) {
                     return $item;
                 }
@@ -167,6 +178,11 @@ abstract class MakefileTestCase extends TestCase
         return self::normalize($command);
     }
 
+    /**
+     * @param list<string> $dirs
+     *
+     * @return list<string>
+     */
     protected static function generatePermissionsExecutionPath(array $dirs): array
     {
         $commands = [];
@@ -221,7 +237,13 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
+     * @param list<string>                   $args
      * @param null|array<string, int|string> $env
+     *
+     * @return list<string>
+     *
+     * @psalm-suppress MoreSpecificReturnType
+     * @psalm-suppress LessSpecificReturnStatement
      */
     protected static function dryRun(
         ?string $makeCommand = null,
@@ -236,6 +258,7 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
+     * @param list<string>                   $args
      * @param null|array<string, int|string> $env
      */
     protected static function execute(

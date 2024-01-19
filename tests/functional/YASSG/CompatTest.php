@@ -27,6 +27,9 @@ final class CompatTest extends MakefileTestCase
 {
     use PhpTrait;
 
+    /**
+     * @var array<string, string>
+     */
     protected array $helpOverride = [
         'start' => 'Start app in APP_ENV mode (defaults to "dev")',
     ];
@@ -118,7 +121,7 @@ final class CompatTest extends MakefileTestCase
     private static function generateDockerBackstopExecutionPath(string $command): string
     {
         return sprintf(
-            'docker run --init --interactive  --shm-size 256MB --cap-add=SYS_ADMIN --rm --env PROJECT_ROOT=$ROOT --env BASE_URL=file://localhost$ROOT/public %2$s --tmpfs /tmp --volume "$ROOT:$ROOT" --workdir "$ROOT" backstopjs/backstopjs:6.2.2 --config backstop.config.js %1$s',
+            'docker run --init --interactive  --shm-size 256MB --cap-add=SYS_ADMIN --rm --env PROJECT_ROOT=$ROOT --env BASE_URL=file://localhost$ROOT/public %2$s --tmpfs /tmp --volume "$ROOT:$ROOT" --workdir "$ROOT" backstopjs/backstopjs:6.3.3 --config backstop.config.js %1$s',
             $command,
             self::generateDockerComposeExecutionUser()
         );
@@ -127,7 +130,7 @@ final class CompatTest extends MakefileTestCase
     private static function generateDockerLighthouseExecutionPath(string $command): string
     {
         return sprintf(
-            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1 %1$s',
+            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-20.10.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1 %1$s',
             $command,
             self::generateDockerComposeExecutionUser()
         );

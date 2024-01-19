@@ -26,6 +26,9 @@ final class PharTest extends MakefileTestCase
 {
     use PhpTrait;
 
+    /**
+     * @var array<string, string>
+     */
     protected array $helpOverride = [
         'phar/build' => 'Build PHAR file',
     ];

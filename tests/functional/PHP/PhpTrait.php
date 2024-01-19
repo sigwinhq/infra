@@ -15,6 +15,9 @@ namespace Sigwin\Infra\Test\Functional\PHP;
 
 trait PhpTrait
 {
+    /**
+     * @return iterable<array<string, string>>
+     */
     protected static function getEnvs(): iterable
     {
         yield ['PHP_VERSION' => '8.1'];
@@ -28,13 +31,44 @@ trait PhpTrait
     /**
      * @param null|array<string, string> $env
      *
-     * @return array<string, list<string>>
+     * @return array{
+     *     analyze: list<string>,
+     *     prepareAndAnalyze: list<string>,
+     *     "box: build": list<string>,
+     *     "build: dev": list<string>,
+     *     "build: prod": list<string>,
+     *     "composer: install": list<string>,
+     *     "composer: install-lowest": list<string>,
+     *     "composer: install-highest": list<string>,
+     *     "docker compose: start app dev": list<string>,
+     *     "docker compose: start app prod": list<string>,
+     *     "docker compose: start app test": list<string>,
+     *     "docker compose: start app": list<string>,
+     *     "docker compose: start library test": list<string>,
+     *     "docker compose: stop Pimcore app": list<string>,
+     *     "docker compose: stop Pimcore library": list<string>,
+     *     "permissions: Pimcore": list<string>,
+     *     "setup: Pimcore app test": list<string>,
+     *     "setup: Pimcore library test": list<string>,
+     *     "shell: app": list<string>,
+     *     "shell: app library": list<string>,
+     *     "shell: PHP": list<string>,
+     *     "test: unit": list<string>,
+     *     "test: functional app": list<string>,
+     *     "test: functional library": list<string>,
+     *     "mkdir: composer": list<string>,
+     *     "mkdir: phpqa": list<string>,
+     *     "touch: .env": list<string>,
+     *     "touch: composer.lock": list<string>,
+     *     "clean: Pimcore application": list<string>,
+     *     "clean: library": list<string>
+     * }
      */
     private static function paths(?array $env): array
     {
         // defaults which are also defined in the Makefile
         $phpVersion = $env['PHP_VERSION'] ?? '8.3';
-        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.93.0-php%1$s-alpine';
+        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.95.1-php%1$s-alpine';
 
         return [
             'analyze' => [

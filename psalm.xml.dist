@@ -4,7 +4,6 @@
        checkForThrowsInGlobalScope="true"
        ensureArrayIntOffsetsExist="true"
        ensureArrayStringOffsetsExist="true"
-       errorBaseline="psalm.baseline.xml"
        errorLevel="1"
        findUnusedBaselineEntry="true"
        findUnusedCode="true"
