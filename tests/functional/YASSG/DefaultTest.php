@@ -71,7 +71,7 @@ final class DefaultTest extends MakefileTestCase
                 'docker compose up imgproxy -d',
                 'docker compose run --rm webpack npm ci',
                 'docker compose run --rm webpack npx encore production',
-                'docker compose run --rm --env IMGPROXY_URL=http://imgproxy:8080 app vendor/sigwin/yassg/bin/yassg yassg:generate --env prod "file://localhost$ROOT/public"'
+                'docker compose run --rm --env IMGPROXY_URL=http://imgproxy:8080 app vendor/sigwin/yassg/bin/yassg yassg:generate --env prod "file://localhost$ROOT/public"',
             ],
             'sh/php' => array_merge($mkdir, $paths['shell: PHP']),
             'start' => $start,

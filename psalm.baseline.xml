@@ -123,4 +123,13 @@
       <code><![CDATA[$paths['shell: PHP']]]></code>
     </PossiblyUndefinedStringArrayOffset>
   </file>
+  <file src="tests/functional/YASSG/DefaultTest.php">
+    <NonInvariantDocblockPropertyType>
+      <code>$helpOverride</code>
+    </NonInvariantDocblockPropertyType>
+    <PossiblyUndefinedStringArrayOffset>
+      <code><![CDATA[$paths['mkdir: phpqa']]]></code>
+      <code><![CDATA[$paths['shell: PHP']]]></code>
+    </PossiblyUndefinedStringArrayOffset>
+  </file>
 </files>
