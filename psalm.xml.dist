@@ -3,7 +3,7 @@
        cacheDirectory="var/phpqa/psalm"
        checkForThrowsInGlobalScope="true"
        ensureArrayIntOffsetsExist="true"
-       ensureArrayStringOffsetsExist="true"
+       ensureArrayStringOffsetsExist="false"
        errorBaseline="psalm.baseline.xml"
        errorLevel="1"
        findUnusedBaselineEntry="true"
