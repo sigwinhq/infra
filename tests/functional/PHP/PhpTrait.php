@@ -69,7 +69,7 @@ trait PhpTrait
     {
         // defaults which are also defined in the Makefile
         $phpVersion = $env['PHP_VERSION'] ?? '8.3';
-        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.95.1-php%1$s-alpine';
+        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.97.0-php%1$s-alpine';
         $dockerEnv = $env['DOCKER_ENV'] ?? ' ';
 
         return [
