@@ -38,6 +38,7 @@ return static function (string $root, ?string $header = null): Config {
                 '@PhpCsFixer:risky' => true,
                 '@Symfony' => true,
                 '@Symfony:risky' => true,
+                'attribute_empty_parentheses' => true,
                 'header_comment' => ['header' => $header],
                 'date_time_immutable' => true,
                 'final_class' => true,
