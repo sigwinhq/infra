@@ -26,6 +26,7 @@ trait PhpTrait
 
         yield ['PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
         yield ['PHP_VERSION' => '8.2', 'PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
+        yield ['DOCKER_ENV' => '--env "FOO=bar"'];
     }
 
     /**
@@ -69,23 +70,24 @@ trait PhpTrait
         // defaults which are also defined in the Makefile
         $phpVersion = $env['PHP_VERSION'] ?? '8.3';
         $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.95.1-php%1$s-alpine';
+        $dockerEnv = $env['DOCKER_ENV'] ?? ' ';
 
         return [
             'analyze' => [
-                self::generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                self::generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                self::generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                self::generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock --dry-run', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
+                self::generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv --dry-run', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
+                self::generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
+                self::generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
             'prepareAndAnalyze' => [
-                self::generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                self::generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                self::generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                self::generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer normalize --no-interaction --no-update-lock', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
+                self::generatePhpqaExecutionPath('php-cs-fixer fix --diff -vvv', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
+                self::generatePhpqaExecutionPath('phpstan analyse --configuration phpstan.neon.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
+                self::generatePhpqaExecutionPath('psalm --php-version=%1$s --config psalm.xml.dist', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
 
             'box: build' => [
-                self::generatePhpqaExecutionPath('box compile', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('box compile', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
 
             'build: dev' => [
@@ -96,13 +98,13 @@ trait PhpTrait
             ],
 
             'composer: install' => [
-                self::generatePhpqaExecutionPath('composer install --audit', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer install --audit', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
             'composer: install-lowest' => [
-                self::generatePhpqaExecutionPath('composer upgrade --prefer-lowest', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer upgrade --prefer-lowest', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
             'composer: install-highest' => [
-                self::generatePhpqaExecutionPath('composer upgrade', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('composer upgrade', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
 
             'docker compose: start app dev' => [
@@ -161,12 +163,12 @@ trait PhpTrait
                 self::generateDockerComposeTestExecExecutionPath('sh'),
             ],
             'shell: PHP' => [
-                self::generatePhpqaExecutionPath('sh', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('sh', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
 
             'test: unit' => [
-                self::generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
-                self::generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage),
+                self::generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
+                self::generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
             'test: functional app' => [
                 self::generateDockerComposeAppExecExecutionPath('vendor/bin/behat --colors --strict', 'test'),
@@ -197,13 +199,14 @@ trait PhpTrait
         ];
     }
 
-    private static function generatePhpqaExecutionPath(string $command, string $phpVersion, string $dockerImage): string
+    private static function generatePhpqaExecutionPath(string $command, string $phpVersion, string $dockerImage, string $env): string
     {
         return self::normalize(sprintf(
-            'docker run --init --interactive  --rm --env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project %3$s %1$s',
+            'docker run --init --interactive  --rm %4$s--env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project %3$s %1$s',
             sprintf($command, $phpVersion),
             self::generateDockerComposeExecutionUser(),
-            sprintf($dockerImage, $phpVersion)
+            sprintf($dockerImage, $phpVersion),
+            $env
         ));
     }
 
