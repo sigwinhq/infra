@@ -12,7 +12,7 @@ PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.95.1-php${PHP_VERSION}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
-PHPQA_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm --env "COMPOSER_CACHE_DIR=/composer/cache" ${DOCKER_USER} --volume "$(DOCKER_CWD)/var/phpqa:/cache" --volume "$(DOCKER_CWD):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
+PHPQA_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm ${DOCKER_ENV} --env "COMPOSER_CACHE_DIR=/composer/cache" ${DOCKER_USER} --volume "$(DOCKER_CWD)/var/phpqa:/cache" --volume "$(DOCKER_CWD):/project" --volume "${HOME}/.composer:/composer" --workdir /project ${PHPQA_DOCKER_IMAGE}
 endif
 
 sh/php: | ${HOME}/.composer var/phpqa composer.lock ## Run PHP shell
