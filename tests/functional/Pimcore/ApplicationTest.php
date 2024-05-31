@@ -19,11 +19,9 @@ use Symfony\Component\Filesystem\Filesystem;
 
 /**
  * @internal
- *
- * @coversNothing
- *
- * @medium
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[\PHPUnit\Framework\Attributes\Medium]
 final class ApplicationTest extends MakefileTestCase
 {
     use PhpTrait;

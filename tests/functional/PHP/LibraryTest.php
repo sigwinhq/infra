@@ -17,11 +17,9 @@ use Sigwin\Infra\Test\Functional\MakefileTestCase;
 
 /**
  * @internal
- *
- * @coversNothing
- *
- * @medium
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[\PHPUnit\Framework\Attributes\Medium]
 final class LibraryTest extends MakefileTestCase
 {
     use PhpTrait;

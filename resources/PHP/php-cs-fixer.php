@@ -19,8 +19,9 @@ return static function (string $root, ?string $header = null): Config {
         ->exclude('vendor')
         ->in($root);
 
-    return (new Config())
+    return (new Config('sigwin/infra'))
         ->setCacheFile($root.'/var/phpqa/php-cs-fixer.cache')
+        ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
         ->setRiskyAllowed(true)
         ->setRules(
             [
@@ -49,6 +50,7 @@ return static function (string $root, ?string $header = null): Config {
                 'not_operator_with_successor_space' => true,
                 'nullable_type_declaration_for_default_null_value' => true,
                 'ordered_interfaces' => true,
+                'php_unit_attributes' => true,
                 'php_unit_internal_class' => true,
                 'php_unit_size_class' => true,
                 'phpdoc_order_by_value' => ['annotations' => [
