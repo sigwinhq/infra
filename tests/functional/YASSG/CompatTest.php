@@ -18,11 +18,9 @@ use Sigwin\Infra\Test\Functional\PHP\PhpTrait;
 
 /**
  * @internal
- *
- * @coversNothing
- *
- * @medium
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[\PHPUnit\Framework\Attributes\Medium]
 final class CompatTest extends MakefileTestCase
 {
     use PhpTrait;
@@ -130,7 +128,7 @@ final class CompatTest extends MakefileTestCase
     private static function generateDockerLighthouseExecutionPath(string $command): string
     {
         return sprintf(
-            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-20.12.2-chrome-124.0.6367.60-1-ff-125.0.1-edge-124.0.2478.51-1 %1$s',
+            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-20.13.1-chrome-125.0.6422.60-1-ff-126.0-edge-125.0.2535.51-1 %1$s',
             $command,
             self::generateDockerComposeExecutionUser()
         );

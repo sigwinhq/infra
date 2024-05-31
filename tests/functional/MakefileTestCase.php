@@ -18,12 +18,10 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 
 /**
- * @coversNothing
- *
  * @internal
- *
- * @medium
  */
+#[\PHPUnit\Framework\Attributes\CoversNothing]
+#[\PHPUnit\Framework\Attributes\Medium]
 abstract class MakefileTestCase extends TestCase
 {
     /**
@@ -107,11 +105,10 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
-     * @dataProvider provideMakefileCommandsWorkCases
-     *
      * @param list<string>          $expected
      * @param array<string, string> $env
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('provideMakefileCommandsWorkCases')]
     public function testMakefileCommandsWork(string $command, array $expected, array $env): void
     {
         $actual = self::dryRun($command, env: $env);
@@ -205,6 +202,8 @@ abstract class MakefileTestCase extends TestCase
 
     /**
      * @return iterable<array-key, array{string, list<string>, array<string, string>}>
+     *
+     * @psalm-suppress PossiblyUnusedMethod false positive
      */
     public static function provideMakefileCommandsWorkCases(): iterable
     {
