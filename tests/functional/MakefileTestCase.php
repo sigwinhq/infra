@@ -39,6 +39,7 @@ abstract class MakefileTestCase extends TestCase
         'setup/filesystem' => 'Setup: filesystem (var, public/var folders)',
         'setup/test' => 'Setup: create a functional test runtime',
         'sh/app' => 'Run application shell',
+        'sh/node' => 'Run Node shell',
         'sh/php' => 'Run PHP shell',
         'start' => 'Start app in APP_ENV mode (defined in .env)',
         'start/dev' => 'Start app in "dev" mode',

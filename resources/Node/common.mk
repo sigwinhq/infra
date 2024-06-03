@@ -17,7 +17,7 @@ ifndef NODE_DOCKER_COMMAND
 NODE_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm ${DOCKER_ENV} ${DOCKER_USER} --volume "$(DOCKER_CWD):/project" --volume "${HOME}/.npm:/home/node/.npm" --workdir /project ${NODE_DOCKER_IMAGE}
 endif
 
-sh/node: | ${HOME}/.npm ## Run Node.js shell
+sh/node: | ${HOME}/.npm ## Run Node shell
 	${NODE_DOCKER_COMMAND} sh
 ${HOME}/.npm:
 	mkdir -p ${HOME}/.npm
