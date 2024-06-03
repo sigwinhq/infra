@@ -24,13 +24,17 @@ final class CommonTest extends MakefileTestCase
 {
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
+        $nodeVersion = $env['NODE_VERSION'] ?? '21.7';
+        $nodeDockerImage = $env['NODE_DOCKER_IMAGE'] ?? 'node:%1$s-alpine';
+        $dockerEnv = $env['DOCKER_ENV'] ?? ' ';
+
         return [
             'help' => [self::generateHelpExecutionPath([
                 __DIR__.'/../../../resources/Node/common.mk',
             ])],
             'sh/node' => [
                 'mkdir -p $HOME/.npm',
-                'docker run --init --interactive  --rm  --user "1000:1000" --volume "$ROOT:$ROOT" --volume "$HOME/.npm:/home/node/.npm" --workdir $ROOT node:21.7-alpine sh',
+                self::generateNodeExecutionPath('sh', nodeVersion: $nodeVersion, dockerImage: $nodeDockerImage, env: $dockerEnv),
             ],
         ];
     }
@@ -42,5 +46,16 @@ final class CommonTest extends MakefileTestCase
             'Common/default',
             'Node/common',
         ];
+    }
+
+    private static function generateNodeExecutionPath(string $command, string $nodeVersion, string $dockerImage, string $env): string
+    {
+        return self::normalize(sprintf(
+            'docker run --init --interactive  --rm %4$s%2$s --volume "$ROOT:/project" --volume "$HOME/.npm:/home/node/.npm" --workdir /project %3$s %1$s',
+            sprintf($command, $nodeVersion),
+            self::generateDockerComposeExecutionUser(),
+            sprintf($dockerImage, $nodeVersion),
+            $env
+        ));
     }
 }
