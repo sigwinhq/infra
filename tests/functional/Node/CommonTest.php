@@ -50,11 +50,11 @@ final class CommonTest extends MakefileTestCase
 
     private static function generateNodeExecutionPath(string $command, string $nodeVersion, string $dockerImage, string $env): string
     {
-        return self::normalize(sprintf(
+        return self::normalize(\sprintf(
             'docker run --init --interactive  --rm %4$s%2$s --volume "$ROOT:/project" --volume "$HOME/.npm:/home/node/.npm" --workdir /project %3$s %1$s',
-            sprintf($command, $nodeVersion),
+            \sprintf($command, $nodeVersion),
             self::generateDockerComposeExecutionUser(),
-            sprintf($dockerImage, $nodeVersion),
+            \sprintf($dockerImage, $nodeVersion),
             $env
         ));
     }
