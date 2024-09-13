@@ -69,7 +69,7 @@ trait PhpTrait
     {
         // defaults which are also defined in the Makefile
         $phpVersion = $env['PHP_VERSION'] ?? '8.3';
-        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.97.3-php%1$s-alpine';
+        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.98.1-php%1$s-alpine';
         $dockerEnv = $env['DOCKER_ENV'] ?? ' ';
 
         return [
@@ -201,33 +201,33 @@ trait PhpTrait
 
     private static function generatePhpqaExecutionPath(string $command, string $phpVersion, string $dockerImage, string $env): string
     {
-        return self::normalize(sprintf(
+        return self::normalize(\sprintf(
             'docker run --init --interactive  --rm %4$s--env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project %3$s %1$s',
-            sprintf($command, $phpVersion),
+            \sprintf($command, $phpVersion),
             self::generateDockerComposeExecutionUser(),
-            sprintf($dockerImage, $phpVersion),
+            \sprintf($dockerImage, $phpVersion),
             $env
         ));
     }
 
     private static function generateDockerBuildxExecutionPath(string $env): string
     {
-        return sprintf('VERSION=latest docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=http://example.com/ --file .infra/docker-buildx/docker-buildx.%1$s.hcl', $env);
+        return \sprintf('VERSION=latest docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=http://example.com/ --file .infra/docker-buildx/docker-buildx.%1$s.hcl', $env);
     }
 
     private static function generateDockerComposeAppExecutionPath(string $command, string $env = 'env'): string
     {
-        return sprintf('VERSION=latest docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.%2$s.yaml %1$s', $command, $env);
+        return \sprintf('VERSION=latest docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.%2$s.yaml %1$s', $command, $env);
     }
 
     private static function generateDockerComposeTestExecutionPath(string $command): string
     {
-        return sprintf('COMPOSE_PROJECT_NAME=infra docker compose --file tests/runtime/docker-compose.yaml %1$s', $command);
+        return \sprintf('COMPOSE_PROJECT_NAME=infra docker compose --file tests/runtime/docker-compose.yaml %1$s', $command);
     }
 
     private static function generateDockerComposeAppExecExecutionPath(string $command, string $env = 'env'): string
     {
-        return self::generateDockerComposeAppExecutionPath(sprintf(
+        return self::generateDockerComposeAppExecutionPath(\sprintf(
             'exec %2$s app %1$s',
             $command,
             self::generateDockerComposeExecutionUser()
@@ -236,7 +236,7 @@ trait PhpTrait
 
     private static function generateDockerComposeTestExecExecutionPath(string $command): string
     {
-        return self::generateDockerComposeTestExecutionPath(sprintf(
+        return self::generateDockerComposeTestExecutionPath(\sprintf(
             'exec %2$s --env PIMCORE_KERNEL_CLASS=App\Kernel app %1$s',
             $command,
             self::generateDockerComposeExecutionUser()

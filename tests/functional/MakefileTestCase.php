@@ -98,7 +98,7 @@ abstract class MakefileTestCase extends TestCase
 
     public function testMakefileHasInit(): void
     {
-        $expected = array_map(static fn (string $path): string => sprintf('if [ -d "$ROOT/resources/%1$s" ]; then cp -a $ROOT/resources/%1$s/. .; fi', $path), $this->getExpectedInitPaths());
+        $expected = array_map(static fn (string $path): string => \sprintf('if [ -d "$ROOT/resources/%1$s" ]; then cp -a $ROOT/resources/%1$s/. .; fi', $path), $this->getExpectedInitPaths());
         $expected = array_merge(...array_map(static fn ($value) => [$value, 'if [ -f .gitattributes.dist ]; then mv .gitattributes.dist .gitattributes; fi'], $expected));
         $actual = self::dryRun('init');
 
@@ -138,7 +138,7 @@ abstract class MakefileTestCase extends TestCase
         $help = [];
         sort($commands);
         foreach ($commands as $command) {
-            $help[] = sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", mb_str_pad($command, 20), $this->helpOverride[$command] ?? $this->help[$command] ?? '');
+            $help[] = \sprintf('%1$s[45m%2$s%1$s[0m %3$s', "\e", mb_str_pad($command, 20), $this->helpOverride[$command] ?? $this->help[$command] ?? '');
         }
 
         return implode("\n", $help)."\n";
@@ -168,7 +168,7 @@ abstract class MakefileTestCase extends TestCase
                     return $item;
                 }
 
-                return str_replace('$ROOT/resources', '$ROOT\\resources', str_replace('\\', '/', self::normalize($item)));
+                return str_replace('$ROOT/resources', '$ROOT\resources', str_replace('\\', '/', self::normalize($item)));
             }, $files, array_keys($files))).' | Sort-Object {$_.Matches[0].Groups["name"]} | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
             default => throw new \LogicException('Unknown OS family'),
         };
@@ -185,16 +185,16 @@ abstract class MakefileTestCase extends TestCase
     {
         $commands = [];
         foreach ($dirs as $dir) {
-            $commands[] = sprintf('mkdir -p %1$s', $dir);
+            $commands[] = \sprintf('mkdir -p %1$s', $dir);
             if (\PHP_OS_FAMILY === 'Linux') {
-                $commands[] = sprintf('setfacl -dRm          m:rwX  %1$s', $dir);
-                $commands[] = sprintf('setfacl -Rm           m:rwX  %1$s', $dir);
-                $commands[] = sprintf('setfacl -dRm u:`whoami`:rwX  %1$s', $dir);
-                $commands[] = sprintf('setfacl -Rm  u:`whoami`:rwX  %1$s', $dir);
-                $commands[] = sprintf('setfacl -dRm u:999:rwX %1$s', $dir);
-                $commands[] = sprintf('setfacl -Rm  u:999:rwX %1$s', $dir);
-                $commands[] = sprintf('setfacl -dRm u:root:rwX      %1$s', $dir);
-                $commands[] = sprintf('setfacl -Rm  u:root:rwX      %1$s', $dir);
+                $commands[] = \sprintf('setfacl -dRm          m:rwX  %1$s', $dir);
+                $commands[] = \sprintf('setfacl -Rm           m:rwX  %1$s', $dir);
+                $commands[] = \sprintf('setfacl -dRm u:`whoami`:rwX  %1$s', $dir);
+                $commands[] = \sprintf('setfacl -Rm  u:`whoami`:rwX  %1$s', $dir);
+                $commands[] = \sprintf('setfacl -dRm u:999:rwX %1$s', $dir);
+                $commands[] = \sprintf('setfacl -Rm  u:999:rwX %1$s', $dir);
+                $commands[] = \sprintf('setfacl -dRm u:root:rwX      %1$s', $dir);
+                $commands[] = \sprintf('setfacl -Rm  u:root:rwX      %1$s', $dir);
             }
         }
 
@@ -214,7 +214,7 @@ abstract class MakefileTestCase extends TestCase
         foreach ($envs as $env) {
             $expected = static::getExpectedHelpCommandsExecutionPath($env);
             foreach ($commands as $command) {
-                self::assertArrayHasKey($command, $expected, sprintf('No expected execution path defined for command "%1$s"', $command));
+                self::assertArrayHasKey($command, $expected, \sprintf('No expected execution path defined for command "%1$s"', $command));
             }
 
             foreach ($expected as $command => $path) {
@@ -233,7 +233,7 @@ abstract class MakefileTestCase extends TestCase
         }
         $name = mb_substr($name, 0, -4);
 
-        return sprintf('resources%2$s%1$s%2$s%3$s.mk', $dir, \DIRECTORY_SEPARATOR, mb_strtolower($name));
+        return \sprintf('resources%2$s%1$s%2$s%3$s.mk', $dir, \DIRECTORY_SEPARATOR, mb_strtolower($name));
     }
 
     /**
@@ -293,7 +293,7 @@ abstract class MakefileTestCase extends TestCase
                 'PHP_VERSION' => '',
                 'GITHUB_ACTIONS' => '',
                 'COMPOSE_PROJECT_NAME' => 'infra',
-                'PIMCORE_KERNEL_CLASS' => 'App\\Kernel',
+                'PIMCORE_KERNEL_CLASS' => 'App\Kernel',
             ], $env ?? []),
         );
 
@@ -372,6 +372,6 @@ abstract class MakefileTestCase extends TestCase
 
     protected static function generateDockerComposeExecutionUser(): string
     {
-        return \PHP_OS_FAMILY !== 'Windows' ? sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : '';
+        return \PHP_OS_FAMILY !== 'Windows' ? \sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : '';
     }
 }
