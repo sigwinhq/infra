@@ -119,7 +119,7 @@ final class CompatTest extends MakefileTestCase
     private static function generateDockerBackstopExecutionPath(string $command): string
     {
         return \sprintf(
-            'docker run --init --interactive  --shm-size 256MB --cap-add=SYS_ADMIN --rm --env PROJECT_ROOT=$ROOT --env BASE_URL=file://localhost$ROOT/public %2$s --tmpfs /tmp --volume "$ROOT:$ROOT" --workdir "$ROOT" backstopjs/backstopjs:6.3.23 --config backstop.config.js %1$s',
+            'docker run --init --interactive  --shm-size 256MB --cap-add=SYS_ADMIN --rm --env PROJECT_ROOT=$ROOT --env BASE_URL=file://localhost$ROOT/public %2$s --tmpfs /tmp --volume "$ROOT:$ROOT" --workdir "$ROOT" backstopjs/backstopjs:6.3.25 --config backstop.config.js %1$s',
             $command,
             self::generateDockerComposeExecutionUser()
         );
@@ -128,7 +128,7 @@ final class CompatTest extends MakefileTestCase
     private static function generateDockerLighthouseExecutionPath(string $command): string
     {
         return \sprintf(
-            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-20.13.1-chrome-125.0.6422.60-1-ff-126.0-edge-125.0.2535.51-1 %1$s',
+            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-20.17.0-chrome-128.0.6613.119-1-ff-130.0-edge-128.0.2739.63-1 %1$s',
             $command,
             self::generateDockerComposeExecutionUser()
         );
