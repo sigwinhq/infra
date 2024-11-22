@@ -128,7 +128,7 @@ final class CompatTest extends MakefileTestCase
     private static function generateDockerLighthouseExecutionPath(string $command): string
     {
         return \sprintf(
-            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-20.17.0-chrome-128.0.6613.119-1-ff-130.0-edge-128.0.2739.63-1 %1$s',
+            'docker run --init --interactive  --rm --env HOME=/tmp %2$s --volume "$ROOT:/public" --workdir "/public" cypress/browsers:node-22.11.0-chrome-131.0.6778.69-1-ff-132.0.2-edge-131.0.2903.51-1 %1$s',
             $command,
             self::generateDockerComposeExecutionUser()
         );

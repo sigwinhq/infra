@@ -250,7 +250,7 @@ abstract class MakefileTestCase extends TestCase
         ?array $args = null,
         ?array $env = null,
         ?string $makefile = null,
-        string $directory = __DIR__.'/../..'
+        string $directory = __DIR__.'/../..',
     ): array {
         $args[] = '--dry-run';
 
@@ -266,7 +266,7 @@ abstract class MakefileTestCase extends TestCase
         ?array $args = null,
         ?array $env = null,
         ?string $makefile = null,
-        string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..'
+        string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..',
     ): string {
         $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile ?? self::getMakefilePath());
         $fullCommand = ['make', '-f', self::getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
