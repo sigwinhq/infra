@@ -1,4 +1,4 @@
-LIGHTHOUSE_DOCKER_IMAGE ?= cypress/browsers:node-20.17.0-chrome-128.0.6613.119-1-ff-130.0-edge-128.0.2739.63-1
+LIGHTHOUSE_DOCKER_IMAGE ?= cypress/browsers:node-22.11.0-chrome-131.0.6778.69-1-ff-132.0.2-edge-131.0.2903.51-1
 LIGHTHOUSE_DOCKER_COMMAND ?= docker run --init --interactive ${DOCKER_TTY} --rm --env HOME=/tmp ${DOCKER_USER} --volume "${DOCKER_CWD}:/public" --workdir "/public" ${LIGHTHOUSE_DOCKER_IMAGE}
 
 analyze/lighthouse: ## Analyze built files using Lighthouse
