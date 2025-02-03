@@ -20,9 +20,9 @@ trait PhpTrait
      */
     protected static function getEnvs(): iterable
     {
-        yield ['PHP_VERSION' => '8.1'];
         yield ['PHP_VERSION' => '8.2'];
         yield ['PHP_VERSION' => '8.3'];
+        yield ['PHP_VERSION' => '8.4'];
 
         yield ['PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
         yield ['PHP_VERSION' => '8.2', 'PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
@@ -69,7 +69,7 @@ trait PhpTrait
     {
         // defaults which are also defined in the Makefile
         $phpVersion = $env['PHP_VERSION'] ?? '8.3';
-        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.98.6-php%1$s-alpine';
+        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.102.0-php%1$s-alpine';
         $dockerEnv = $env['DOCKER_ENV'] ?? ' ';
 
         return [
