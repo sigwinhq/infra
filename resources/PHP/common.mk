@@ -10,7 +10,7 @@ PHP_VERSION=8.3
 endif
 
 ifndef PHPQA_DOCKER_IMAGE
-PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.98.6-php${PHP_VERSION}-alpine
+PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.102.0-php${PHP_VERSION}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
