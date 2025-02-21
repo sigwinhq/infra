@@ -372,6 +372,16 @@ abstract class MakefileTestCase extends TestCase
 
     protected static function generateDockerComposeExecutionUser(): string
     {
-        return \PHP_OS_FAMILY !== 'Windows' ? \sprintf('--user "%1$s:%2$s"', getmyuid(), getmygid()) : '';
+        if (\PHP_OS_FAMILY === 'Windows') {
+            return '';
+        }
+
+        $uid = getmyuid();
+        $gid = getmygid();
+        if ($uid === false || $gid === false) {
+            throw new \RuntimeException('Failed to get UID or GID');
+        }
+
+        return \sprintf('--user "%1$s:%2$s"', $uid, $gid);
     }
 }
