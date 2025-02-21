@@ -14,7 +14,7 @@ NODE_DOCKER_IMAGE=node:${NODE_VERSION}-alpine
 endif
 
 ifndef NODE_DOCKER_COMMAND
-NODE_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm ${DOCKER_ENV} ${DOCKER_USER} --volume "$(DOCKER_CWD):/project" --volume "${HOME}/.npm:/home/node/.npm" --workdir /project ${NODE_DOCKER_IMAGE}
+NODE_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm ${DOCKER_ENV} ${DOCKER_USER} --volume "$(DOCKER_CWD):$(DOCKER_CWD)" --volume "${HOME}/.npm:/home/node/.npm" --workdir "$(DOCKER_CWD)" ${NODE_DOCKER_IMAGE}
 endif
 
 sh/node: | ${HOME}/.npm ## Run Node shell

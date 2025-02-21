@@ -202,7 +202,7 @@ trait PhpTrait
     private static function generatePhpqaExecutionPath(string $command, string $phpVersion, string $dockerImage, string $env): string
     {
         return self::normalize(\sprintf(
-            'docker run --init --interactive  --rm %4$s--env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:/project" --volume "$HOME/.composer:/composer" --workdir /project %3$s %1$s',
+            'docker run --init --interactive  --rm %4$s--env "COMPOSER_CACHE_DIR=/composer/cache" %2$s --volume "$ROOT/var/phpqa:/cache" --volume "$ROOT:$ROOT" --volume "$HOME/.composer:/composer" --workdir "$ROOT" %3$s %1$s',
             \sprintf($command, $phpVersion),
             self::generateDockerComposeExecutionUser(),
             \sprintf($dockerImage, $phpVersion),
