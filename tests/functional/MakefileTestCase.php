@@ -377,10 +377,11 @@ abstract class MakefileTestCase extends TestCase
         }
 
         $uid = getmyuid();
-        if ($uid === false) {
-            throw new \RuntimeException('Failed to get UID');
+        $gid = getmygid();
+        if ($uid === false || $gid === false) {
+            throw new \RuntimeException('Failed to get UID or GID');
         }
 
-        return \sprintf('--user "%1$s:%2$s"', $uid, $uid);
+        return \sprintf('--user "%1$s:%2$s"', $uid, $gid);
     }
 }
