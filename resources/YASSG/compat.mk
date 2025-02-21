@@ -11,7 +11,7 @@ LYCHEE_DOCKER_IMAGE=lycheeverse/lychee:0.13.0
 endif
 
 ifndef LYCHEE_DOCKER_COMMAND
-LYCHEE_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm ${DOCKER_USER} --volume "$(DOCKER_CWD):/project:ro" --workdir /project ${LYCHEE_DOCKER_IMAGE}
+LYCHEE_DOCKER_COMMAND=docker run --init --interactive ${DOCKER_TTY} --rm ${DOCKER_USER} --volume "$(DOCKER_CWD):$(DOCKER_CWD):ro" --workdir "$(DOCKER_CWD)" ${LYCHEE_DOCKER_IMAGE}
 endif
 
 dist: composer/normalize cs analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
