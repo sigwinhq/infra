@@ -241,9 +241,6 @@ abstract class MakefileTestCase extends TestCase
      * @param null|array<string, int|string> $env
      *
      * @return list<string>
-     *
-     * @psalm-suppress MoreSpecificReturnType
-     * @psalm-suppress LessSpecificReturnStatement
      */
     protected static function dryRun(
         ?string $makeCommand = null,
@@ -254,7 +251,7 @@ abstract class MakefileTestCase extends TestCase
     ): array {
         $args[] = '--dry-run';
 
-        return array_filter(explode("\n", self::execute($makeCommand, $args, $env, $makefile, $directory)));
+        return array_values(array_filter(explode("\n", self::execute($makeCommand, $args, $env, $makefile, $directory)), static fn (string $line): bool => $line !== ''));
     }
 
     /**
@@ -277,8 +274,10 @@ abstract class MakefileTestCase extends TestCase
             $fullCommand[] = $command;
         }
 
-        /** @var string $directory */
         $directory = realpath($directory);
+        if ($directory === false) {
+            throw new \LogicException('Failed to get directory');
+        }
         $process = new Process(
             $fullCommand,
             $directory,
@@ -337,8 +336,10 @@ abstract class MakefileTestCase extends TestCase
 
     private static function getRoot(): string
     {
-        /** @var string $root */
         $root = realpath(__DIR__.'/../..');
+        if ($root === false) {
+            throw new \LogicException('Failed to get root directory');
+        }
 
         return $root;
     }
