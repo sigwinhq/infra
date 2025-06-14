@@ -1,3 +1,5 @@
+/.venv/
+/dist/
 /var/
 /vendor/
-/composer.lock
+/*.lock

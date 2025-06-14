@@ -1,6 +1,6 @@
 on:
     release:
-        types: [published]
+        types: [ published ]
 
 jobs:
     ReleaseNPM:
@@ -16,3 +16,29 @@ jobs:
                     NODE_AUTH_TOKEN: "${{ secrets.NPMJS_SECRET }}"
             -   name: NPM release
                 run: npm publish
+    ReleasePyPI:
+        runs-on: ubuntu-latest
+        environment:
+            name: pypi
+            url: https://pypi.org/project/sigwin-infra
+        permissions:
+            id-token: write
+        steps:
+            -   name: Repo checkout
+                uses: actions/checkout@v3
+            -   name: Set release version to pyproject.toml
+                run: sed -i 's#version = ".*"#version = "'"${{ github.ref_name }}"'"#' pyproject.toml
+            -   name: Set up Python
+                run: python -m pip install --upgrade poetry
+            -   name: Set up Poetry
+                run: poetry install --no-root
+            -   name: Prepare Python package structure
+                run: |
+                    mkdir sigwin_infra
+                    mv resources sigwin_infra/
+                    touch sigwin_infra/__init__.py
+                    touch sigwin_infra/resources/__init__.py
+            -   name: Build package
+                run: poetry build
+            -   name: Publish to PyPI using Trusted Publisher
+                uses: pypa/gh-action-pypi-publish@release/v1
