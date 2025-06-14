@@ -28,7 +28,7 @@ jobs:
             -   name: Repo checkout
                 uses: actions/checkout@v3
             -   name: Set release version to pyproject.toml
-                run: sed -i 's/version = ".*"/version = "'"${{ github.ref_name }}"'"/' pyproject.toml
+                run: sed -i 's#version = ".*"#version = "'"${{ github.ref_name }}"'"#' pyproject.toml
             -   name: Set up Poetry
                 run: poetry install --no-root
             -   name: Build package
