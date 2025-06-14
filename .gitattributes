@@ -2,7 +2,8 @@
 /resources/__init__.py
 /tests export-ignore
 /.* export-ignore
+/*.lock export-ignore
 /*dist export-ignore
 /*baseline* export-ignore
-/composer.lock export-ignore
 /Makefile export-ignore
+/pyproject.toml export-ignore
