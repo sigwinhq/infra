@@ -5,4 +5,5 @@
 /*dist export-ignore
 /*baseline* export-ignore
 /Makefile export-ignore
+/package.json export-ignore
 /pyproject.toml export-ignore

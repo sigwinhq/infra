@@ -1,7 +1,6 @@
 on:
     release:
         types: [ published ]
-    pull_request:
 
 jobs:
     ReleaseNPM:
@@ -16,7 +15,7 @@ jobs:
                 env:
                     NODE_AUTH_TOKEN: "${{ secrets.NPMJS_SECRET }}"
             -   name: NPM release
-                run: echo npm publish
+                run: npm publish
     ReleasePyPI:
         runs-on: ubuntu-latest
         environment:
@@ -28,7 +27,7 @@ jobs:
             -   name: Repo checkout
                 uses: actions/checkout@v3
             -   name: Set release version to pyproject.toml
-                run: echo sed -i 's#version = ".*"#version = "'"${{ github.ref_name }}"'"#' pyproject.toml
+                run: sed -i 's#version = ".*"#version = "'"${{ github.ref_name }}"'"#' pyproject.toml
             -   name: Set up Python
                 run: python -m pip install --upgrade poetry
             -   name: Set up Poetry
