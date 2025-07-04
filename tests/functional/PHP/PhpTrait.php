@@ -25,7 +25,7 @@ trait PhpTrait
         yield ['PHP_VERSION' => '8.4'];
 
         yield ['PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
-        yield ['PHP_VERSION' => '8.2', 'PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
+        yield ['PHP_VERSION' => '8.4', 'PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
         yield ['DOCKER_ENV' => '--env "FOO=bar"'];
     }
 
