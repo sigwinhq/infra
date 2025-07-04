@@ -266,7 +266,7 @@ abstract class MakefileTestCase extends TestCase
         string $directory = __DIR__.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..',
     ): string {
         $makefile = str_replace('/', \DIRECTORY_SEPARATOR, $makefile ?? self::getMakefilePath());
-        $fullCommand = ['make', '-f', self::getRoot().\DIRECTORY_SEPARATOR.ltrim($makefile, '/\\')];
+        $fullCommand = ['make', '-f', self::getRoot().\DIRECTORY_SEPARATOR.mb_ltrim($makefile, '/\\')];
         if ($args !== null) {
             array_push($fullCommand, ...$args);
         }
@@ -320,7 +320,7 @@ abstract class MakefileTestCase extends TestCase
      */
     private static function getMakefileHelpCommands(): array
     {
-        $help = explode("\n", trim(self::stripColoring(self::getMakefileHelp())));
+        $help = explode("\n", mb_trim(self::stripColoring(self::getMakefileHelp())));
 
         $commands = [];
         foreach ($help as $command) {

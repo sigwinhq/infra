@@ -22,6 +22,7 @@ return static function (string $root, ?string $header = null): Config {
     return (new Config('sigwin/infra'))
         ->setCacheFile($root.'/var/phpqa/php-cs-fixer.cache')
         ->setParallelConfig(PhpCsFixer\Runner\Parallel\ParallelConfigFactory::detect())
+        ->setUnsupportedPhpVersionAllowed(true)
         ->setRiskyAllowed(true)
         ->setRules(
             [
