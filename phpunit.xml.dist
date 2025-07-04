@@ -12,7 +12,6 @@
          displayDetailsOnTestsThatTriggerErrors="true"
          displayDetailsOnTestsThatTriggerNotices="true"
          displayDetailsOnTestsThatTriggerWarnings="true"
-         enforceTimeLimit="true"
          executionOrder="random"
          failOnEmptyTestSuite="true"
          failOnRisky="true"
