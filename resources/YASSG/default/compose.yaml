@@ -1,6 +1,6 @@
 services:
     app:
-        image: php:8.2-alpine
+        image: php:8.4-alpine
         environment:
             BASE_URL: ${BASE_URL}
         working_dir: /app
