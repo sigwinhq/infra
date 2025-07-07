@@ -118,6 +118,28 @@ abstract class MakefileTestCase extends TestCase
     }
 
     /**
+     * @return iterable<array-key, array{string, list<string>, array<string, string>}>
+     *
+     * @psalm-suppress PossiblyUnusedMethod false positive
+     */
+    public static function provideMakefileCommandsWorkCases(): iterable
+    {
+        $commands = self::getMakefileHelpCommands();
+
+        $envs = self::getEnvs();
+        foreach ($envs as $env) {
+            $expected = static::getExpectedHelpCommandsExecutionPath($env);
+            foreach ($commands as $command) {
+                self::assertArrayHasKey($command, $expected, \sprintf('No expected execution path defined for command "%1$s"', $command));
+            }
+
+            foreach ($expected as $command => $path) {
+                yield [$command, $path, $env];
+            }
+        }
+    }
+
+    /**
      * @return iterable<array<string, string>>
      */
     protected static function getEnvs(): iterable
@@ -199,28 +221,6 @@ abstract class MakefileTestCase extends TestCase
         }
 
         return $commands;
-    }
-
-    /**
-     * @return iterable<array-key, array{string, list<string>, array<string, string>}>
-     *
-     * @psalm-suppress PossiblyUnusedMethod false positive
-     */
-    public static function provideMakefileCommandsWorkCases(): iterable
-    {
-        $commands = self::getMakefileHelpCommands();
-
-        $envs = self::getEnvs();
-        foreach ($envs as $env) {
-            $expected = static::getExpectedHelpCommandsExecutionPath($env);
-            foreach ($commands as $command) {
-                self::assertArrayHasKey($command, $expected, \sprintf('No expected execution path defined for command "%1$s"', $command));
-            }
-
-            foreach ($expected as $command => $path) {
-                yield [$command, $path, $env];
-            }
-        }
     }
 
     protected static function getMakefilePath(): string
