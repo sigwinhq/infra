@@ -1,5 +1,5 @@
 include:
-    - remote: 'https://raw.githubusercontent.com/sigwinhq/infra/refs/heads/feat/gitlab-ci/resources/Gitlab/ssh.yaml'
+    - remote: 'https://raw.githubusercontent.com/sigwinhq/infra/refs/heads/main/resources/Gitlab/ssh.yaml'
 
 .docker_compose_build:
     stage: build
