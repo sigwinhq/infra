@@ -1,7 +1,7 @@
 include:
     - remote: 'https://raw.githubusercontent.com/sigwinhq/infra/refs/heads/feat/gitlab-ci/resources/Gitlab/ssh.yaml'
 
-.build: &build
+.docker_compose_build:
     stage: build
     variables:
         BUILD_PATH: build_previous
