@@ -1,0 +1,36 @@
+include:
+    - remote: 'https://raw.githubusercontent.com/sigwinhq/infra/refs/heads/main/resources/Gitlab/ssh.yaml'
+
+.docker_compose_build:
+    stage: build
+    variables:
+        BUILD_PATH: build_previous
+    before_script:
+        - echo -n "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
+        - test -f .env.dist && cp .env.dist .env
+        - mkdir -p var/build && mv var/build var/build_previous
+    script:
+        - VERSION=${CI_DEFAULT_BRANCH} make registry/pull
+        - make build/prod
+        - make registry/push
+    cache:
+        key: build:cache
+        paths:
+            - var/build/
+    artifacts:
+        when: on_failure
+        paths:
+            - var/log/
+    tags:
+        - docker
+
+.docker_compose_ssh_deploy:
+    extends: .ssh_agent
+    script:
+        - ssh ${APPLICATION_USER} "test -d ~/${APPLICATION_TEMPLATE} && cp -vRT ~/${APPLICATION_TEMPLATE} ~/${APPLICATION_NAMESPACE} || mkdir -p ~/${APPLICATION_NAMESPACE}"
+        - scp .infra/docker-compose/compose.yaml ${APPLICATION_USER}:~/${APPLICATION_NAMESPACE}/
+        - ssh ${APPLICATION_USER} "cd ~/${APPLICATION_NAMESPACE} && VERSION=${APPLICATION_VERSION} SERVICE=${APPLICATION_NAMESPACE} DOMAIN=${APPLICATION_URL} docker compose up --pull always --detach"
+.docker_compose_ssh_undeploy:
+    extends: .ssh_agent
+    script:
+        - ssh ${APPLICATION_USER} "cd ~/${APPLICATION_NAMESPACE} && VERSION=${APPLICATION_VERSION} SERVICE=${APPLICATION_NAMESPACE} DOMAIN=${APPLICATION_URL} docker compose down --remove-orphans && cd ~ && rm -rf ~/${APPLICATION_NAMESPACE}"

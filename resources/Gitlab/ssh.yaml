@@ -1,0 +1,6 @@
+.ssh_agent:
+    before_script:
+        - eval $(ssh-agent -s)
+        - chmod 400 "$SSH_PRIVATE_KEY" && ssh-add -v "$SSH_PRIVATE_KEY"
+        - mkdir -p ~/.ssh && chmod 700 ~/.ssh && cp "$SSH_KNOWN_HOSTS" ~/.ssh/known_hosts && chmod 644 ~/.ssh/known_hosts
+
