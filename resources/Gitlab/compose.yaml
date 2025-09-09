@@ -7,7 +7,7 @@ include:
         BUILD_PATH: build_previous
     before_script:
         - echo -n "${CI_REGISTRY_PASSWORD}" | docker login --username "${CI_REGISTRY_USER}" --password-stdin "${CI_REGISTRY}"
-        - cp .env.dist .env
+        - test -f .env.dist && cp .env.dist .env
         - mkdir -p var/build && mv var/build var/build_previous
     script:
         - VERSION=${CI_DEFAULT_BRANCH} make registry/pull
