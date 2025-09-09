@@ -1,3 +1,6 @@
+include:
+    - remote: 'https://raw.githubusercontent.com/sigwinhq/infra/refs/heads/feat/gitlab-ci/resources/Gitlab/ssh.yaml'
+
 .build: &build
     stage: build
     variables:
