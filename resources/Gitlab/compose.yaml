@@ -25,12 +25,12 @@ include:
         - docker
 
 .ssh_deploy: &ssh_deploy
-    <<: *ssh_agent
+    extends: .ssh_agent
     script:
         - ssh ${APPLICATION_USER} "test -d ~/${APPLICATION_TEMPLATE} && cp -vRT ~/${APPLICATION_TEMPLATE} ~/${APPLICATION_NAMESPACE} || true"
         - scp .infra/docker-compose/compose.yaml ${APPLICATION_USER}:~/${APPLICATION_NAMESPACE}/
         - ssh ${APPLICATION_USER} "cd ~/${APPLICATION_NAMESPACE} && VERSION=${APPLICATION_VERSION} SERVICE=${APPLICATION_NAMESPACE} DOMAIN=${APPLICATION_URL} docker compose up --pull always --detach"
 .ssh_undeploy: &ssh_undeploy
-    <<: *ssh_agent
+    extends: .ssh_agent
     script:
         - ssh ${APPLICATION_USER} "cd ~/${APPLICATION_NAMESPACE} && VERSION=${APPLICATION_VERSION} SERVICE=${APPLICATION_NAMESPACE} DOMAIN=${APPLICATION_URL} docker compose down --remove-orphans && cd ~ && rm -rf ~/${APPLICATION_NAMESPACE}"

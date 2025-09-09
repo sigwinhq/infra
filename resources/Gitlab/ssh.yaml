@@ -1,4 +1,4 @@
-.ssh_agent: &ssh_agent
+.ssh_agent:
     before_script:
         - eval $(ssh-agent -s)
         - chmod 400 "$SSH_PRIVATE_KEY" && ssh-add -v "$SSH_PRIVATE_KEY"
