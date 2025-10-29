@@ -7,7 +7,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: Repo checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v5
             -   name: Set release version to package.json
                 run: jq --indent 4 '.version = "${{ github.ref_name }}"' < package.json > package.json~ && mv package.json~ package.json
             -   name: NPM auth
@@ -25,7 +25,7 @@ jobs:
             id-token: write
         steps:
             -   name: Repo checkout
-                uses: actions/checkout@v3
+                uses: actions/checkout@v5
             -   name: Set release version to pyproject.toml
                 run: sed -i 's#version = ".*"#version = "'"${{ github.ref_name }}"'"#' pyproject.toml
             -   name: Set up Python
