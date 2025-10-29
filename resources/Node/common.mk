@@ -1,12 +1,12 @@
 ifndef SIGWIN_INFRA_ROOT
-$(error SIGWIN_INFRA_ROOT must be defined before loading PHP/common.mk)
+$(error SIGWIN_INFRA_ROOT must be defined before loading Node/common.mk)
 endif
 ifndef OS_FAMILY
 include ${SIGWIN_INFRA_ROOT:%/=%}/Common/default.mk
 endif
 
 ifndef NODE_VERSION
-NODE_VERSION=21.7
+NODE_VERSION=25.1
 endif
 
 ifndef NODE_DOCKER_IMAGE
