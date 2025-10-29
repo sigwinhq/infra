@@ -1,7 +1,7 @@
 include:
     - remote: 'https://raw.githubusercontent.com/sigwinhq/infra/refs/heads/main/resources/Gitlab/ssh.yaml'
 
-.compose_build:
+.docker_compose_build:
     stage: build
     variables:
         BUILD_PATH: build_previous
@@ -24,13 +24,13 @@ include:
     tags:
         - docker
 
-.compose_ssh_deploy:
+.docker_compose_ssh_deploy:
     extends: .ssh_agent
     script:
         - ssh ${APPLICATION_USER} "test -d ~/${APPLICATION_TEMPLATE} && cp -vRT ~/${APPLICATION_TEMPLATE} ~/${APPLICATION_NAMESPACE} || mkdir -p ~/${APPLICATION_NAMESPACE}"
-        - scp .infra/docker-compose/compose.yaml ${APPLICATION_USER}:~/${APPLICATION_NAMESPACE}/
+        - scp .infra/docker-compose/docker-compose.yaml ${APPLICATION_USER}:~/${APPLICATION_NAMESPACE}/
         - ssh ${APPLICATION_USER} "cd ~/${APPLICATION_NAMESPACE} && VERSION=${APPLICATION_VERSION} SERVICE=${APPLICATION_NAMESPACE} DOMAIN=${APPLICATION_URL} docker compose up --pull always --detach"
-.compose_ssh_undeploy:
+.docker_compose_ssh_undeploy:
     extends: .ssh_agent
     script:
         - ssh ${APPLICATION_USER} "cd ~/${APPLICATION_NAMESPACE} && VERSION=${APPLICATION_VERSION} SERVICE=${APPLICATION_NAMESPACE} DOMAIN=${APPLICATION_URL} docker compose down --remove-orphans && cd ~ && rm -rf ~/${APPLICATION_NAMESPACE}"
