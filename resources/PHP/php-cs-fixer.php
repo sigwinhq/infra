@@ -27,8 +27,8 @@ return static function (string $root, ?string $header = null): Config {
         ->setRules(
             [
                 '@DoctrineAnnotation' => true,
-                '@PHP80Migration' => true,
-                '@PHP80Migration:risky' => true,
+                '@PHP8x0Migration' => true,
+                '@PHP8x0Migration:risky' => true,
                 '@PhpCsFixer' => true,
                 '@PhpCsFixer:risky' => true,
                 '@Symfony' => true,

@@ -24,7 +24,7 @@ final class CommonTest extends MakefileTestCase
 {
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        $nodeVersion = $env['NODE_VERSION'] ?? '21.7';
+        $nodeVersion = $env['NODE_VERSION'] ?? '25.1';
         $nodeDockerImage = $env['NODE_DOCKER_IMAGE'] ?? 'node:%1$s-alpine';
         $dockerEnv = $env['DOCKER_ENV'] ?? ' ';
 
