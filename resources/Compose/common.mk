@@ -6,6 +6,12 @@ include ${SIGWIN_INFRA_ROOT:%/=%}/Common/default.mk
 endif
 include ${SIGWIN_INFRA_ROOT:%/=%}/Secrets/common.mk
 
+ifeq ($(wildcard ./.env),)
+ifneq ($(wildcard ./.env.dist),)
+$(shell cp .env.dist .env)
+endif
+endif
+
 ifneq (,$(wildcard ./.env))
     include .env
     export
