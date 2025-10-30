@@ -2,45 +2,13 @@ ifndef SIGWIN_INFRA_ROOT
 SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
 endif
 include ${SIGWIN_INFRA_ROOT:%/=%}/Pimcore/common.mk
-include ${SIGWIN_INFRA_ROOT:%/=%}/Secrets/common.mk
-
-ifneq (,$(wildcard ./.env))
-    include .env
-    export
-endif
-
-APP_DOCKER_COMMAND ?= docker compose exec ${DOCKER_USER} app
-
-VERSION ?= latest
-
-BASE_URL ?= http://example.com/
+include ${SIGWIN_INFRA_ROOT:%/=%}/Compose/common.mk
 
 dist: composer/normalize cs analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
 test: test/unit test/functional ## Test the codebase
 test/unit: test/infection ## Test the codebase, unit tests
 test/functional: test/behat ## Test the codebase, functional tests
-
-build/dev: ## Build app for "dev" target
-	VERSION=${VERSION} docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=${BASE_URL} --file .infra/docker-buildx/docker-buildx.dev.hcl
-build/prod: ## Build app for "prod" target
-	VERSION=${VERSION} docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=${BASE_URL} --file .infra/docker-buildx/docker-buildx.prod.hcl
-registry/push:
-	VERSION=${VERSION} docker compose push
-registry/pull:
-	VERSION=${VERSION} docker compose pull
-
-start/dev: secrets ## Start app in "dev" mode
-	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans --no-build
-start/prod: secrets ## Start app in "prod" mode
-	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.prod.yaml up --detach --remove-orphans --no-build
-start: secrets ## Start app in APP_ENV mode (defined in .env)
-	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml up --detach --remove-orphans --no-build
-stop: ## Stop app
-	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans
-
-sh/app: ## Run application shell
-	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml exec ${DOCKER_USER} app sh
 
 clean: ## Clear logs and system cache
 	rm -rf var/admin/* var/cache/* var/log/* var/tmp/*
@@ -52,8 +20,6 @@ setup/test: ## Setup: create a functional test runtime
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction doctrine:database:create
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app vendor/bin/pimcore-install --env test --no-interaction --skip-database-config
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml exec ${DOCKER_USER} app bin/console --env test --no-interaction sigwin:testing:setup
-start/test: secrets ## Start app in "test" mode
-	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml up --detach --remove-orphans --no-build
 
 setup/filesystem: ${HOME}/.composer clean config/pimcore/classes public/var/assets public/var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/tmp var/versions ## Setup: filesystem (var, public/var folders)
 config/pimcore/classes:

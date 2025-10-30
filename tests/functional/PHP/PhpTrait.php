@@ -212,7 +212,7 @@ trait PhpTrait
 
     private static function generateDockerBuildxExecutionPath(string $env): string
     {
-        return \sprintf('VERSION=latest docker buildx bake --load --file docker-compose.yaml --set *.args.BASE_URL=http://example.com/ --file .infra/docker-buildx/docker-buildx.%1$s.hcl', $env);
+        return \sprintf('VERSION=latest docker buildx bake --load --file docker-compose.yaml --file .infra/docker-buildx/docker-buildx.%1$s.hcl', $env);
     }
 
     private static function generateDockerComposeAppExecutionPath(string $command, string $env = 'env'): string
