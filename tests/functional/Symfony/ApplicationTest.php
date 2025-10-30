@@ -100,7 +100,6 @@ final class ApplicationTest extends MakefileTestCase
             ], [
                 __DIR__.'/../../../resources/Compose/common.mk',
                 __DIR__.'/../../../resources/Secrets/common.mk',
-                '',
             ])],
             'analyze' => array_merge($mkdir, $paths['analyze']),
             'build/dev' => $paths['build: dev'],
