@@ -22,14 +22,6 @@
         </ignoreFiles>
     </projectFiles>
 
-    <issueHandlers>
-        <MissingOverrideAttribute>
-            <errorLevel type="suppress">
-                <directory name="tests/"/>
-            </errorLevel>
-        </MissingOverrideAttribute>
-    </issueHandlers>
-
     <plugins>
         <pluginClass class="Psalm\PhpUnitPlugin\Plugin"/>
         <pluginClass class="Psalm\SymfonyPsalmPlugin\Plugin"/>
