@@ -48,6 +48,7 @@ final class LibraryTest extends MakefileTestCase
         self::assertSame($expected, $actual);
     }
 
+    #[\Override]
     protected function getExpectedInitPaths(): array
     {
         return [
@@ -58,6 +59,7 @@ final class LibraryTest extends MakefileTestCase
         ];
     }
 
+    #[\Override]
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
         $paths = self::paths($env);

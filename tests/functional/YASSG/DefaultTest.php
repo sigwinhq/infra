@@ -33,6 +33,7 @@ final class DefaultTest extends MakefileTestCase
         'build/docker' => 'Build app for "APP_ENV" target (defaults to "prod") fully in Docker',
     ];
 
+    #[\Override]
     protected function getExpectedInitPaths(): array
     {
         return [
@@ -44,6 +45,7 @@ final class DefaultTest extends MakefileTestCase
         ];
     }
 
+    #[\Override]
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
         $paths = self::paths($env);

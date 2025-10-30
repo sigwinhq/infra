@@ -32,6 +32,7 @@ final class CompatTest extends MakefileTestCase
         'start' => 'Start app in APP_ENV mode (defaults to "dev")',
     ];
 
+    #[\Override]
     protected function getExpectedInitPaths(): array
     {
         return [
@@ -45,6 +46,7 @@ final class CompatTest extends MakefileTestCase
         ];
     }
 
+    #[\Override]
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
         $paths = self::paths($env);

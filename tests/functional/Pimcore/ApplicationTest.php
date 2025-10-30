@@ -45,6 +45,7 @@ final class ApplicationTest extends MakefileTestCase
         self::assertSame($expected, $actual);
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         $filesystem = new Filesystem();
@@ -64,6 +65,7 @@ final class ApplicationTest extends MakefileTestCase
         ]);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $filesystem = new Filesystem();
@@ -82,6 +84,7 @@ final class ApplicationTest extends MakefileTestCase
         ]);
     }
 
+    #[\Override]
     protected function getExpectedInitPaths(): array
     {
         return [
@@ -95,6 +98,7 @@ final class ApplicationTest extends MakefileTestCase
         ];
     }
 
+    #[\Override]
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
         $paths = self::paths($env);

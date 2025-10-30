@@ -22,6 +22,7 @@ use Sigwin\Infra\Test\Functional\MakefileTestCase;
 #[\PHPUnit\Framework\Attributes\Medium]
 final class DefaultTest extends MakefileTestCase
 {
+    #[\Override]
     protected function getExpectedInitPaths(): array
     {
         return [
@@ -30,6 +31,7 @@ final class DefaultTest extends MakefileTestCase
         ];
     }
 
+    #[\Override]
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
         return [

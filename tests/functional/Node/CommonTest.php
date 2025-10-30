@@ -22,6 +22,7 @@ use Sigwin\Infra\Test\Functional\MakefileTestCase;
 #[\PHPUnit\Framework\Attributes\Medium]
 final class CommonTest extends MakefileTestCase
 {
+    #[\Override]
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
         $nodeVersion = $env['NODE_VERSION'] ?? '25.1';
@@ -39,6 +40,7 @@ final class CommonTest extends MakefileTestCase
         ];
     }
 
+    #[\Override]
     protected function getExpectedInitPaths(): array
     {
         return [
