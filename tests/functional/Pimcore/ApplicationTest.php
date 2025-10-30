@@ -131,7 +131,7 @@ final class ApplicationTest extends MakefileTestCase
             'start/dev' => $paths['docker compose: start app dev'],
             'start/prod' => $paths['docker compose: start app prod'],
             'start/test' => $paths['docker compose: start app test'],
-            'stop' => $paths['docker compose: stop Pimcore app'],
+            'stop' => $paths['docker compose: stop app'],
             'test' => array_merge($mkdir, $testUnit, $testFunctional),
             'test/functional' => $testFunctional,
             'test/unit' => array_merge($mkdir, $testUnit),
