@@ -45,12 +45,14 @@ trait PhpTrait
      *     "docker compose: start app prod": list<string>,
      *     "docker compose: start app test": list<string>,
      *     "docker compose: start app": list<string>,
-     *     "docker compose: start library test": list<string>,
-     *     "docker compose: stop Pimcore app": list<string>,
-     *     "docker compose: stop Pimcore library": list<string>,
+     *     "docker compose: start test": list<string>,
+     *     "docker compose: stop app": list<string>,
+     *     "docker compose: stop library": list<string>,
      *     "permissions: Pimcore": list<string>,
+     *     "permissions: Symfony": list<string>,
      *     "setup: Pimcore app test": list<string>,
      *     "setup: Pimcore library test": list<string>,
+     *     "setup: Symfony app test": list<string>,
      *     "shell: app": list<string>,
      *     "shell: app library": list<string>,
      *     "shell: PHP": list<string>,
@@ -62,6 +64,7 @@ trait PhpTrait
      *     "touch: .env": list<string>,
      *     "touch: composer.lock": list<string>,
      *     "clean: Pimcore application": list<string>,
+     *     "clean: Symfony application": list<string>,
      *     "clean: library": list<string>
      * }
      */
@@ -119,14 +122,27 @@ trait PhpTrait
             'docker compose: start app' => [
                 self::generateDockerComposeAppExecutionPath('up --detach --remove-orphans --no-build'),
             ],
-            'docker compose: start library test' => [
+            'docker compose: start test' => [
                 self::generateDockerComposeTestExecutionPath('up --detach --remove-orphans --no-build'),
             ],
-            'docker compose: stop Pimcore app' => [
+            'docker compose: stop app' => [
                 self::generateDockerComposeAppExecutionPath('down --remove-orphans'),
             ],
-            'docker compose: stop Pimcore library' => [
+            'docker compose: stop library' => [
                 self::generateDockerComposeTestExecutionPath('down --remove-orphans'),
+            ],
+
+            'permissions: Symfony' => self::generatePermissionsExecutionPath([
+                'var/cache',
+                'var/log',
+            ]),
+            'setup: Symfony app test' => [
+                self::generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:drop --if-exists --force', 'test'),
+                self::generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:create', 'test'),
+                self::generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:migrations:migrate --all-or-nothing', 'test'),
+            ],
+            'clean: Symfony application' => [
+                'rm -rf var/cache/* var/log/*',
             ],
 
             'permissions: Pimcore' => self::generatePermissionsExecutionPath([
@@ -142,7 +158,6 @@ trait PhpTrait
                 'var/tmp',
                 'var/versions',
             ]),
-
             'setup: Pimcore app test' => [
                 self::generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:drop --if-exists --force', 'test'),
                 self::generateDockerComposeAppExecExecutionPath('bin/console --env test --no-interaction doctrine:database:create', 'test'),
@@ -154,6 +169,9 @@ trait PhpTrait
                 self::generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction doctrine:database:create'),
                 self::generateDockerComposeTestExecExecutionPath('vendor/bin/pimcore-install --env test --no-interaction --ignore-existing-config --skip-database-config'),
                 self::generateDockerComposeTestExecExecutionPath('php tests/runtime/bootstrap.php --env test --no-interaction sigwin:testing:setup'),
+            ],
+            'clean: Pimcore application' => [
+                'rm -rf var/admin/* var/cache/* var/log/* var/tmp/*',
             ],
 
             'shell: app' => [
@@ -189,9 +207,6 @@ trait PhpTrait
             ],
             'touch: composer.lock' => [
                 'touch composer.lock',
-            ],
-            'clean: Pimcore application' => [
-                'rm -rf var/admin/* var/cache/* var/log/* var/tmp/*',
             ],
             'clean: library' => [
                 'rm -rf var/ tests/runtime/var',
