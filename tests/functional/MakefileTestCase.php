@@ -177,7 +177,13 @@ abstract class MakefileTestCase extends TestCase
             __DIR__.'/../../resources/Common/Platform/'.\PHP_OS_FAMILY.'/default.mk',
         ]);
         $files = array_map('realpath', $files);
-        $files = array_merge($files, $additionalFiles);
+        /**
+         * @psalm-suppress FalsableReturnStatement
+         * @psalm-suppress InvalidFalsableReturnType
+         *
+         * @phpstan-ignore return.type
+         */
+        $files = array_merge($files, array_map(static fn (string $item): string => str_contains($item, './') ? realpath($item) : $item, $additionalFiles));
 
         $command = match (\PHP_OS_FAMILY) {
             'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \'  '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',

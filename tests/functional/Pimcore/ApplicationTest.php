@@ -85,6 +85,7 @@ final class ApplicationTest extends MakefileTestCase
     protected function getExpectedInitPaths(): array
     {
         return [
+            'Secrets/common',
             'Common/Platform/$PLATFORM/default',
             'Common/default',
             'PHP/common',
@@ -107,7 +108,7 @@ final class ApplicationTest extends MakefileTestCase
                 __DIR__.'/../../../resources/Pimcore/application.mk',
                 __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
-            ], ['.env'])],
+            ], [__DIR__.'/../../../resources/Secrets/common.mk', '.env'])],
             'analyze' => array_merge($mkdir, $paths['analyze']),
             'build/dev' => $paths['build: dev'],
             'build/prod' => $paths['build: prod'],
