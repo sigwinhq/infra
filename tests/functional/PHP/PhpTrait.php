@@ -45,12 +45,14 @@ trait PhpTrait
      *     "docker compose: start app prod": list<string>,
      *     "docker compose: start app test": list<string>,
      *     "docker compose: start app": list<string>,
-     *     "docker compose: start library test": list<string>,
-     *     "docker compose: stop Pimcore app": list<string>,
-     *     "docker compose: stop Pimcore library": list<string>,
+     *     "docker compose: start test": list<string>,
+     *     "docker compose: stop app": list<string>,
+     *     "docker compose: stop library": list<string>,
      *     "permissions: Pimcore": list<string>,
+     *     "permissions: Symfony": list<string>,
      *     "setup: Pimcore app test": list<string>,
      *     "setup: Pimcore library test": list<string>,
+     *     "setup: Symfony app test": list<string>,
      *     "shell: app": list<string>,
      *     "shell: app library": list<string>,
      *     "shell: PHP": list<string>,
@@ -62,6 +64,7 @@ trait PhpTrait
      *     "touch: .env": list<string>,
      *     "touch: composer.lock": list<string>,
      *     "clean: Pimcore application": list<string>,
+     *     "clean: Symfony application": list<string>,
      *     "clean: library": list<string>
      * }
      */
