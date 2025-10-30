@@ -2,6 +2,7 @@ ifndef SIGWIN_INFRA_ROOT
 SIGWIN_INFRA_ROOT := $(dir $(abspath $(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))))
 endif
 include ${SIGWIN_INFRA_ROOT:%/=%}/Pimcore/common.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/Secrets/common.mk
 
 ifneq (,$(wildcard ./.env))
     include .env
@@ -13,9 +14,6 @@ APP_DOCKER_COMMAND ?= docker compose exec ${DOCKER_USER} app
 VERSION ?= latest
 
 BASE_URL ?= http://example.com/
-
-SECRETS_DIR ?= ./.infra/secrets
-SECRETS_DIST ?= .dist
 
 dist: composer/normalize cs analyze/phpstan analyze/psalm test ## Prepare the codebase for commit
 analyze: analyze/composer analyze/cs analyze/phpstan analyze/psalm ## Analyze the codebase
@@ -95,7 +93,3 @@ var/versions: var
 	mkdir -p var/versions
 	$(call permissions,var/versions)
 .PHONY: config/pimcore/classes public/var/assets public/var/tmp var/admin var/application-logger var/cache var/config var/email var/log var/tmp var/versions
-
-secrets: $(patsubst %${SECRETS_DIST},%,$(wildcard ${SECRETS_DIR}/*.secret${SECRETS_DIST}))
-${SECRETS_DIR}/%.secret:
-	cp $@${SECRETS_DIST} $@
