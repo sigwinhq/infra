@@ -49,7 +49,7 @@ final class ApplicationTest extends MakefileTestCase
     protected function setUp(): void
     {
         $filesystem = new Filesystem();
-        $filesystem->touch('.env');
+        $filesystem->touch('.env.dist');
         $filesystem->mkdir([
             'var/cache',
             'var/log',
@@ -61,6 +61,7 @@ final class ApplicationTest extends MakefileTestCase
     {
         $filesystem = new Filesystem();
         $filesystem->remove([
+            '.env.dist',
             '.env',
             'var/log',
             'var/tmp',
@@ -99,7 +100,7 @@ final class ApplicationTest extends MakefileTestCase
             ], [
                 __DIR__.'/../../../resources/Compose/common.mk',
                 __DIR__.'/../../../resources/Secrets/common.mk',
-                '.env',
+                '',
             ])],
             'analyze' => array_merge($mkdir, $paths['analyze']),
             'build/dev' => $paths['build: dev'],
