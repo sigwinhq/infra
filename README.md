@@ -84,6 +84,28 @@ make setup/filesystem        # Create and configure var directories
 make clean                   # Clear logs and caches
 ```
 
+### Node Application Projects
+```bash
+make dist                    # Run all checks (analyze, test)
+make analyze                 # Run all analysis tools (lint, type-check)
+make analyze/lint            # Run linter
+make analyze/type-check      # Run type checking
+make test                    # Run tests (unit + functional)
+make test/vitest             # Run Vitest unit tests
+make test/e2e                # Run end-to-end tests
+make build/dev               # Build Docker images for dev environment
+make build/prod              # Build Docker images for prod environment
+make start/dev               # Start application in dev mode
+make start/test              # Start application in test mode
+make start/prod              # Start application in prod mode
+make stop                    # Stop running application
+make sh/app                  # Open shell in application container
+make sh/node                 # Open Node shell in Docker container
+make setup/test              # Setup test environment
+make setup/filesystem        # Create and configure var directories
+make clean                   # Clear logs and caches
+```
+
 ### Environment Configuration
 
 Docker Compose projects automatically copy `.env.dist` to `.env` if `.env` doesn't exist (see `Compose/common.mk`).
