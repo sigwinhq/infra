@@ -9,7 +9,10 @@ Sigwin Infra is a reusable infrastructure framework providing standardized Makef
 - Docker-based tooling for consistent environments
 - Modular Makefile system with inheritance
 - Resource-based architecture in `resources/` directory
-- Distributed via multiple package managers (Composer, npm, pip/poetry/uv)
+- Distributed via multiple package managers:
+  - `sigwin/infra` for PHP (Composer)
+  - `@sigwinhq/infra` for Node.js (npm)
+  - `sigwin-infra` for Python (pip/poetry/uv)
 
 ## Architecture and Structure
 
@@ -27,6 +30,8 @@ The `resources/` directory contains modular Makefile includes organized by techn
 - **Monorepo**: Multi-package repository support
 - **YASSG**: Static site generation support
 - **Gitlab/Lighthouse/Visual**: CI/CD and testing integrations
+
+Each resource directory (e.g., `PHP/library.mk`) may have a corresponding folder (e.g., `PHP/library/`) containing template files. During `make init`, these files are recursively copied to consuming projects, with best match winning for nested structures.
 
 ### Inclusion Pattern
 
@@ -87,16 +92,10 @@ When working with PHP code in this repository:
 ### Running Tests
 
 ```bash
-make test/phpunit          # Run PHPUnit tests only
-make test/infection        # Run mutation testing (requires prior coverage)
-make test                  # Run all tests with mutation testing
+make test/phpunit          # Run PHPUnit tests
 ```
 
-### Test Coverage
-
-- PHPUnit requires coverage metadata with `requireCoverageMetadata="true"`
-- Infection mutation testing enforces 100% MSI (Mutation Score Indicator)
-- Tests must be thorough and cover edge cases
+This project does not use mutation testing or coverage collection. Tests only need to pass regular PHPUnit execution.
 
 ### Writing Tests
 
@@ -115,14 +114,14 @@ When adding or modifying tests:
 Before committing changes, always run:
 
 ```bash
-make dist                  # Runs: normalize, cs, analyze, test
+make dist                  # Runs: normalize, cs, analyze, test/phpunit
 ```
 
 This executes:
 1. `composer/normalize` - Normalize composer.json format
 2. `cs` - Fix code style issues automatically
 3. `analyze` - Run all static analysis tools
-4. `test` - Run all tests with mutation testing
+4. `test/phpunit` - Run PHPUnit tests
 
 ### Static Analysis
 

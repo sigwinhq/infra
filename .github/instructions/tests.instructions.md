@@ -13,6 +13,11 @@ All tests extend `Sigwin\Infra\Test\Functional\MakefileTestCase` which provides:
 - Helper methods for validating Make command output
 - Standardized test patterns for resource validation
 
+**Important**: The test class name must directly reflect which Makefile resource it is testing. For example:
+- `LibraryTest` tests `resources/PHP/library.mk`
+- `ApplicationTest` tests `resources/Symfony/application.mk`
+- `DefaultTest` tests `resources/Common/default.mk`
+
 ### Required Test Attributes
 
 Every test class must have these PHPUnit attributes:
@@ -61,7 +66,7 @@ When creating a new test class extending `MakefileTestCase`, implement:
 
 ### Test Naming
 
-- Class name: `{ResourceType}Test` (e.g., `LibraryTest`, `ApplicationTest`)
+- Class name: Must match the Makefile resource being tested (e.g., `LibraryTest` for `library.mk`, `ApplicationTest` for `application.mk`)
 - Method name: `test{Behavior}` (e.g., `testMakefileExists`, `testMakefileHasHelp`)
 - Use descriptive names that explain what is being validated
 
@@ -117,16 +122,14 @@ declare(strict_types=1);
 
 ```bash
 make test/phpunit          # Run PHPUnit tests
-make test/infection        # Run mutation testing
-make test                  # Run both PHPUnit and mutation testing
 ```
 
 ### Test Requirements
 
 - Tests must pass PHPUnit strict settings
-- Coverage metadata required with `#[\PHPUnit\Framework\Attributes\CoversNothing]`
-- Tests must kill all mutations (100% MSI required)
 - Tests must be deterministic (no random failures)
+- Tests run on Linux, macOS, and Windows in CI - all three platforms must pass for successful PR
+- Test logic must be platform-agnostic to ensure cross-platform compatibility
 
 ## Common Test Scenarios
 
@@ -178,14 +181,14 @@ public function testDistExecutesExpectedCommands(): void
 
 - Do not test Docker image internals
 - Do not test external tools (PHPStan, Psalm, etc.) behavior
-- Do not test platform-specific shell behavior
 - Focus on testing the Makefile resource integration and command orchestration
+- Tests must be platform-agnostic and avoid hardcoding platform-specific paths or behaviors
 
 ## Adding Tests for New Resources
 
 When adding a new Makefile resource:
 
-1. Create corresponding test class in `tests/functional/{ResourceType}/`
+1. Create corresponding test class in `tests/functional/{ResourceType}/` with name matching the `.mk` file
 2. Extend `MakefileTestCase`
 3. Implement required abstract methods
 4. Add tests for:
@@ -194,7 +197,7 @@ When adding a new Makefile resource:
    - Resource initialization
    - Target execution paths
    - Integration with parent resources
-5. Ensure 100% mutation score
+5. Ensure tests pass on Linux, macOS, and Windows
 
 ## Debugging Tests
 
