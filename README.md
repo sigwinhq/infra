@@ -51,6 +51,84 @@ The `init` target (in `Common/default.mk`) copies distribution files from resour
 make help                    # Show all available targets
 ```
 
+The `make help` command can be customized with project-specific information by adding metadata to your `package.json` (Node.js projects) or `composer.json` (PHP projects):
+
+**For package.json:**
+```json
+{
+  "name": "my-project",
+  "description": "A brief description of your project",
+  "homepage": "https://docs.example.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/example/my-project.git"
+  },
+  "extra": {
+    "sigwin/infra": {
+      "help_color": "46",
+      "local_urls": [
+        {"url": "http://localhost:3000", "description": "Main dev server"},
+        {"url": "http://api.local.test", "description": "API endpoint"}
+      ]
+    }
+  }
+}
+```
+
+**For composer.json:**
+```json
+{
+  "name": "my-project/library",
+  "description": "A brief description of your project",
+  "homepage": "https://docs.example.com",
+  "support": {
+    "source": "https://github.com/example/my-project"
+  },
+  "extra": {
+    "sigwin/infra": {
+      "help_color": "46",
+      "local_urls": [
+        {"url": "http://localhost:8000"},
+        {"url": "http://api.local.test", "description": "Use when testing Google OAuth"}
+      ]
+    }
+  }
+}
+```
+
+**Alternative: Define in Makefile**
+
+If you don't have or don't want to use package.json/composer.json, you can define these variables directly in your root Makefile:
+
+```makefile
+.SILENT:
+export PROJECT_NAME := My Project
+export PROJECT_DESCRIPTION := A brief description of your project
+export PROJECT_HOMEPAGE := https://docs.example.com
+export PROJECT_REPOSITORY := https://github.com/example/my-project
+export SIGWIN_INFRA_HELP_COLOR := 46
+export PROJECT_LOCAL_URLS := http://localhost:3000|Main dev server,http://localhost:3001|HMR server
+
+include vendor/sigwin/infra/resources/PHP/library.mk
+```
+
+**Note**: The `PROJECT_LOCAL_URLS` variable should be a comma-separated list of URLs. You can optionally add descriptions by separating the URL and description with a pipe (`|`) character, e.g., `http://localhost:3000|Description`.
+
+When configured, `make help` will display a header with:
+- **Project name** - from `name` field or `PROJECT_NAME` (displayed with custom background color)
+- **Description** - from `description` field or `PROJECT_DESCRIPTION`
+- **Local URLs** - from `extra."sigwin/infra".local_urls` field or `PROJECT_LOCAL_URLS` (array/list of URLs with optional descriptions)
+- **Homepage** - from `homepage` field or `PROJECT_HOMEPAGE`
+- **Repository** - from `repository.url` (package.json) or `support.source` (composer.json) or `PROJECT_REPOSITORY`
+
+Custom colors can be set using ANSI color codes in `extra."sigwin/infra".help_color` or `SIGWIN_INFRA_HELP_COLOR` (default is `45` for magenta). Common options:
+- `44` - Blue
+- `45` - Magenta (default)
+- `46` - Cyan
+- `41` - Red
+- `42` - Green
+- `43` - Yellow
+
 ### PHP Library Projects
 ```bash
 make dist                    # Run all checks (normalize, cs, analyze, test)

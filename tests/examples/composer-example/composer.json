@@ -1,0 +1,18 @@
+{
+    "name": "example/composer-project",
+    "description": "Example project using composer.json for help metadata",
+    "license": "proprietary",
+    "homepage": "https://example.com/composer",
+    "support": {
+        "source": "https://github.com/example/composer-project"
+    },
+    "extra": {
+        "sigwin/infra": {
+            "help_color": "44",
+            "local_urls": [
+                {"url": "http://localhost:8000"},
+                {"url": "http://api.localhost:8000", "description": "API endpoint"}
+            ]
+        }
+    }
+}

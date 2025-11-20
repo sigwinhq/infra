@@ -47,11 +47,11 @@ final class LibraryTest extends MakefileTestCase
         $testFunctional = $paths['test: functional library'];
 
         return [
-            'help' => [self::generateHelpExecutionPath([
+            'help' => self::generateHelpExecutionPathArray([
                 __DIR__.'/../../../resources/Pimcore/library.mk',
                 __DIR__.'/../../../resources/Pimcore/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
-            ])],
+            ]),
             'analyze' => array_merge($mkdir, $paths['analyze']),
             'clean' => $paths['clean: library'],
             'dist' => array_merge($mkdir, $paths['prepareAndAnalyze'], $testUnit, $testFunctional),
