@@ -15,7 +15,7 @@ jobs:
         steps:
             -
                 name: Repo checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
             -
                 name: Install dependencies
                 run: make composer/install
@@ -27,7 +27,7 @@ jobs:
         steps:
             -
                 name: Repo checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
             -
                 name: Compare resources/ folder against Git archive
                 run: |
@@ -51,7 +51,7 @@ jobs:
                     ini-values: post_max_size=256M, max_execution_time=180, xdebug.mode=develop
             -
                 name: Repo checkout
-                uses: actions/checkout@v5
+                uses: actions/checkout@v6
             -
                 name: Install dependencies
                 run: composer install --prefer-dist
