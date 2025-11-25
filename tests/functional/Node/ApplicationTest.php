@@ -72,13 +72,13 @@ final class ApplicationTest extends MakefileTestCase
         $testFunctional = $paths['test: functional app'];
 
         return [
-            'help' => [self::generateHelpExecutionPath([
+            'help' => self::generateHelpExecutionPathArray([
                 __DIR__.'/../../../resources/Node/application.mk',
                 __DIR__.'/../../../resources/Node/common.mk',
             ], [
                 __DIR__.'/../../../resources/Compose/common.mk',
                 __DIR__.'/../../../resources/Secrets/common.mk',
-            ])],
+            ]),
             'analyze' => $paths['analyze'],
             'build/dev' => $paths['build: dev'],
             'build/prod' => $paths['build: prod'],

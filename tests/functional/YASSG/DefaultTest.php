@@ -64,11 +64,11 @@ final class DefaultTest extends MakefileTestCase
         ];
 
         return [
-            'help' => [self::generateHelpExecutionPath([
+            'help' => self::generateHelpExecutionPathArray([
                 __DIR__.'/../../../resources/YASSG/default.mk',
                 __DIR__.'/../../../resources/YASSG/common.mk',
                 __DIR__.'/../../../resources/PHP/common.mk',
-            ])],
+            ]),
             'build' => $build,
             'build/docker' => [
                 'docker compose up imgproxy -d',

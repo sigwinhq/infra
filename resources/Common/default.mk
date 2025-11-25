@@ -56,7 +56,51 @@ define str_reverse
 $(if $(wordlist 2,2,$(1)),$(call str_reverse,$(wordlist 2,$(words $(1)),$(1))) $(firstword $(1)),$(1))
 endef
 
+# Get the directory of the entrypoint Makefile (first in MAKEFILE_LIST)
+ENTRYPOINT_DIR := $(patsubst %/,%,$(dir $(abspath $(firstword ${MAKEFILE_LIST}))))
+
+# Extract metadata from package.json or composer.json
+define get_project_metadata
+$(shell \
+	if command -v jq >/dev/null 2>&1; then \
+		if [ -f "$(ENTRYPOINT_DIR)/package.json" ]; then \
+			jq -r '.$(1) // empty' "$(ENTRYPOINT_DIR)/package.json" 2>/dev/null; \
+		elif [ -f "$(ENTRYPOINT_DIR)/composer.json" ]; then \
+			jq -r '.$(1) // empty' "$(ENTRYPOINT_DIR)/composer.json" 2>/dev/null; \
+		fi; \
+	fi \
+)
+endef
+
+# Extract nested metadata from package.json or composer.json
+define get_nested_metadata
+$(shell \
+	if command -v jq >/dev/null 2>&1; then \
+		if [ -f "$(ENTRYPOINT_DIR)/package.json" ]; then \
+			jq -r '.$(1).$(2) // empty' "$(ENTRYPOINT_DIR)/package.json" 2>/dev/null; \
+		elif [ -f "$(ENTRYPOINT_DIR)/composer.json" ]; then \
+			jq -r '.$(1).$(2) // empty' "$(ENTRYPOINT_DIR)/composer.json" 2>/dev/null; \
+		fi; \
+	fi \
+)
+endef
+
+# Extract infra metadata from package.json or composer.json
+# For composer.json, the infra config is in extra."sigwin/infra"
+# For package.json, the infra config is in extra."sigwin/infra"
+define get_infra_metadata
+$(shell \
+	if command -v jq >/dev/null 2>&1; then \
+		if [ -f "$(ENTRYPOINT_DIR)/package.json" ]; then \
+			jq -r '.extra["sigwin/infra"].$(1) // empty' "$(ENTRYPOINT_DIR)/package.json" 2>/dev/null; \
+		elif [ -f "$(ENTRYPOINT_DIR)/composer.json" ]; then \
+			jq -r '.extra["sigwin/infra"].$(1) // empty' "$(ENTRYPOINT_DIR)/composer.json" 2>/dev/null; \
+		fi; \
+	fi \
+)
+endef
+
 include ${SIGWIN_INFRA_ROOT:%/=%}/Common/Platform/${OS_FAMILY}/default.mk
 
 init:
-	$(foreach MAKEFILE, $(call str_reverse, $(subst .env,,${MAKEFILE_LIST})),$(call dir_copy,$(basename $(abspath ${MAKEFILE}))))
+	$(foreach MAKEFILE, $(call str_reverse, $(filter $(SIGWIN_INFRA_ROOT)%,$(subst .env,,${MAKEFILE_LIST}))),$(call dir_copy,$(basename $(abspath ${MAKEFILE}))))

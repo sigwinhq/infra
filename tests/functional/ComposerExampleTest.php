@@ -11,17 +11,18 @@ declare(strict_types=1);
  * with this source code in the file LICENSE.
  */
 
-namespace Sigwin\Infra\Test\Functional\Common;
-
-use Sigwin\Infra\Test\Functional\MakefileTestCase;
+namespace Sigwin\Infra\Test\Functional;
 
 /**
  * @internal
  */
+#[\PHPUnit\Framework\Attributes\Group('help')]
 #[\PHPUnit\Framework\Attributes\CoversNothing]
 #[\PHPUnit\Framework\Attributes\Medium]
-final class DefaultTest extends MakefileTestCase
+final class ComposerExampleTest extends MakefileTestCase
 {
+    public const MAKEFILE_PATH = __DIR__.'/../examples/composer-example/Makefile';
+
     #[\Override]
     protected function getExpectedInitPaths(): array
     {
