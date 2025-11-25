@@ -16,35 +16,6 @@ _METADATA_FILE := $(shell \
 	} \
 )
 
-# For backwards compatibility, these functions still work but are no longer used by print_help_header
-# They are kept in case other parts of the codebase call them
-define get_project_metadata
-$(if $(_METADATA_FILE),$(shell \
-	$$ErrorActionPreference = 'SilentlyContinue'; \
-	$$json = Get-Content "$(_METADATA_FILE)" | ConvertFrom-Json; \
-	$$value = $$json.$(1); \
-	if ($$value) { $$value } \
-))
-endef
-
-define get_nested_metadata
-$(if $(_METADATA_FILE),$(shell \
-	$$ErrorActionPreference = 'SilentlyContinue'; \
-	$$json = Get-Content "$(_METADATA_FILE)" | ConvertFrom-Json; \
-	$$value = $$json.$(1).$(2); \
-	if ($$value) { $$value } \
-))
-endef
-
-define get_infra_metadata
-$(if $(_METADATA_FILE),$(shell \
-	$$ErrorActionPreference = 'SilentlyContinue'; \
-	$$json = Get-Content "$(_METADATA_FILE)" | ConvertFrom-Json; \
-	$$value = $$json.extra.'sigwin/infra'.$(1); \
-	if ($$value) { $$value } \
-))
-endef
-
 # print_help_header reads all metadata from JSON at runtime (single shell invocation)
 # This eliminates multiple PowerShell startups that occurred when using get_*_metadata functions
 define print_help_header
