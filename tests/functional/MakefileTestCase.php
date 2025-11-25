@@ -396,7 +396,7 @@ abstract class MakefileTestCase extends TestCase
             ),
             'Windows' => \sprintf(
                 '$metadataFile = "%s"; $json = $null; if ($metadataFile -and (Test-Path $metadataFile)) { $json = Get-Content $metadataFile | ConvertFrom-Json; }; $PROJECT_NAME = if ($env:PROJECT_NAME) { $env:PROJECT_NAME } elseif ($json -and $json.name) { $json.name } else { "" }; $PROJECT_DESCRIPTION = if ($env:PROJECT_DESCRIPTION) { $env:PROJECT_DESCRIPTION } elseif ($json -and $json.description) { $json.description } else { "" }; $PROJECT_HOMEPAGE = if ($env:PROJECT_HOMEPAGE) { $env:PROJECT_HOMEPAGE } elseif ($json -and $json.homepage) { $json.homepage } else { "" }; $PROJECT_REPOSITORY = if ($env:PROJECT_REPOSITORY) { $env:PROJECT_REPOSITORY } elseif ($json -and $json.repository -and $json.repository.url) { $json.repository.url } else { "" }; if ([string]::IsNullOrEmpty($PROJECT_REPOSITORY) -and $json -and $json.support -and $json.support.source) { $PROJECT_REPOSITORY = $json.support.source }; $PROJECT_COLOR = "Magenta"; if (-not [string]::IsNullOrEmpty($PROJECT_NAME) -or -not [string]::IsNullOrEmpty($PROJECT_DESCRIPTION)) { Write-Host ""; if (-not [string]::IsNullOrEmpty($PROJECT_NAME)) { Write-Host ("{0,-78}" -f $PROJECT_NAME) -BackgroundColor $PROJECT_COLOR -ForegroundColor White; }; if (-not [string]::IsNullOrEmpty($PROJECT_DESCRIPTION)) { Write-Host $PROJECT_DESCRIPTION -ForegroundColor DarkGray; }; $localUrlsEnv = $env:PROJECT_LOCAL_URLS; if ($localUrlsEnv) { Write-Host "Local:" -ForegroundColor DarkGray; $localUrlsEnv -split \',\' | ForEach-Object { $parts = $_ -split \'\|\', 2; $url = $parts[0].Trim(); $desc = if ($parts.Length -gt 1) { $parts[1].Trim() } else { $null }; if ($url) { if ($desc) { Write-Host "  - $url " -NoNewline; Write-Host "($desc)" -ForegroundColor DarkGray; } else { Write-Host "  - $url"; } } }; } elseif ($json -and $json.extra -and $json.extra.\'sigwin/infra\' -and $json.extra.\'sigwin/infra\'.local_urls) { Write-Host "Local:" -ForegroundColor DarkGray; $json.extra.\'sigwin/infra\'.local_urls | ForEach-Object { if ($_ -is [string]) { Write-Host "  - $_"; } else { $url = $_.url; $desc = $_.description; if ($url) { if ($desc) { Write-Host "  - $url " -NoNewline; Write-Host "($desc)" -ForegroundColor DarkGray; } else { Write-Host "  - $url"; } } } }; }; if (-not [string]::IsNullOrEmpty($PROJECT_HOMEPAGE) -and -not [string]::IsNullOrEmpty($PROJECT_REPOSITORY)) { Write-Host "Homepage:   " -ForegroundColor DarkGray -NoNewline; Write-Host $PROJECT_HOMEPAGE; } elseif (-not [string]::IsNullOrEmpty($PROJECT_HOMEPAGE)) { Write-Host "Homepage: " -ForegroundColor DarkGray -NoNewline; Write-Host $PROJECT_HOMEPAGE; }; if (-not [string]::IsNullOrEmpty($PROJECT_REPOSITORY)) { Write-Host "Repository: " -ForegroundColor DarkGray -NoNewline; Write-Host $PROJECT_REPOSITORY; }; Write-Host ""; }',
-                self::getMetadataFilePath($entrypointDir)
+                self::getMetadataFilePath($entrypointPath)
             ),
             default => throw new \LogicException('Unknown OS family'),
         };
@@ -576,8 +576,10 @@ abstract class MakefileTestCase extends TestCase
     /**
      * Get the path to the metadata file (package.json or composer.json) for the entrypoint Makefile.
      * Returns an empty string if no metadata file exists.
+     *
+     * @param string $entrypointPath The normalized path prefix (e.g., '$ROOT' or '$ROOT/tests/examples')
      */
-    private static function getMetadataFilePath(string $entrypointDir): string
+    private static function getMetadataFilePath(string $entrypointPath): string
     {
         $root = self::getRoot();
         $makefilePath = mb_ltrim(self::getMakefilePath(), '/\\');
@@ -587,10 +589,10 @@ abstract class MakefileTestCase extends TestCase
         $composerJson = $fullEntrypointDir.\DIRECTORY_SEPARATOR.'composer.json';
 
         if (file_exists($packageJson)) {
-            return $entrypointDir.'/package.json';
+            return $entrypointPath.'/package.json';
         }
         if (file_exists($composerJson)) {
-            return $entrypointDir.'/composer.json';
+            return $entrypointPath.'/composer.json';
         }
 
         return '';
