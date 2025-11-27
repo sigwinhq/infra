@@ -198,9 +198,58 @@ Tests are located in `tests/functional/` and validate that the Makefile resource
 - Executes Make commands
 - Validates expected behavior
 
-Run tests with `make test/phpunit` (which runs PHPUnit).
+### Running Tests
+
+**Always use the direct PHPUnit command for fastest feedback:**
+```bash
+vendor/bin/phpunit                    # Run all tests directly (recommended)
+vendor/bin/phpunit --filter TestName  # Run specific test
+```
+
+**Only use `make test/phpunit` when:**
+- Testing the full Docker-based CI pipeline
+- You need to verify Docker environment compatibility
+- The README specifically asks you to test the Docker setup
+
+**Why?** The Docker image may be missing tools (like `jq`) that are available on the host, causing false failures.
+
+### Test-First Approach
+
+**Critical**: Run tests IMMEDIATELY after making changes. Do not:
+- Make multiple changes before testing
+- Try to predict if changes will work
+- Debug "in your head" instead of using the test suite
+- Spend time analyzing why something might fail - just test it
+
+The test suite is your fastest feedback loop. Use it.
+
+### Debugging Workflow
+
+When tests fail:
+
+1. **Run tests directly first**: `vendor/bin/phpunit` (not via Make/Docker)
+2. **Check the actual failure message** - don't assume what's wrong
+3. **Make one small change** and re-test immediately
+4. **If stuck after 2-3 attempts**, ask the user for guidance rather than going deeper
+5. **Trust the test suite** - if tests pass, the solution is correct
+
+**Anti-patterns to avoid:**
+- ❌ Debugging test infrastructure when tests fail
+- ❌ Writing debug scripts to trace test execution
+- ❌ Assuming environment issues without evidence
+- ❌ Making multiple changes before re-testing
 
 ## Development Workflow
+
+### Problem-Solving Approach
+
+When making changes to this repository:
+
+- **Start with the simplest possible solution** - If it feels complicated, step back and reconsider
+- **Test immediately** - Change → Test → Iterate (tight feedback loop)
+- **Don't debug hypothetical problems** - Only fix actual failures
+- **Trust the test suite** - If tests pass, the solution is correct
+- **If you're writing debug/trace code, you've gone too far** - Step back and simplify
 
 ### Installing as a Dependency
 
