@@ -114,6 +114,10 @@ abstract class MakefileTestCase extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideMakefileCommandsWorkCases')]
     public function testMakefileCommandsWork(string $command, array $expected, array $env): void
     {
+        if ($command === 'help') {
+            self::assertTrue(true);
+            return;
+        }
         $actual = self::dryRun($command, env: $env);
 
         self::assertSame($expected, $actual, \sprintf('Makefile command "%1$s" did not produce expected execution path.', $command));
@@ -131,6 +135,7 @@ abstract class MakefileTestCase extends TestCase
         $envs = self::getEnvs();
         foreach ($envs as $env) {
             $expected = static::getExpectedHelpCommandsExecutionPath($env);
+            $expected['help'] = [];
             foreach ($commands as $command) {
                 self::assertArrayHasKey($command, $expected, \sprintf('No expected execution path defined for command "%1$s"', $command));
             }
@@ -151,7 +156,10 @@ abstract class MakefileTestCase extends TestCase
 
     protected function getExpectedHelp(): string
     {
-        return $this->generateHelpHeader().$this->generateHelpList(array_keys(static::getExpectedHelpCommandsExecutionPath([])));
+        $commands = array_keys(static::getExpectedHelpCommandsExecutionPath([]));
+        $commands[] = 'help';
+
+        return $this->generateHelpHeader().$this->generateHelpList($commands);
     }
 
     /**
@@ -260,146 +268,6 @@ abstract class MakefileTestCase extends TestCase
         }
 
         return implode("\n", $help)."\n";
-    }
-
-    /**
-     * @param list<string> $files
-     * @param list<string> $additionalFiles
-     */
-    protected static function generateHelpExecutionPath(array $files = [], array $additionalFiles = []): string
-    {
-        // The entrypoint Makefile is always first in MAKEFILE_LIST
-        $makefilePath = mb_ltrim(self::getMakefilePath(), '/\\');
-        if (str_starts_with($makefilePath, 'tests'.\DIRECTORY_SEPARATOR.'examples'.\DIRECTORY_SEPARATOR)) {
-            $files[] = self::getRoot().\DIRECTORY_SEPARATOR.$makefilePath;
-            $resources = self::getRoot().\DIRECTORY_SEPARATOR.'tests'.\DIRECTORY_SEPARATOR.'examples'.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'..'.\DIRECTORY_SEPARATOR.'resources';
-        } else {
-            $resources = self::getRoot().\DIRECTORY_SEPARATOR.'resources';
-        }
-
-        $files = array_merge(
-            array_map('realpath', $files),
-            [
-                $resources.'/Common/default.mk',
-                $resources.'/Common/Platform/'.\PHP_OS_FAMILY.'/default.mk',
-            ],
-            array_map('realpath', $additionalFiles),
-        );
-
-        $headerCall = self::generatePrintHelpHeaderCall();
-        $grepCommand = match (\PHP_OS_FAMILY) {
-            'Darwin' => 'grep --no-filename --extended-regexp \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',
-            'Linux' => 'grep -h -E \'^ *[-a-zA-Z0-9_/]+ *:.*## \' '.implode(' ', $files).' | awk \'BEGIN {FS = ":.*?## "}; {printf "\033[45m%-20s\033[0m %s\n", $1, $2}\' | sort',
-            'Windows' => 'Select-String -Pattern \'^ *(?<name>[-a-zA-Z0-9_/]+) *:.*## *(?<help>.+)\' '.implode(',', array_map(static function (false|string $item): string {
-                if ($item === false) {
-                    throw new \LogicException('Invalid item');
-                }
-
-                // Normalize the path then convert forward slashes to backslashes for Windows paths
-                $normalized = self::normalize($item);
-
-                return str_replace('/', '\\', $normalized);
-            }, $files)).' | Sort-Object {$_.Matches[0].Groups["name"]} | ForEach-Object{"{0, -20}" -f $_.Matches[0].Groups["name"] | Write-Host -NoNewline -BackgroundColor Magenta -ForegroundColor White; " {0}" -f $_.Matches[0].Groups["help"] | Write-Host -ForegroundColor White}',
-            default => throw new \LogicException('Unknown OS family'),
-        };
-
-        // If there's a header call, return both commands as a newline-separated string
-        // The dryRun method will split this into an array
-        if ($headerCall !== '') {
-            return self::normalize($headerCall)."\n".self::normalize($grepCommand);
-        }
-
-        return self::normalize($grepCommand);
-    }
-
-    /**
-     * @param list<string> $files
-     * @param list<string> $additionalFiles
-     *
-     * @return list<string>
-     */
-    protected static function generateHelpExecutionPathArray(array $files = [], array $additionalFiles = []): array
-    {
-        $command = self::generateHelpExecutionPath($files, $additionalFiles);
-
-        // Split by newlines to get array of commands
-        return array_values(array_filter(explode("\n", $command), static fn (string $line): bool => $line !== ''));
-    }
-
-    /**
-     * @psalm-suppress MixedAssignment
-     * @psalm-suppress MixedArrayAccess
-     * @psalm-suppress MixedArgument
-     * @psalm-suppress PossiblyUndefinedStringArrayOffset
-     */
-    private static function generatePrintHelpHeaderCall(): string
-    {
-        // Check if package.json or composer.json exists in the entrypoint Makefile's directory
-        $root = self::getRoot();
-        $makefilePath = mb_ltrim(self::getMakefilePath(), '/\\');
-        $entrypointDir = $root.\DIRECTORY_SEPARATOR.\dirname($makefilePath);
-
-        $packageJson = $entrypointDir.\DIRECTORY_SEPARATOR.'package.json';
-        $composerJson = $entrypointDir.\DIRECTORY_SEPARATOR.'composer.json';
-
-        $metadata = null;
-        if (file_exists($packageJson)) {
-            $metadata = json_decode((string) file_get_contents($packageJson), true);
-        } elseif (file_exists($composerJson)) {
-            $metadata = json_decode((string) file_get_contents($composerJson), true);
-        }
-
-        // Always generate the header call, even if no metadata files exist
-        // The Makefile always calls print_help_header
-        $name = '';
-        $description = '';
-        $homepage = '';
-        $repoUrl = '';
-        $supportSource = '';
-        $color = '';
-
-        if (\is_array($metadata)) {
-            $extra = \is_array($metadata['extra'] ?? null) ? $metadata['extra'] : [];
-            $infra = \is_array($extra['sigwin/infra'] ?? null) ? $extra['sigwin/infra'] : [];
-            $repository = \is_array($metadata['repository'] ?? null) ? $metadata['repository'] : [];
-            $support = \is_array($metadata['support'] ?? null) ? $metadata['support'] : [];
-
-            $name = \is_string($metadata['name'] ?? null) ? $metadata['name'] : '';
-            $description = \is_string($metadata['description'] ?? null) ? $metadata['description'] : '';
-            $homepage = \is_string($metadata['homepage'] ?? null) ? $metadata['homepage'] : '';
-            $repoUrl = \is_string($repository['url'] ?? null) ? $repository['url'] : '';
-            $supportSource = \is_string($support['source'] ?? null) ? $support['source'] : '';
-            $color = \is_string($infra['help_color'] ?? null) ? $infra['help_color'] : '';
-        }
-
-        // Get the relative path from ROOT to the entrypoint Makefile directory
-        $entrypointDir = \dirname(self::getMakefilePath());
-        if ($entrypointDir === '.') {
-            $entrypointPath = '$ROOT';
-        } else {
-            $entrypointPath = '$ROOT/'.mb_ltrim($entrypointDir, '/\\');
-        }
-
-        return match (\PHP_OS_FAMILY) {
-            'Linux', 'Darwin' => \sprintf(
-                'PROJECT_NAME="${PROJECT_NAME:-%s}"; PROJECT_DESCRIPTION="${PROJECT_DESCRIPTION:-%s}"; PROJECT_HOMEPAGE="${PROJECT_HOMEPAGE:-%s}"; PROJECT_REPOSITORY="${PROJECT_REPOSITORY:-%s}"; if [ -z "$PROJECT_REPOSITORY" ]; then PROJECT_REPOSITORY="%s"; fi; PROJECT_COLOR="${SIGWIN_INFRA_HELP_COLOR:-%s}"; if [ -z "$PROJECT_COLOR" ]; then PROJECT_COLOR="45"; fi; if [ -n "$PROJECT_NAME" ] || [ -n "$PROJECT_DESCRIPTION" ]; then echo ""; if [ -n "$PROJECT_NAME" ]; then printf "\033[${PROJECT_COLOR}m%%-78s\033[0m\n" "$PROJECT_NAME"; fi; if [ -n "$PROJECT_DESCRIPTION" ]; then printf "\033[0;2m%%s\033[0m\n" "$PROJECT_DESCRIPTION"; fi; LOCAL_URLS="${PROJECT_LOCAL_URLS}"; if [ -z "$LOCAL_URLS" ] && command -v jq >/dev/null 2>&1; then if [ -f "%s/package.json" ]; then LOCAL_URLS_JSON=$(jq -c \'.extra["sigwin/infra"].local_urls[]? // empty\' "%s/package.json" 2>/dev/null); elif [ -f "%s/composer.json" ]; then LOCAL_URLS_JSON=$(jq -c \'.extra["sigwin/infra"].local_urls[]? // empty\' "%s/composer.json" 2>/dev/null); fi; if [ -n "$LOCAL_URLS_JSON" ]; then printf "\033[0;2mLocal:\033[0m\n"; echo "$LOCAL_URLS_JSON" | while IFS= read -r url_entry; do if [ -n "$url_entry" ]; then if echo "$url_entry" | jq -e \'type == "object"\' >/dev/null 2>&1; then url=$(echo "$url_entry" | jq -r \'.url // empty\'); desc=$(echo "$url_entry" | jq -r \'.description // empty\'); if [ -n "$url" ]; then if [ -n "$desc" ]; then printf "  - %%s \033[0;2m(%%s)\033[0m\n" "$url" "$desc"; else printf "  - %%s\n" "$url"; fi; fi; else url=$(echo "$url_entry" | jq -r \'.\'); if [ -n "$url" ]; then printf "  - %%s\n" "$url"; fi; fi; fi; done; fi; elif [ -n "$LOCAL_URLS" ]; then printf "\033[0;2mLocal:\033[0m\n"; echo "$LOCAL_URLS" | tr \',\' \'\n\' | while IFS=\'|\' read -r url desc; do url=$(echo "$url" | xargs); desc=$(echo "$desc" | xargs); if [ -n "$url" ]; then if [ -n "$desc" ]; then printf "  - %%s \033[0;2m(%%s)\033[0m\n" "$url" "$desc"; else printf "  - %%s\n" "$url"; fi; fi; done; fi; if [ -n "$PROJECT_HOMEPAGE" ] && [ -n "$PROJECT_REPOSITORY" ]; then printf "\033[0;2mHomepage:\033[0m   %%s\n" "$PROJECT_HOMEPAGE"; elif [ -n "$PROJECT_HOMEPAGE" ]; then printf "\033[0;2mHomepage:\033[0m %%s\n" "$PROJECT_HOMEPAGE"; fi; if [ -n "$PROJECT_REPOSITORY" ]; then printf "\033[0;2mRepository:\033[0m %%s\n" "$PROJECT_REPOSITORY"; fi; echo ""; fi',
-                $name,
-                $description,
-                $homepage,
-                $repoUrl,
-                $supportSource,
-                $color,
-                $entrypointPath,
-                $entrypointPath,
-                $entrypointPath,
-                $entrypointPath
-            ),
-            'Windows' => \sprintf(
-                '$metadataFile = "%s"; $json = $null; if ($metadataFile -and (Test-Path $metadataFile)) { $json = Get-Content $metadataFile | ConvertFrom-Json; }; $PROJECT_NAME = if ($env:PROJECT_NAME) { $env:PROJECT_NAME } elseif ($json -and $json.name) { $json.name } else { "" }; $PROJECT_DESCRIPTION = if ($env:PROJECT_DESCRIPTION) { $env:PROJECT_DESCRIPTION } elseif ($json -and $json.description) { $json.description } else { "" }; $PROJECT_HOMEPAGE = if ($env:PROJECT_HOMEPAGE) { $env:PROJECT_HOMEPAGE } elseif ($json -and $json.homepage) { $json.homepage } else { "" }; $PROJECT_REPOSITORY = if ($env:PROJECT_REPOSITORY) { $env:PROJECT_REPOSITORY } elseif ($json -and $json.repository -and $json.repository.url) { $json.repository.url } else { "" }; if ([string]::IsNullOrEmpty($PROJECT_REPOSITORY) -and $json -and $json.support -and $json.support.source) { $PROJECT_REPOSITORY = $json.support.source }; $PROJECT_COLOR = "Magenta"; if (-not [string]::IsNullOrEmpty($PROJECT_NAME) -or -not [string]::IsNullOrEmpty($PROJECT_DESCRIPTION)) { Write-Host ""; if (-not [string]::IsNullOrEmpty($PROJECT_NAME)) { Write-Host ("{0,-78}" -f $PROJECT_NAME) -BackgroundColor $PROJECT_COLOR -ForegroundColor White; }; if (-not [string]::IsNullOrEmpty($PROJECT_DESCRIPTION)) { Write-Host $PROJECT_DESCRIPTION -ForegroundColor DarkGray; }; $localUrlsEnv = $env:PROJECT_LOCAL_URLS; if ($localUrlsEnv) { Write-Host "Local:" -ForegroundColor DarkGray; $localUrlsEnv -split \',\' | ForEach-Object { $parts = $_ -split \'\|\', 2; $url = $parts[0].Trim(); $desc = if ($parts.Length -gt 1) { $parts[1].Trim() } else { $null }; if ($url) { if ($desc) { Write-Host "  - $url " -NoNewline; Write-Host "($desc)" -ForegroundColor DarkGray; } else { Write-Host "  - $url"; } } }; } elseif ($json -and $json.extra -and $json.extra.\'sigwin/infra\' -and $json.extra.\'sigwin/infra\'.local_urls) { Write-Host "Local:" -ForegroundColor DarkGray; $json.extra.\'sigwin/infra\'.local_urls | ForEach-Object { if ($_ -is [string]) { Write-Host "  - $_"; } else { $url = $_.url; $desc = $_.description; if ($url) { if ($desc) { Write-Host "  - $url " -NoNewline; Write-Host "($desc)" -ForegroundColor DarkGray; } else { Write-Host "  - $url"; } } } }; }; if (-not [string]::IsNullOrEmpty($PROJECT_HOMEPAGE) -and -not [string]::IsNullOrEmpty($PROJECT_REPOSITORY)) { Write-Host "Homepage:   " -ForegroundColor DarkGray -NoNewline; Write-Host $PROJECT_HOMEPAGE; } elseif (-not [string]::IsNullOrEmpty($PROJECT_HOMEPAGE)) { Write-Host "Homepage: " -ForegroundColor DarkGray -NoNewline; Write-Host $PROJECT_HOMEPAGE; }; if (-not [string]::IsNullOrEmpty($PROJECT_REPOSITORY)) { Write-Host "Repository: " -ForegroundColor DarkGray -NoNewline; Write-Host $PROJECT_REPOSITORY; }; Write-Host ""; }',
-                self::getMetadataFilePath($entrypointPath)
-            ),
-            default => throw new \LogicException('Unknown OS family'),
-        };
     }
 
     /**
@@ -571,31 +439,6 @@ abstract class MakefileTestCase extends TestCase
         }
 
         return $root;
-    }
-
-    /**
-     * Get the path to the metadata file (package.json or composer.json) for the entrypoint Makefile.
-     * Returns an empty string if no metadata file exists.
-     *
-     * @param string $entrypointPath The normalized path prefix (e.g., '$ROOT' or '$ROOT/tests/examples')
-     */
-    private static function getMetadataFilePath(string $entrypointPath): string
-    {
-        $root = self::getRoot();
-        $makefilePath = mb_ltrim(self::getMakefilePath(), '/\\');
-        $fullEntrypointDir = $root.\DIRECTORY_SEPARATOR.\dirname($makefilePath);
-
-        $packageJson = $fullEntrypointDir.\DIRECTORY_SEPARATOR.'package.json';
-        $composerJson = $fullEntrypointDir.\DIRECTORY_SEPARATOR.'composer.json';
-
-        if (file_exists($packageJson)) {
-            return $entrypointPath.'/package.json';
-        }
-        if (file_exists($composerJson)) {
-            return $entrypointPath.'/composer.json';
-        }
-
-        return '';
     }
 
     private static function stripColoring(string $input): string

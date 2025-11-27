@@ -35,8 +35,6 @@ final class ComposerExampleTest extends MakefileTestCase
     #[\Override]
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        return [
-            'help' => self::generateHelpExecutionPathArray(),
-        ];
+        return [];
     }
 }

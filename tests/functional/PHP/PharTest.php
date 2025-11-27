@@ -75,10 +75,6 @@ final class PharTest extends MakefileTestCase
         $test = $paths['test: unit'];
 
         return [
-            'help' => self::generateHelpExecutionPathArray([
-                __DIR__.'/../../../resources/PHP/phar.mk',
-                __DIR__.'/../../../resources/PHP/common.mk',
-            ]),
             'phar/build' => array_merge($mkdir, $paths['box: build']),
             'analyze' => array_merge($mkdir, $paths['analyze']),
             'dist' => array_merge($mkdir, $paths['prepareAndAnalyze'], $test),

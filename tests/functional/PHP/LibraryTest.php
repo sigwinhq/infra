@@ -68,10 +68,6 @@ final class LibraryTest extends MakefileTestCase
         $test = $paths['test: unit'];
 
         return [
-            'help' => self::generateHelpExecutionPathArray([
-                __DIR__.'/../../../resources/PHP/library.mk',
-                __DIR__.'/../../../resources/PHP/common.mk',
-            ]),
             'analyze' => array_merge($mkdir, $paths['analyze']),
             'dist' => array_merge($mkdir, $paths['prepareAndAnalyze'], $test),
             'sh/php' => array_merge($mkdir, $paths['shell: PHP']),

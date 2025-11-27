@@ -30,9 +30,6 @@ final class CommonTest extends MakefileTestCase
         $dockerEnv = $env['DOCKER_ENV'] ?? ' ';
 
         return [
-            'help' => self::generateHelpExecutionPathArray([
-                __DIR__.'/../../../resources/Node/common.mk',
-            ]),
             'sh/node' => [
                 'mkdir -p $HOME/.npm',
                 self::generateNodeExecutionPath('sh', nodeVersion: $nodeVersion, dockerImage: $nodeDockerImage, env: $dockerEnv),

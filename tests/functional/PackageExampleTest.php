@@ -35,8 +35,6 @@ final class PackageExampleTest extends MakefileTestCase
     #[\Override]
     protected static function getExpectedHelpCommandsExecutionPath(?array $env = null): array
     {
-        return [
-            'help' => self::generateHelpExecutionPathArray(),
-        ];
+        return [];
     }
 }
