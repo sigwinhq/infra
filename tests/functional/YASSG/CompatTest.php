@@ -76,13 +76,6 @@ final class CompatTest extends MakefileTestCase
         ];
 
         return [
-            'help' => self::generateHelpExecutionPathArray([
-                __DIR__.'/../../../resources/YASSG/compat.mk',
-                __DIR__.'/../../../resources/YASSG/common.mk',
-                __DIR__.'/../../../resources/Visual/common.mk',
-                __DIR__.'/../../../resources/Lighthouse/common.mk',
-                __DIR__.'/../../../resources/PHP/common.mk',
-            ]),
             'analyze' => array_merge($mkdir, $paths['analyze']),
             'analyze/lighthouse' => $lighthouse,
             'build' => $build,

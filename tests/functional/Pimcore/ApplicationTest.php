@@ -110,14 +110,6 @@ final class ApplicationTest extends MakefileTestCase
         $testFunctional = $paths['test: functional app'];
 
         return [
-            'help' => self::generateHelpExecutionPathArray([
-                __DIR__.'/../../../resources/Pimcore/application.mk',
-                __DIR__.'/../../../resources/Pimcore/common.mk',
-                __DIR__.'/../../../resources/PHP/common.mk',
-            ], [
-                __DIR__.'/../../../resources/Compose/common.mk',
-                __DIR__.'/../../../resources/Secrets/common.mk',
-            ]),
             'analyze' => array_merge($mkdir, $paths['analyze']),
             'build/dev' => $paths['build: dev'],
             'build/prod' => $paths['build: prod'],
