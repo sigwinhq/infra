@@ -114,11 +114,12 @@ abstract class MakefileTestCase extends TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('provideMakefileCommandsWorkCases')]
     public function testMakefileCommandsWork(string $command, array $expected, array $env): void
     {
+        $actual = self::dryRun($command, env: $env);
         if ($command === 'help') {
-            self::assertTrue(true);
+            self::assertNotEmpty($actual);
+
             return;
         }
-        $actual = self::dryRun($command, env: $env);
 
         self::assertSame($expected, $actual, \sprintf('Makefile command "%1$s" did not produce expected execution path.', $command));
     }
