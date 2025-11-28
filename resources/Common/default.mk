@@ -100,6 +100,24 @@ $(shell \
 )
 endef
 
+# Extract local domains from local_urls in package.json or composer.json
+# Returns space-separated list of domain names (hostname only, no port)
+# Also considers PROJECT_LOCAL_URLS Make variable or environment variable (format: url1|desc1,url2|desc2)
+_LOCAL_DOMAINS := $(shell \
+	urls="$(PROJECT_LOCAL_URLS)"; \
+	if [ -n "$$urls" ]; then \
+		echo "$$urls" | tr ',' '\n' | while IFS='|' read -r url desc; do \
+			echo "$$url" | sed -E 's|^https?://||' | sed -E 's|:[0-9]+.*||' | sed -E 's|/.*||'; \
+		done | sort -u | tr '\n' ' '; \
+	elif command -v jq >/dev/null 2>&1; then \
+		if [ -f "$(ENTRYPOINT_DIR)/package.json" ]; then \
+			jq -r '.extra["sigwin/infra"].local_urls[]? | if type == "object" then .url else . end // empty' "$(ENTRYPOINT_DIR)/package.json" 2>/dev/null | sed -E 's|^https?://||' | sed -E 's|:[0-9]+.*||' | sed -E 's|/.*||' | sort -u | tr '\n' ' '; \
+		elif [ -f "$(ENTRYPOINT_DIR)/composer.json" ]; then \
+			jq -r '.extra["sigwin/infra"].local_urls[]? | if type == "object" then .url else . end // empty' "$(ENTRYPOINT_DIR)/composer.json" 2>/dev/null | sed -E 's|^https?://||' | sed -E 's|:[0-9]+.*||' | sed -E 's|/.*||' | sort -u | tr '\n' ' '; \
+		fi; \
+	fi \
+)
+
 include ${SIGWIN_INFRA_ROOT:%/=%}/Common/Platform/${OS_FAMILY}/default.mk
 
 init:

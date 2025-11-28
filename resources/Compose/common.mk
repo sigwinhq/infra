@@ -5,6 +5,7 @@ ifndef OS_FAMILY
 include ${SIGWIN_INFRA_ROOT:%/=%}/Common/default.mk
 endif
 include ${SIGWIN_INFRA_ROOT:%/=%}/Secrets/common.mk
+include ${SIGWIN_INFRA_ROOT:%/=%}/Certificates/common.mk
 
 ifeq ($(wildcard ./.env),)
 ifneq ($(wildcard ./.env.dist),)
@@ -29,13 +30,13 @@ registry/push:
 registry/pull:
 	VERSION=${VERSION} docker compose pull
 
-start/dev: secrets ## Start app in "dev" mode
+start/dev: secrets certificates ## Start app in "dev" mode
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.dev.yaml up --detach --remove-orphans --no-build
-start/test: secrets ## Start app in "test" mode
+start/test: secrets certificates ## Start app in "test" mode
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.test.yaml up --detach --remove-orphans --no-build
-start/prod: secrets ## Start app in "prod" mode
+start/prod: secrets certificates ## Start app in "prod" mode
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.prod.yaml up --detach --remove-orphans --no-build
-start: secrets ## Start app in APP_ENV mode (defined in .env)
+start: secrets certificates ## Start app in APP_ENV mode (defined in .env)
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml up --detach --remove-orphans --no-build
 stop: ## Stop app
 	VERSION=${VERSION} docker compose --file docker-compose.yaml --file .infra/docker-compose/docker-compose.${APP_ENV}.yaml down --remove-orphans

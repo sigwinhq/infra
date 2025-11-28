@@ -52,6 +52,7 @@ final class ApplicationTest extends MakefileTestCase
     protected function getExpectedInitPaths(): array
     {
         return [
+            'Certificates/common',
             'Secrets/common',
             'Compose/common',
             'Common/Platform/$PLATFORM/default',
