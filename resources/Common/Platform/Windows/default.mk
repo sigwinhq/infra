@@ -5,7 +5,7 @@ EMPTY :=
 SPACE := $(empty) $(empty)
 
 # Cache the metadata file path (single shell invocation at load time)
-# All other metadata is read at runtime by print_help_header to avoid multiple PowerShell startups
+# All other metadata is read at runtime by read_project_metadata to avoid multiple PowerShell startups
 _METADATA_FILE := $(shell \
 	$$ErrorActionPreference = 'SilentlyContinue'; \
 	$$entrypointDir = "$(ENTRYPOINT_DIR)"; \
@@ -16,9 +16,10 @@ _METADATA_FILE := $(shell \
 	} \
 )
 
-# print_help_header reads all metadata from JSON at runtime (single shell invocation)
-# This eliminates multiple PowerShell startups that occurred when using get_*_metadata functions
-define print_help_header
+# Read all project metadata into PowerShell variables
+# Sets: $PROJECT_NAME, $PROJECT_DESCRIPTION, $PROJECT_HOMEPAGE, $PROJECT_REPOSITORY, $PROJECT_COLOR, $PROJECT_LOCAL_URLS_DATA
+# PROJECT_LOCAL_URLS_DATA contains an array of PSCustomObject with url and description properties
+define read_project_metadata
 	$$metadataFile = "$(_METADATA_FILE)"; \
 	$$json = $$null; \
 	if ($$metadataFile -and (Test-Path $$metadataFile)) { \
@@ -30,6 +31,21 @@ define print_help_header
 	$$PROJECT_REPOSITORY = if ($$env:PROJECT_REPOSITORY) { $$env:PROJECT_REPOSITORY } elseif ($$json -and $$json.repository -and $$json.repository.url) { $$json.repository.url } else { "" }; \
 	if ([string]::IsNullOrEmpty($$PROJECT_REPOSITORY) -and $$json -and $$json.support -and $$json.support.source) { $$PROJECT_REPOSITORY = $$json.support.source }; \
 	$$PROJECT_COLOR = "Magenta"; \
+	$$PROJECT_LOCAL_URLS_DATA = @(); \
+	if ($$env:PROJECT_LOCAL_URLS) { \
+		$$PROJECT_LOCAL_URLS_DATA = $$env:PROJECT_LOCAL_URLS -split ',' | ForEach-Object { \
+			$$parts = $$_ -split '\|', 2; \
+			[PSCustomObject]@{ url = $$parts[0].Trim(); description = if ($$parts.Count -gt 1) { $$parts[1].Trim() } else { "" } } \
+		}; \
+	} elseif ($$json -and $$json.extra -and $$json.extra.'sigwin/infra' -and $$json.extra.'sigwin/infra'.local_urls) { \
+		$$PROJECT_LOCAL_URLS_DATA = $$json.extra.'sigwin/infra'.local_urls | ForEach-Object { \
+			if ($$_ -is [string]) { [PSCustomObject]@{ url = $$_; description = "" } } else { [PSCustomObject]@{ url = $$_.url; description = if ($$_.description) { $$_.description } else { "" } } } \
+		}; \
+	}
+endef
+
+define print_help_header
+	$(call read_project_metadata); \
 	if (-not [string]::IsNullOrEmpty($$PROJECT_NAME) -or -not [string]::IsNullOrEmpty($$PROJECT_DESCRIPTION)) { \
 		Write-Host ""; \
 		if (-not [string]::IsNullOrEmpty($$PROJECT_NAME)) { \
@@ -38,36 +54,13 @@ define print_help_header
 		if (-not [string]::IsNullOrEmpty($$PROJECT_DESCRIPTION)) { \
 			Write-Host $$PROJECT_DESCRIPTION -ForegroundColor DarkGray; \
 		}; \
-		$$localUrlsEnv = $$env:PROJECT_LOCAL_URLS; \
-		if ($$localUrlsEnv) { \
+		if ($$PROJECT_LOCAL_URLS_DATA -and $$PROJECT_LOCAL_URLS_DATA.Count -gt 0) { \
 			Write-Host "Local:" -ForegroundColor DarkGray; \
-			$$localUrlsEnv -split ',' | ForEach-Object { \
-				$$parts = $$_ -split '\|', 2; \
-				$$url = $$parts[0].Trim(); \
-				$$desc = if ($$parts.Length -gt 1) { $$parts[1].Trim() } else { $$null }; \
-				if ($$url) { \
-					if ($$desc) { \
-						Write-Host "  - $$url " -NoNewline; Write-Host "($$desc)" -ForegroundColor DarkGray; \
-					} else { \
-						Write-Host "  - $$url"; \
-					} \
-				} \
-			}; \
-		} elseif ($$json -and $$json.extra -and $$json.extra.'sigwin/infra' -and $$json.extra.'sigwin/infra'.local_urls) { \
-			Write-Host "Local:" -ForegroundColor DarkGray; \
-			$$json.extra.'sigwin/infra'.local_urls | ForEach-Object { \
-				if ($$_ -is [string]) { \
-					Write-Host "  - $$_"; \
+			$$PROJECT_LOCAL_URLS_DATA | ForEach-Object { \
+				if (-not [string]::IsNullOrEmpty($$_.description)) { \
+					Write-Host ("  - {0} " -f $$_.url) -NoNewline; Write-Host ("({0})" -f $$_.description) -ForegroundColor DarkGray; \
 				} else { \
-					$$url = $$_.url; \
-					$$desc = $$_.description; \
-					if ($$url) { \
-						if ($$desc) { \
-							Write-Host "  - $$url " -NoNewline; Write-Host "($$desc)" -ForegroundColor DarkGray; \
-						} else { \
-							Write-Host "  - $$url"; \
-						} \
-					} \
+					Write-Host ("  - {0}" -f $$_.url); \
 				} \
 			}; \
 		}; \

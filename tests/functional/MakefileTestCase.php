@@ -33,6 +33,7 @@ abstract class MakefileTestCase extends TestCase
         'build' => 'Build app for "APP_ENV" target (defaults to "prod")',
         'build/dev' => 'Build app for "dev" target',
         'build/prod' => 'Build app for "prod" target',
+        'certificates' => 'Generate mkcert certificates for local URLs',
         'clean' => 'Clear logs and system cache',
         'dist' => 'Prepare the codebase for commit',
         'help' => 'Prints this help',
@@ -50,6 +51,14 @@ abstract class MakefileTestCase extends TestCase
         'test/functional' => 'Test the codebase, functional tests',
         'test/unit' => 'Test the codebase, unit tests',
         'visual/reference' => 'Generate visual testing references',
+    ];
+
+    /**
+     * @var array<non-empty-string, string>
+     */
+    private static array $lineMatches = [
+        '/^PROJECT_NAME=/' => '$(call read_project_metadata)',
+        '/^\$metadataFile =/' => '$(call read_project_metadata)',
     ];
 
     /**
@@ -115,6 +124,14 @@ abstract class MakefileTestCase extends TestCase
     public function testMakefileCommandsWork(string $command, array $expected, array $env): void
     {
         $actual = self::dryRun($command, env: $env);
+        foreach ($actual as $idx => $line) {
+            foreach (self::$lineMatches as $matcher => $replacement) {
+                if (preg_match($matcher, $line) === 1) {
+                    $actual[$idx] = $replacement;
+                    continue 2;
+                }
+            }
+        }
         if ($command === 'help') {
             self::assertNotEmpty($actual);
 
