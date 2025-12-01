@@ -93,3 +93,103 @@ endef
 # TODO: review
 define permissions
 endef
+
+# Check if a command is available in PowerShell
+# Arguments: 1=command name, 2=required (1) or optional (0), 3=version command (optional)
+define check_command_ps
+	$$cmd = "$(1)"; \
+	$$required = "$(2)"; \
+	$$versionCmd = "$(3)"; \
+	if (Get-Command $$cmd -ErrorAction SilentlyContinue) { \
+		$$version = ""; \
+		if ($$versionCmd) { \
+			try { $$version = (Invoke-Expression $$versionCmd 2>$$null | Select-Object -First 1) } catch {} \
+		}; \
+		if ($$version) { \
+			Write-Host "  " -NoNewline; Write-Host "✓" -ForegroundColor Green -NoNewline; Write-Host " $$cmd " -NoNewline; Write-Host "($$version)" -ForegroundColor DarkGray; \
+		} else { \
+			Write-Host "  " -NoNewline; Write-Host "✓" -ForegroundColor Green -NoNewline; Write-Host " $$cmd"; \
+		} \
+	} else { \
+		if ($$required -eq "1") { \
+			Write-Host "  " -NoNewline; Write-Host "✗" -ForegroundColor Red -NoNewline; Write-Host " $$cmd " -NoNewline; Write-Host "(required)" -ForegroundColor Red; \
+			$$script:SIGWIN_INFRA_CHECK_FAILED = $$true; \
+		} else { \
+			Write-Host "  " -NoNewline; Write-Host "○" -ForegroundColor Yellow -NoNewline; Write-Host " $$cmd " -NoNewline; Write-Host "(optional)" -ForegroundColor DarkGray; \
+		} \
+	}
+endef
+
+# Check Docker Compose plugin availability in PowerShell
+define check_docker_compose_ps
+	if ((Get-Command docker -ErrorAction SilentlyContinue) -and (docker compose version 2>$$null)) { \
+		$$version = (docker compose version --short 2>$$null); \
+		Write-Host "  " -NoNewline; Write-Host "✓" -ForegroundColor Green -NoNewline; Write-Host " docker compose " -NoNewline; Write-Host "($$version)" -ForegroundColor DarkGray; \
+	} else { \
+		Write-Host "  " -NoNewline; Write-Host "✗" -ForegroundColor Red -NoNewline; Write-Host " docker compose " -NoNewline; Write-Host "(required)" -ForegroundColor Red; \
+		$$script:SIGWIN_INFRA_CHECK_FAILED = $$true; \
+	}
+endef
+
+# Check filesystem permissions in PowerShell
+define check_filesystem_ps
+	Write-Host ""; \
+	Write-Host "Filesystem:" -ForegroundColor White; \
+	$$testFile = Join-Path "$(CURDIR)" ".sigwin-infra-check-$$([guid]::NewGuid().ToString('N'))"; \
+	try { \
+		[System.IO.File]::WriteAllText($$testFile, "test"); \
+		Remove-Item $$testFile -Force; \
+		Write-Host "  " -NoNewline; Write-Host "✓" -ForegroundColor Green -NoNewline; Write-Host " Current directory is writable"; \
+	} catch { \
+		Write-Host "  " -NoNewline; Write-Host "✗" -ForegroundColor Red -NoNewline; Write-Host " Current directory is not writable"; \
+		$$script:SIGWIN_INFRA_CHECK_FAILED = $$true; \
+	}
+endef
+
+# Check Infra version in PowerShell
+define check_infra_version_ps
+	Write-Host ""; \
+	Write-Host "Infra Version:" -ForegroundColor White; \
+	$$localVersion = $$null; \
+	$$composerLock = Join-Path "$(ENTRYPOINT_DIR)" "composer.lock"; \
+	$$packageLock = Join-Path "$(ENTRYPOINT_DIR)" "package-lock.json"; \
+	if (Test-Path $$composerLock) { \
+		$$json = Get-Content $$composerLock | ConvertFrom-Json; \
+		$$pkg = $$json.packages | Where-Object { $$_.name -eq "sigwin/infra" } | Select-Object -First 1; \
+		if (-not $$pkg) { $$pkg = $$json."packages-dev" | Where-Object { $$_.name -eq "sigwin/infra" } | Select-Object -First 1 }; \
+		if ($$pkg) { $$localVersion = $$pkg.version }; \
+	}; \
+	if (-not $$localVersion -and (Test-Path $$packageLock)) { \
+		$$json = Get-Content $$packageLock | ConvertFrom-Json; \
+		if ($$json.packages."node_modules/@sigwinhq/infra") { $$localVersion = $$json.packages."node_modules/@sigwinhq/infra".version }; \
+	}; \
+	if ($$localVersion) { \
+		Write-Host "  " -NoNewline; Write-Host "✓" -ForegroundColor Green -NoNewline; Write-Host " Local version: $$localVersion"; \
+	} else { \
+		Write-Host "  " -NoNewline; Write-Host "○" -ForegroundColor Yellow -NoNewline; Write-Host " Local version: " -NoNewline; Write-Host "(not detected)" -ForegroundColor DarkGray; \
+	}
+endef
+
+help/check: ## Check environment for sigwin/infra compatibility
+	@$(call block_start,$@)
+	@$$script:SIGWIN_INFRA_CHECK_FAILED = $$false; \
+	Write-Host ""; \
+	Write-Host "Mandatory Tools:" -ForegroundColor White; \
+	$(call check_command_ps,make,1,make --version); \
+	$(call check_command_ps,docker,1,docker --version); \
+	$(call check_docker_compose_ps); \
+	Write-Host ""; \
+	Write-Host "Optional Tools:" -ForegroundColor White; \
+	$(call check_command_ps,mkcert,0,mkcert --version); \
+	$(call check_filesystem_ps); \
+	$(call check_infra_version_ps); \
+	Write-Host ""; \
+	if ($$script:SIGWIN_INFRA_CHECK_FAILED) { \
+		Write-Host "Environment check failed. Please install missing required tools." -ForegroundColor Red; \
+		Write-Host ""; \
+		exit 1; \
+	} else { \
+		Write-Host "Environment check passed." -ForegroundColor Green; \
+		Write-Host ""; \
+	}
+	@$(call block_end)
