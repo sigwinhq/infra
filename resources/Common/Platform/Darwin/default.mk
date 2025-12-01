@@ -168,9 +168,9 @@ help/check: ## Check environment for sigwin/infra compatibility
 	$(call check_command,echo,1,); \
 	$(call check_command,test,1,); \
 	$(call check_command,jq,1,jq --version); \
-	$(call check_command,grep,1,grep --version); \
-	$(call check_command,awk,1,awk --version); \
-	$(call check_command,sort,1,sort --version); \
+	$(call check_command,grep,1,); \
+	$(call check_command,awk,1,); \
+	$(call check_command,sort,1,); \
 	$(call check_command,docker,1,docker --version); \
 	$(call check_docker_compose); \
 	printf "\n\033[1mOptional Tools:\033[0m\n"; \
