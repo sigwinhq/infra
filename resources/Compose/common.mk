@@ -15,7 +15,7 @@ endif
 
 ifneq (,$(wildcard ./.env))
     include .env
-    export
+    export $(shell sed 's/=.*//' .env 2>/dev/null)
 endif
 
 VERSION ?= latest
