@@ -100,3 +100,114 @@ define permissions
 	setfacl -dRm u:root:rwX      $(1)
 	setfacl -Rm  u:root:rwX      $(1)
 endef
+
+# Check if a command is available, printing status with optional version
+# Arguments: 1=command name, 2=required (1) or optional (0), 3=version command (optional)
+define check_command
+	if command -v $(1) >/dev/null 2>&1; then \
+		version=""; \
+		if [ -n "$(3)" ]; then \
+			version=$$($(3) 2>/dev/null | head -1); \
+		fi; \
+		if [ -n "$$version" ]; then \
+			printf "  \033[32m✓\033[0m %s \033[0;2m(%s)\033[0m\n" "$(1)" "$$version"; \
+		else \
+			printf "  \033[32m✓\033[0m %s\n" "$(1)"; \
+		fi; \
+	else \
+		if [ "$(2)" = "1" ]; then \
+			printf "  \033[31m✗\033[0m %s \033[31m(required)\033[0m\n" "$(1)"; \
+			SIGWIN_INFRA_CHECK_FAILED=1; \
+		else \
+			printf "  \033[33m○\033[0m %s \033[0;2m(optional)\033[0m\n" "$(1)"; \
+		fi; \
+	fi
+endef
+
+# Check Docker Compose plugin availability
+define check_docker_compose
+	if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then \
+		version=$$(docker compose version --short 2>/dev/null); \
+		printf "  \033[32m✓\033[0m docker compose \033[0;2m(%s)\033[0m\n" "$$version"; \
+	else \
+		printf "  \033[31m✗\033[0m docker compose \033[31m(required)\033[0m\n"; \
+		SIGWIN_INFRA_CHECK_FAILED=1; \
+	fi
+endef
+
+# Check Docker server connectivity
+define check_docker_server
+	if command -v docker >/dev/null 2>&1 && docker version --format '{{.Server.Version}}' >/dev/null 2>&1; then \
+		version=$$(docker version --format '{{.Server.Version}}' 2>/dev/null); \
+		printf "  \033[32m✓\033[0m docker server \033[0;2m(%s)\033[0m\n" "$$version"; \
+	else \
+		printf "  \033[31m✗\033[0m docker server \033[31m(required, cannot connect)\033[0m\n"; \
+		SIGWIN_INFRA_CHECK_FAILED=1; \
+	fi
+endef
+
+# Check filesystem permissions on current directory
+define check_filesystem
+	printf "\n\033[1mFilesystem:\033[0m\n"; \
+	if [ -w "$(CURDIR)" ]; then \
+		printf "  \033[32m✓\033[0m Current directory is writable\n"; \
+	else \
+		printf "  \033[31m✗\033[0m Current directory is not writable\n"; \
+		SIGWIN_INFRA_CHECK_FAILED=1; \
+	fi; \
+	if command -v getfacl >/dev/null 2>&1; then \
+		printf "  \033[32m✓\033[0m ACL support available\n"; \
+	else \
+		printf "  \033[33m○\033[0m ACL support not available \033[0;2m(optional)\033[0m\n"; \
+	fi
+endef
+
+# Check Infra version (local vs latest)
+define check_infra_version
+	printf "\n\033[1mInfra Version:\033[0m\n"; \
+	LOCAL_VERSION=""; \
+	if [ -f "$(ENTRYPOINT_DIR)/composer.lock" ] && command -v jq >/dev/null 2>&1; then \
+		LOCAL_VERSION=$$(jq -r '.packages[] | select(.name == "sigwin/infra") | .version // empty' "$(ENTRYPOINT_DIR)/composer.lock" 2>/dev/null); \
+		if [ -z "$$LOCAL_VERSION" ]; then \
+			LOCAL_VERSION=$$(jq -r '.["packages-dev"][] | select(.name == "sigwin/infra") | .version // empty' "$(ENTRYPOINT_DIR)/composer.lock" 2>/dev/null); \
+		fi; \
+	fi; \
+	if [ -z "$$LOCAL_VERSION" ] && [ -f "$(ENTRYPOINT_DIR)/package-lock.json" ] && command -v jq >/dev/null 2>&1; then \
+		LOCAL_VERSION=$$(jq -r '.packages["node_modules/@sigwinhq/infra"].version // empty' "$(ENTRYPOINT_DIR)/package-lock.json" 2>/dev/null); \
+	fi; \
+	if [ -n "$$LOCAL_VERSION" ]; then \
+		printf "  \033[32m✓\033[0m Local version: %s\n" "$$LOCAL_VERSION"; \
+	else \
+		printf "  \033[33m○\033[0m Local version: \033[0;2m(not detected)\033[0m\n"; \
+	fi
+endef
+
+help/check: ## Check environment for sigwin/infra compatibility
+	@$(call block_start,$@)
+	@SIGWIN_INFRA_CHECK_FAILED=0; \
+	printf "\n\033[1mMandatory Tools:\033[0m\n"; \
+	$(call check_command,uname,1,uname -a); \
+	$(call check_command,make,1,make --version); \
+	$(call check_command,docker,1,docker --version); \
+	$(call check_docker_server); \
+	$(call check_docker_compose); \
+	$(call check_command,jq,1,jq --version); \
+	$(call check_command,awk,1,awk --version); \
+	$(call check_command,grep,1,grep --version); \
+	$(call check_command,sort,1,sort --version); \
+	$(call check_command,id,1,); \
+	$(call check_command,echo,1,); \
+	$(call check_command,test,1,); \
+	printf "\n\033[1mOptional Tools:\033[0m\n"; \
+	$(call check_command,mkcert,0,mkcert --version); \
+	$(call check_command,setfacl,0,setfacl --version); \
+	$(call check_filesystem); \
+	$(call check_infra_version); \
+	printf "\n"; \
+	if [ "$$SIGWIN_INFRA_CHECK_FAILED" = "1" ]; then \
+		printf "\033[31mEnvironment check failed. Please install missing required tools.\033[0m\n\n"; \
+		exit 1; \
+	else \
+		printf "\033[32mEnvironment check passed.\033[0m\n\n"; \
+	fi
+	@$(call block_end)

@@ -37,6 +37,7 @@ abstract class MakefileTestCase extends TestCase
         'clean' => 'Clear logs and system cache',
         'dist' => 'Prepare the codebase for commit',
         'help' => 'Prints this help',
+        'help/check' => 'Check environment for sigwin/infra compatibility',
         'setup/filesystem' => 'Setup: filesystem (var, public/var folders)',
         'setup/test' => 'Setup: create a functional test runtime',
         'sh/app' => 'Run application shell',
@@ -132,7 +133,7 @@ abstract class MakefileTestCase extends TestCase
                 }
             }
         }
-        if ($command === 'help') {
+        if ($command === 'help' || $command === 'help/check') {
             self::assertNotEmpty($actual);
 
             return;
@@ -154,6 +155,7 @@ abstract class MakefileTestCase extends TestCase
         foreach ($envs as $env) {
             $expected = static::getExpectedHelpCommandsExecutionPath($env);
             $expected['help'] = [];
+            $expected['help/check'] = [];
             foreach ($commands as $command) {
                 self::assertArrayHasKey($command, $expected, \sprintf('No expected execution path defined for command "%1$s"', $command));
             }
@@ -176,6 +178,7 @@ abstract class MakefileTestCase extends TestCase
     {
         $commands = array_keys(static::getExpectedHelpCommandsExecutionPath([]));
         $commands[] = 'help';
+        $commands[] = 'help/check';
 
         return $this->generateHelpHeader().$this->generateHelpList($commands);
     }
