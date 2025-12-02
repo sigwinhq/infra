@@ -127,6 +127,17 @@ define check_docker_compose
 	fi
 endef
 
+# Check Docker server connectivity
+define check_docker_server
+	if command -v docker >/dev/null 2>&1 && docker version --format '{{.Server.Version}}' >/dev/null 2>&1; then \
+		version=$$(docker version --format '{{.Server.Version}}' 2>/dev/null); \
+		printf "  \033[32m✓\033[0m docker server \033[0;2m(%s)\033[0m\n" "$$version"; \
+	else \
+		printf "  \033[31m✗\033[0m docker server \033[31m(required, cannot connect)\033[0m\n"; \
+		SIGWIN_INFRA_CHECK_FAILED=1; \
+	fi
+endef
+
 # Check filesystem permissions on current directory
 define check_filesystem
 	printf "\n\033[1mFilesystem:\033[0m\n"; \
@@ -164,15 +175,16 @@ help/check: ## Check environment for sigwin/infra compatibility
 	printf "\n\033[1mMandatory Tools:\033[0m\n"; \
 	$(call check_command,make,1,make --version); \
 	$(call check_command,uname,1,uname -a); \
-	$(call check_command,id,1,); \
-	$(call check_command,echo,1,); \
-	$(call check_command,test,1,); \
 	$(call check_command,jq,1,jq --version); \
 	$(call check_command,grep,1,); \
 	$(call check_command,awk,1,); \
 	$(call check_command,sort,1,); \
 	$(call check_command,docker,1,docker --version); \
+	$(call check_docker_server); \
 	$(call check_docker_compose); \
+	$(call check_command,id,1,); \
+	$(call check_command,echo,1,); \
+	$(call check_command,test,1,); \
 	printf "\n\033[1mOptional Tools:\033[0m\n"; \
 	$(call check_command,mkcert,0,mkcert --version); \
 	$(call check_filesystem); \

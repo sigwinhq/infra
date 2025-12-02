@@ -131,6 +131,17 @@ define check_docker_compose_ps
 	}
 endef
 
+# Check Docker server connectivity in PowerShell
+define check_docker_server_ps
+	if ((Get-Command docker -ErrorAction SilentlyContinue) -and (docker version --format '{{.Server.Version}}' 2>$$null)) { \
+		$$version = (docker version --format '{{.Server.Version}}' 2>$$null); \
+		Write-Host "  " -NoNewline; Write-Host "✓" -ForegroundColor Green -NoNewline; Write-Host " docker server " -NoNewline; Write-Host "($$version)" -ForegroundColor DarkGray; \
+	} else { \
+		Write-Host "  " -NoNewline; Write-Host "✗" -ForegroundColor Red -NoNewline; Write-Host " docker server " -NoNewline; Write-Host "(required, cannot connect)" -ForegroundColor Red; \
+		$$script:SIGWIN_INFRA_CHECK_FAILED = $$true; \
+	}
+endef
+
 # Check filesystem permissions in PowerShell
 define check_filesystem_ps
 	Write-Host ""; \
@@ -177,6 +188,7 @@ help/check: ## Check environment for sigwin/infra compatibility
 	Write-Host "Mandatory Tools:" -ForegroundColor White; \
 	$(call check_command_ps,make,1,make --version); \
 	$(call check_command_ps,docker,1,docker --version); \
+	$(call check_docker_server_ps); \
 	$(call check_docker_compose_ps); \
 	Write-Host ""; \
 	Write-Host "Optional Tools:" -ForegroundColor White; \
