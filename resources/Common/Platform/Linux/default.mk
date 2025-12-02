@@ -186,21 +186,21 @@ help/check: ## Check environment for sigwin/infra compatibility
 	@$(call block_start,$@)
 	@SIGWIN_INFRA_CHECK_FAILED=0; \
 	printf "\n\033[1mMandatory Tools:\033[0m\n"; \
-	$(call check_command,make,1,make --version); \
 	$(call check_command,uname,1,uname -a); \
-	$(call check_command,jq,1,jq --version); \
-	$(call check_command,grep,1,grep --version); \
-	$(call check_command,awk,1,awk --version); \
-	$(call check_command,sort,1,sort --version); \
+	$(call check_command,make,1,make --version); \
 	$(call check_command,docker,1,docker --version); \
 	$(call check_docker_server); \
 	$(call check_docker_compose); \
+	$(call check_command,jq,1,jq --version); \
+	$(call check_command,awk,1,awk --version); \
+	$(call check_command,grep,1,grep --version); \
+	$(call check_command,sort,1,sort --version); \
 	$(call check_command,id,1,); \
 	$(call check_command,echo,1,); \
 	$(call check_command,test,1,); \
 	printf "\n\033[1mOptional Tools:\033[0m\n"; \
 	$(call check_command,mkcert,0,mkcert --version); \
-	$(call check_command,setfacl,0,); \
+	$(call check_command,setfacl,0,setfacl --version); \
 	$(call check_filesystem); \
 	$(call check_infra_version); \
 	printf "\n"; \
