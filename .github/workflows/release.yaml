@@ -13,10 +13,14 @@ jobs:
         steps:
             -   name: Repo checkout
                 uses: actions/checkout@v6
+            -   name: Set up Node.js
+                uses: actions/setup-node@v4
+                with:
+                    node-version: '20'
             -   name: Set release version to package.json
                 run: jq --indent 4 '.version = "${{ github.ref_name }}"' < package.json > package.json~ && mv package.json~ package.json
             -   name: NPM release
-                run: npm publish
+                run: npm publish --access public
     ReleasePyPI:
         runs-on: ubuntu-latest
         environment:
