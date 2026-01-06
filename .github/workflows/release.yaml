@@ -5,15 +5,16 @@ on:
 jobs:
     ReleaseNPM:
         runs-on: ubuntu-latest
+        environment:
+            name: npmjs
+        permissions:
+            id-token: write
+            contents: read
         steps:
             -   name: Repo checkout
                 uses: actions/checkout@v6
             -   name: Set release version to package.json
                 run: jq --indent 4 '.version = "${{ github.ref_name }}"' < package.json > package.json~ && mv package.json~ package.json
-            -   name: NPM auth
-                run: npm set //registry.npmjs.org/:_authToken=$NODE_AUTH_TOKEN
-                env:
-                    NODE_AUTH_TOKEN: "${{ secrets.NPMJS_SECRET }}"
             -   name: NPM release
                 run: npm publish
     ReleasePyPI:
