@@ -23,9 +23,10 @@ trait PhpTrait
         yield ['PHP_VERSION' => '8.2'];
         yield ['PHP_VERSION' => '8.3'];
         yield ['PHP_VERSION' => '8.4'];
+        yield ['PHP_VERSION' => '8.5'];
 
         yield ['PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
-        yield ['PHP_VERSION' => '8.4', 'PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
+        yield ['PHP_VERSION' => '8.5', 'PHPQA_DOCKER_IMAGE' => 'fake/image:123'];
         yield ['DOCKER_ENV' => '--env "FOO=bar"'];
     }
 
@@ -71,8 +72,8 @@ trait PhpTrait
     private static function paths(?array $env): array
     {
         // defaults which are also defined in the Makefile
-        $phpVersion = $env['PHP_VERSION'] ?? '8.4';
-        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.113.9-php%1$s-alpine';
+        $phpVersion = $env['PHP_VERSION'] ?? '8.5';
+        $phpqaDockerImage = $env['PHPQA_DOCKER_IMAGE'] ?? 'jakzal/phpqa:1.119.2-php%1$s-alpine';
         $dockerEnv = $env['DOCKER_ENV'] ?? ' ';
 
         return [

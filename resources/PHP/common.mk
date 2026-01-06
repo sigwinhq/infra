@@ -6,11 +6,11 @@ include ${SIGWIN_INFRA_ROOT:%/=%}/Common/default.mk
 endif
 
 ifndef PHP_VERSION
-PHP_VERSION=8.4
+PHP_VERSION=8.5
 endif
 
 ifndef PHPQA_DOCKER_IMAGE
-PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.113.9-php${PHP_VERSION}-alpine
+PHPQA_DOCKER_IMAGE=jakzal/phpqa:1.119.2-php${PHP_VERSION}-alpine
 endif
 
 ifndef PHPQA_DOCKER_COMMAND
