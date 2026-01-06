@@ -9,5 +9,7 @@ SECRETS_DIR ?= ./.infra/secrets
 SECRETS_DIST ?= .dist
 
 secrets: $(patsubst %${SECRETS_DIST},%,$(wildcard ${SECRETS_DIR}/*.secret${SECRETS_DIST}))
-${SECRETS_DIR}/%.secret:
+${SECRETS_DIR}:
+	mkdir -p $@
+${SECRETS_DIR}/%.secret: ${SECRETS_DIR}
 	cp $@${SECRETS_DIST} $@
