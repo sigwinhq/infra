@@ -9,5 +9,7 @@ CERTIFICATES_DIR ?= ./.infra/certificates
 _CERTIFICATES := $(addprefix ${CERTIFICATES_DIR}/,$(addsuffix .pem,$(_LOCAL_DOMAINS)))
 
 certificates: $(_CERTIFICATES)
-${CERTIFICATES_DIR}/%.pem:
+${CERTIFICATES_DIR}:
+	mkdir -p $@
+${CERTIFICATES_DIR}/%.pem: ${CERTIFICATES_DIR}
 	(cd ${CERTIFICATES_DIR} && mkcert $*)
