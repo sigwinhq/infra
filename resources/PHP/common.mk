@@ -65,7 +65,7 @@ test/phpunit-coverage: | ${HOME}/.composer var/phpqa composer.lock
 	$(call block_end)
 test/infection: test/phpunit-coverage
 	$(call block_start,$@)
-	${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covered --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max
+	${PHPQA_DOCKER_COMMAND} infection run --verbose --show-mutations --no-interaction --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max
 	$(call block_end)
 
 ${HOME}/.composer:

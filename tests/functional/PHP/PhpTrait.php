@@ -187,7 +187,7 @@ trait PhpTrait
 
             'test: unit' => [
                 self::generatePhpqaExecutionPath('php -d pcov.enabled=1 vendor/bin/phpunit --coverage-text --log-junit=var/phpqa/phpunit/junit.xml --coverage-xml var/phpqa/phpunit/coverage-xml/', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
-                self::generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covered --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
+                self::generatePhpqaExecutionPath('infection run --verbose --show-mutations --no-interaction --only-covering-test-cases --coverage var/phpqa/phpunit/ --threads max', phpVersion: $phpVersion, dockerImage: $phpqaDockerImage, env: $dockerEnv),
             ],
             'test: functional app' => [
                 self::generateDockerComposeAppExecExecutionPath('vendor/bin/behat --colors --strict', 'test'),
